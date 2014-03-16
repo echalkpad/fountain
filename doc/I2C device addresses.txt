@@ -1,0 +1,31 @@
+Beagle Bone I2C devices
+
+Access
+
+
+PINS=/sys/kernel/debug/pinctrl/44e10800.pinmux/pins
+SLOTS=/sys/devices/bone_capemgr.9/slots
+
+cat /sys/kernel/debug/pinctrl/44e10800.pinmux/pinmux-pins
+cat /sys/kernel/debug/gpio
+
+
+Processor I2C bus 1, P9-17/18
+
+i2c-0, 0x24, (UU), TPS 65217C - Power Management
+i2c-0, 0x34, (34), TDA 19988 - HDMI Framer (CEC Core)
+i2c-0, 0x50, (UU), 4KB 24LC32AT-I/OT - Mainboard EEPROM
+i2c-0, 0x70, (70), TDA 19988 - HDMI Framer (HDMI Core)
+
+Processor I2C bus 2, P9-19/20
+
+i2c-1, 0x19, LSM303DLHC - accelerometer
+i2c-1, 0x1E, LSM303DLHC - magnetometer
+i2c-1, 0x54, (UU), Cape EEPROM
+i2c-1, 0x55, (UU), Cape EEPROM
+i2c-1, 0x56, (UU), Cape EEPROM
+i2c-1, 0x57, (UU), Cape EEPROM
+
+MMC0 - SD Card
+MMC1 - eMMC (2GB Flash)
+

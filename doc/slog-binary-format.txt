@@ -1,0 +1,9 @@
+0xBEAD (i16, 2-byte file signature)
+0x---- (i16, 2-byte file version)
+group id (i32, >0 or 0 => no more)
+analog channel count (i32, 0 to Na)
+[i32, Na pin numbers]
+digital channel count (i32, 0 to Nd)
+[i32, Nd pin numbers]
+group id 
+...
