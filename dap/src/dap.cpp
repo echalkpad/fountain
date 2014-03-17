@@ -22,19 +22,27 @@
 int main(int argc, char* argv[]) {
 	printf("DAP - I2C Data Acquisition Program\n");
 
-	LSM303Accelerometer *d = new LSM303Accelerometer(1,0x19,"LSM303 Accelerometer");
+	LSM303Accelerometer *d = new LSM303Accelerometer(1, 0x19,
+			"LSM303 Accelerometer");
 
-	printf("Device: %s at Bus %i, Address %#x.\n",d->getDeviceName(),d->getBus(),d->getDeviceAddress());
+	printf("Device: %s at Bus %i, Address %#x.\n", d->getDeviceName(),
+			d->getBus(), d->getDeviceAddress());
 
 	int status = d->openDevice();
 	if (status < 0) {
 		return EXIT_FAILURE;
 	}
-	printf("Device opened.  Handle: %i\n",d->getHandle());
+	printf("Device opened.  Handle: %i\n", d->getHandle());
 
-	status = d->readFullSensorState();
-	if (status < 0) {
-		return EXIT_FAILURE;
+	for (int idx = 0; idx < 50; idx++) {
+		status = d->readFullSensorState();
+		if (status < 0) {
+			return EXIT_FAILURE;
+		}
+
+		printf("Accelerations X, Y, Z: %i, %i, %i.\n", d->getAccelerationX(),
+				d->getAccelerationY(), d->getAccelerationZ());
+		sleep(1);
 	}
 
 	status = d->closeDevice();

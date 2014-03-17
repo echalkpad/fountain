@@ -11,6 +11,11 @@
 #define LSM303_I2C_BUFFER_SIZE 0x80
 #define MAX_BUS_NAME_SIZE 64
 
+#define MAX_REGISTER_ADDRESS 0x7F
+
+#define ODR_MASK 0xF0
+#define LPEN_MASK 0x08
+#define XYZENABLE_MASK 0x07
 
 enum LSM303_RANGE {
 	PLUSMINUS_1_G 		= 0,
@@ -40,6 +45,26 @@ enum LSM303_MODECONFIG {
 	MODE_LOW_POWER = 3
 };
 
+
+#define FIRST_REGISTER    0x20
+#define CTRL_REG1_A       0x20  // DLH, DLM, DLHC
+#define CTRL_REG2_A       0x21  // DLH, DLM, DLHC
+#define CTRL_REG3_A       0x22  // DLH, DLM, DLHC
+#define CTRL_REG4_A       0x23  // DLH, DLM, DLHC
+#define CTRL_REG5_A       0x24  // DLH, DLM, DLHC
+#define CTRL_REG6_A       0x25  // DLHC
+#define REFERENCE_A       0x26  // DLH, DLM, DLHC
+#define STATUS_REG_A      0x27  // DLH, DLM, DLHC
+
+#define OUT_X_L_A         0x28
+#define OUT_X_H_A         0x29
+#define OUT_Y_L_A         0x2A
+#define OUT_Y_H_A         0x2B
+#define OUT_Z_L_A         0x2C
+#define OUT_Z_H_A         0x2D
+
+
+
 class LSM303Accelerometer {
 
 private:
@@ -50,8 +75,9 @@ private:
 	int deviceAddress;
 	char *deviceName;
 
-	int I2CAddress;
-	char dataBuffer[LSM303_I2C_BUFFER_SIZE];
+	char bfOutputDataRate;
+	char bfLowPowerEnable;
+	char bfAxisEnable;
 
 	int accelerationX;
 	int accelerationY;
@@ -71,7 +97,8 @@ public:
 	int openDevice(void);
 	int closeDevice(void);
 
-	int  readFullSensorState();
+	int readFullSensorState(void);
+	int16_t convertAcceleration(char upper,char lower);
 
 	int getBus() const
 	{
@@ -96,6 +123,21 @@ public:
 	int getHandle() const
 	{
 		return handle;
+	}
+
+	int getAccelerationX() const
+	{
+		return accelerationX;
+	}
+
+	int getAccelerationY() const
+	{
+		return accelerationY;
+	}
+
+	int getAccelerationZ() const
+	{
+		return accelerationZ;
 	}
 };
 

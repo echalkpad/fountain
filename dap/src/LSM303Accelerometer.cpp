@@ -59,26 +59,54 @@ LSM303Accelerometer::LSM303Accelerometer(int aBus, int anAddress, char *dName) {
 	deviceName = dName;
 	deviceAddress = anAddress;
 	snprintf(busName, MAX_BUS_NAME_SIZE, "/dev/i2c-%d", bus);
+
+	bfOutputDataRate = 0x5; // 100hz
+	bfLowPowerEnable = 0x0; // Normal power mode
+	bfAxisEnable = 0x7;		// Enable X, Y, and Z acceleration axes
+
 }
 /*
  * Open the I2C adapter and point to the device of interest.
  * return status == 0 if okay, status < 0 if error
  */
 int LSM303Accelerometer::openDevice(void) {
-	int status = open(busName, O_RDWR);
 
+	// Connect to the I2C bus adapter
+
+	int status = open(busName, O_RDWR);
 	if (status < 0) {
 			printf("Failed to open %s on I2C Bus %s.  Error: %i\n",deviceName,busName,status);
 			return(status);
 	}
-
 	handle = status;
-	status = ioctl(handle, I2C_SLAVE, deviceAddress);
 
+	// Tell the adapter which slave device we are using
+
+	status = ioctl(handle, I2C_SLAVE, deviceAddress);
 	if (status < 0){
 			printf("I2C_SLAVE address %#x failed.  Error: %i\n",deviceAddress,status);
 			return(status);
 	}
+
+	// Set up the control registers for our use
+
+    char buf[8];
+    buf[0] = 0x80 | CTRL_REG1_A;  // autoincrement, starting with register 0x20
+    buf[1] = ((bfOutputDataRate<<4) & ODR_MASK) |  // CTRL_REG1_A
+    		((bfLowPowerEnable<<3) & LPEN_MASK) |
+    		((bfAxisEnable<<0) & XYZENABLE_MASK);
+    buf[2] = 0;  // CTRL_REG2_A
+    buf[3] = 0;  // CTRL_REG3_A
+    buf[4] = 0;  // CTRL_REG4_A
+    buf[5] = 0;  // CTRL_REG5_A
+    buf[6] = 0;  // CTRL_REG6_A
+    buf[7] = 0;  // REFERENCE_A
+
+
+    if(write(handle, buf, 8) !=8){
+    	printf("Failed to set all control registers.\n");
+    	return 1;
+    }
 
 	return 0;
 }
@@ -92,37 +120,37 @@ int LSM303Accelerometer::readFullSensorState(){
     // According to the LSM303 datasheet on page 59, you need to send the first address
     // in write mode and then a stop/start condition is issued. Data bytes are
     // transferred with automatic address increment.
-    char buf[1] = { 0x20 | 0x80};
-    if(write(handle, buf, 1) !=1){
+    char startAddress = 0x80 | FIRST_REGISTER;  // autoincrement, starting with first control register
+    if(write(handle, &startAddress, 1) !=1){
     	printf("Failed to Reset Address in readFullSensorState()\n");
     	return 1;
     }
 
-    int numberBytes = LSM303_I2C_BUFFER_SIZE;
-	numberBytes = 16;
-    int bytesRead = read(handle, this->dataBuffer, numberBytes);
-    if (bytesRead == -1){
+	char statusBuffer[MAX_REGISTER_ADDRESS+1];
+
+    int numberBytes = 14;
+    int bytesRead = read(handle, statusBuffer, numberBytes);
+    if (bytesRead != numberBytes){
     	printf("Failure to read Byte Stream in readFullSensorState()\n");
     	return 1;
     }
-    printf("Number of bytes read was %i.\n",bytesRead);
+//    printf("Number of bytes read was %i.\n",bytesRead);
 
-   for (int i=0; i<numberBytes; i++){
-           printf("Byte %#04x is %#04x\n", i, dataBuffer[i]);
-    }
+//   for (int i=0; i<numberBytes; i++){
+//           printf("Byte %#04x is %#04x\n", i, statusBuffer[i]);
+//    }
 
- //  if (this->dataBuffer[0]!=0x03){
- //  	printf("MAJOR FAILURE: DATA WITH LSM303 HAS LOST SYNC!\n");
- //  	return 1;
- //  }
+   if (statusBuffer[0] != 0x57){
+   	printf("MAJOR FAILURE: DATA WITH LSM303 HAS LOST SYNC!\n");
+   	return 1;
+   }
 
-/*
-    this->accelerationX = convertAcceleration(ACC_X_MSB, ACC_X_LSB);
-    this->accelerationY = convertAcceleration(ACC_Y_MSB, ACC_Y_LSB);
-    this->accelerationZ = convertAcceleration(ACC_Z_MSB, ACC_Z_LSB);
+    this->accelerationX = convertAcceleration(statusBuffer[OUT_X_H_A-FIRST_REGISTER],statusBuffer[OUT_X_H_A-FIRST_REGISTER]);
+    this->accelerationY = convertAcceleration(statusBuffer[OUT_Y_H_A-FIRST_REGISTER],statusBuffer[OUT_Y_H_A-FIRST_REGISTER]);
+    this->accelerationZ = convertAcceleration(statusBuffer[OUT_Z_H_A-FIRST_REGISTER],statusBuffer[OUT_Z_H_A-FIRST_REGISTER]);
+    /*
     this->calculatePitchAndRoll();
 */
-    //cout << "Pitch:" << this->getPitch() << "   Roll:" << this->getRoll() <<  endl;
     return 0;
 }
 /*
@@ -131,3 +159,9 @@ int LSM303Accelerometer::readFullSensorState(){
 int LSM303Accelerometer::closeDevice(void) {
 	return close(handle);
 }
+
+
+int16_t LSM303Accelerometer::convertAcceleration(char upper,char lower){
+	return (upper<<8) | lower;
+}
+
