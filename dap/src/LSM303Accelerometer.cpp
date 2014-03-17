@@ -92,28 +92,29 @@ int LSM303Accelerometer::readFullSensorState(){
     // According to the LSM303 datasheet on page 59, you need to send the first address
     // in write mode and then a stop/start condition is issued. Data bytes are
     // transferred with automatic address increment.
-    char buf[1] = { 0x00 };
+    char buf[1] = { 0x20 | 0x80};
     if(write(handle, buf, 1) !=1){
     	printf("Failed to Reset Address in readFullSensorState()\n");
     	return 1;
     }
 
     int numberBytes = LSM303_I2C_BUFFER_SIZE;
+	numberBytes = 16;
     int bytesRead = read(handle, this->dataBuffer, numberBytes);
     if (bytesRead == -1){
     	printf("Failure to read Byte Stream in readFullSensorState()\n");
     	return 1;
     }
-    printf("Number of bytes read was %i.\n");
+    printf("Number of bytes read was %i.\n",bytesRead);
 
-   for (int i=0; i<8; i++){
-           printf("Byte %02d is 0x%02x\n", i, dataBuffer[i]);
+   for (int i=0; i<numberBytes; i++){
+           printf("Byte %#04x is %#04x\n", i, dataBuffer[i]);
     }
 
-   if (this->dataBuffer[0]!=0x03){
-   	printf("MAJOR FAILURE: DATA WITH LSM303 HAS LOST SYNC!\n");
-   	return 1;
-   }
+ //  if (this->dataBuffer[0]!=0x03){
+ //  	printf("MAJOR FAILURE: DATA WITH LSM303 HAS LOST SYNC!\n");
+ //  	return 1;
+ //  }
 
 /*
     this->accelerationX = convertAcceleration(ACC_X_MSB, ACC_X_LSB);
