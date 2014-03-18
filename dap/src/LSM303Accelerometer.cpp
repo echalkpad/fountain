@@ -37,22 +37,9 @@
 #include <sys/ioctl.h>
 #include <stropts.h>
 #include <stdio.h>
-#include "LSM303Accelerometer.h"
-//#include <iostream>
+#include "LSM303AccMagSensor.h"
 #include <math.h>
 using namespace std;
-
-
-#define ACC_X_LSB 	0x02
-#define ACC_X_MSB 	0x03
-#define ACC_Y_LSB 	0x04
-#define ACC_Y_MSB 	0x05
-#define ACC_Z_LSB 	0x06
-#define ACC_Z_MSB 	0x07
-#define TEMP	  	0x08  //Temperature
-#define RANGE	  	0x35  //bits 3,2,1
-#define BANDWIDTH 	0x20  //bits 7,6,5,4
-#define MODE_CONFIG 0x30  //bits 1,0
 
 LSM303Accelerometer::LSM303Accelerometer(int aBus, int anAddress, char *dName) {
 	bus = aBus;
@@ -63,6 +50,16 @@ LSM303Accelerometer::LSM303Accelerometer(int aBus, int anAddress, char *dName) {
 	bfOutputDataRate = 0x5; // 100hz
 	bfLowPowerEnable = 0x0; // Normal power mode
 	bfAxisEnable = 0x7;		// Enable X, Y, and Z acceleration axes
+
+	accelerationX = 0;
+	accelerationY = 0;
+	accelerationZ = 0;
+
+	pitch = 0.0;
+	roll = 0.0;
+	temperature = 0.0;
+
+	handle = -1;
 
 }
 /*
