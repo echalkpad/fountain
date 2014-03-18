@@ -1,3 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">&#x0A;<refactoring comment="Rename resource &apos;dap/src/dap.cpp&apos; to &apos;LSM303Accelerometer.cpp&apos;" description="Rename resource &apos;dap.cpp&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="src/dap.cpp" name="LSM303Accelerometer.cpp" stamp="1394990606103" updateReferences="true"/>&#x0A;<refactoring comment="Rename resource &apos;dap/src/dap.c&apos; to &apos;dap.cpp&apos;" description="Rename resource &apos;dap.c&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="src/dap.c" name="dap.cpp" stamp="1394997227211" updateReferences="true"/>
-</session>
