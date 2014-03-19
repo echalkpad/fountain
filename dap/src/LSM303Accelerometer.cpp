@@ -41,11 +41,16 @@
 #include <math.h>
 using namespace std;
 
+#define XSTRINGIFY(s) STRINGIFY(s)
+#define STRINGIFY(s) #s
+
 LSM303Accelerometer::LSM303Accelerometer(int aBus, int anAddress, char *dName) {
 	bus = aBus;
 	deviceName = dName;
+	sensorID = XSTRINGIFY(SENSOR_ID);
 	deviceAddress = anAddress;
 	snprintf(busName, MAX_BUS_NAME_SIZE, "/dev/i2c-%d", bus);
+	handle = -1;
 
 	bfOutputDataRate = 0x5; // 100hz
 	bfLowPowerEnable = 0x0; // Normal power mode
@@ -59,7 +64,6 @@ LSM303Accelerometer::LSM303Accelerometer(int aBus, int anAddress, char *dName) {
 	roll = 0.0;
 	temperature = 0.0;
 
-	handle = -1;
 }
 /*
  * Open the I2C adapter and point to the device of interest.

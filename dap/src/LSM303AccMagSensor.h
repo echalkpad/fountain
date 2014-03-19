@@ -12,7 +12,7 @@
 
 #include "i2c-master.h"
 
-#define SENSOR_ID LSM303DLHC
+#define SENSOR_ID LSM303D
 #include SENSOR_HEADER(SENSOR_ID)
 
 class LSM303Accelerometer {
@@ -24,6 +24,7 @@ private:
 
 	int deviceAddress;
 	char *deviceName;
+	char *sensorID;
 
 	char bfOutputDataRate;
 	char bfLowPowerEnable;
@@ -38,9 +39,13 @@ private:
 
 	float temperature; //accurate to 0.5C
 
+	char registerBuffer[REGISTER_COUNT];
+
 	LSM303_RANGE range;
 	LSM303_BANDWIDTH bandwidth;
 	LSM303_MODECONFIG modeConfig;
+
+	void initializeRegisters();
 
 public:
 	LSM303Accelerometer(int bus, int address, char *name);
