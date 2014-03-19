@@ -12,13 +12,8 @@
 
 #include "i2c-master.h"
 
-#define LSM303DLHC
-
-#if defined(LSM303DLHC)
-#include "LSM303DLHC-registers.h"
-#elif defined(LSM303D)
-#include "LSM303D-registers.h"
-#endif
+#define SENSOR_ID LSM303DLHC
+#include SENSOR_HEADER(SENSOR_ID)
 
 class LSM303Accelerometer {
 
@@ -42,6 +37,7 @@ private:
 	double roll;   //in degrees
 
 	float temperature; //accurate to 0.5C
+
 	LSM303_RANGE range;
 	LSM303_BANDWIDTH bandwidth;
 	LSM303_MODECONFIG modeConfig;

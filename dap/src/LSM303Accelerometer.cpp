@@ -60,7 +60,6 @@ LSM303Accelerometer::LSM303Accelerometer(int aBus, int anAddress, char *dName) {
 	temperature = 0.0;
 
 	handle = -1;
-
 }
 /*
  * Open the I2C adapter and point to the device of interest.
