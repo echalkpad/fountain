@@ -5,22 +5,23 @@
  *
  */
 
-#include <stdlib.h>
+//#include <stdlib.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <linux/i2c.h>
 #include <linux/i2c-dev.h>
 #include <sys/ioctl.h>
-#include <stropts.h>
+//#include <stropts.h>
 #include <stdio.h>
+//#include <math.h>
+//using namespace std;
+
 #include "Sensor.h"
-#include <math.h>
-using namespace std;
 
 #define XSTRINGIFY(s) STRINGIFY(s)
 #define STRINGIFY(s) #s
 
-Sensor::Sensor(int aBus, uint8_t anAddress, char *aName) {
+Sensor::Sensor(int aBus, uint8_t anAddress, const char *aName) {
 	bus = aBus;
 	deviceAddress = anAddress;
 	deviceName = aName;
@@ -53,6 +54,8 @@ Sensor::~Sensor(void) {
  */
 int Sensor::writeRegisters(uint8_t adr, uint8_t registerValues[], int count) {
 
+	printf("wR: %#04x %i\n",adr,count);
+
 	if (count < 1) {
 		return -1;
 	}
@@ -69,10 +72,12 @@ int Sensor::writeRegisters(uint8_t adr, uint8_t registerValues[], int count) {
 	// Write the provided values
 
 	registerBuffer[0] =
-			(adr & I2C_ADDRESS_MASK) | (count > 1) ? I2C_AUTOINCREMENT_MASK : 0;
+			(adr & I2C_ADDRESS_MASK) | ((count > 1) ? I2C_AUTOINCREMENT_MASK : 0);
 	for (int idx = 0; idx < count; idx++) {
 		registerBuffer[idx + 1] = registerValues[idx];
 	}
+
+	printf("Sub address: %#04x %#04x\n",adr,registerBuffer[0]);
 
 	status = write(handle, registerBuffer, count + 1);
 	if (status != count + 1) {
@@ -108,7 +113,7 @@ int Sensor::readRegisters(uint8_t adr, uint8_t registerValues[], int count) {
 // Write the address of the first register to read.
 
 	uint8_t startAddress =
-			(adr & I2C_ADDRESS_MASK) | (count > 1) ? I2C_AUTOINCREMENT_MASK : 0;
+			(adr & I2C_ADDRESS_MASK) | ((count > 1) ? I2C_AUTOINCREMENT_MASK : 0);
 
 	status = write(handle, &startAddress, 1);
 	if (status != 1) {

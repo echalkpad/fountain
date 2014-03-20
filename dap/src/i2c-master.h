@@ -1,5 +1,5 @@
 /*
- * i2cmaster.h
+ * i2c-master.h
  *
  *	Define various I2C-related constants.
  *  Created on: Mar 16, 2014
