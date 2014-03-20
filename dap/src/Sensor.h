@@ -47,10 +47,6 @@ public:
 	const char* getDeviceName() const { return deviceName; }
 	const char* getDeviceLabel() const { return deviceLabel; }
 
-	int16_t convertAcceleration(uint8_t upper,uint8_t lower){
-		return (upper<<8) | lower;
-	}
-
 
 };
 

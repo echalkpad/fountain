@@ -46,9 +46,9 @@ int LSM303DLHC::refreshSensorData() {
 		return -1;
 	}
 
-    accX = convertAcceleration(registerBuffer[OUT_X_H_A-FIRST_REGISTER],registerBuffer[OUT_X_L_A-FIRST_REGISTER]);
-    accY = convertAcceleration(registerBuffer[OUT_Y_H_A-FIRST_REGISTER],registerBuffer[OUT_Y_L_A-FIRST_REGISTER]);
-    accZ = convertAcceleration(registerBuffer[OUT_Z_H_A-FIRST_REGISTER],registerBuffer[OUT_Z_L_A-FIRST_REGISTER]);
+    accX = (registerBuffer[OUT_X_H_A-FIRST_REGISTER]<<8) | registerBuffer[OUT_X_L_A-FIRST_REGISTER];
+    accY = (registerBuffer[OUT_Y_H_A-FIRST_REGISTER]<<8) | registerBuffer[OUT_Y_L_A-FIRST_REGISTER];
+    accZ = (registerBuffer[OUT_Z_H_A-FIRST_REGISTER]<<8) | registerBuffer[OUT_Z_L_A-FIRST_REGISTER];
 
     return 0;
 }
