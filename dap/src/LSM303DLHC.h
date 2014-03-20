@@ -2,6 +2,11 @@
 #ifndef LSM303DLHC_H_
 #define LSM303DLHC_H_
 
+#include <stdint.h>
+#include "Accelerometer.h"
+#include "Thermometer.h"
+#include "Sensor.h"
+
 #define ODR_MASK 0xF0
 #define LPEN_MASK 0x08
 #define XYZENABLE_MASK 0x07
@@ -62,5 +67,14 @@ enum LSM303_MODECONFIG {
 #define RANGE	  	0x35  //bits 3,2,1
 #define BANDWIDTH 	0x20  //bits 7,6,5,4
 #define MODE_CONFIG 0x30  //bits 1,0
+
+class LSM303DLHC : public Accelerometer, public Thermometer, public Sensor {
+public:
+	LSM303DLHC(int bus, uint8_t address, const char *name);
+
+	int refreshSensorData();
+
+};
+
 
 #endif

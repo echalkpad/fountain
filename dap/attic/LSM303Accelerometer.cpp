@@ -29,16 +29,21 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <stdlib.h>
-#include <unistd.h>
 #include <fcntl.h>
-#include <linux/i2c.h>
+//#include <linux/i2c.h>
 #include <linux/i2c-dev.h>
-#include <sys/ioctl.h>
-#include <stropts.h>
+//#include <math.h>
 #include <stdio.h>
+//#include <stdlib.h>
+//#include <stropts.h>
+#include <sys/ioctl.h>
+#include <sys/types.h>
+#include <unistd.h>
+#include "i2c-master.h"
+
+#include "IO-LSM303D.h"
 #include "LSM303AccMagSensor.h"
-#include <math.h>
+
 using namespace std;
 
 #define XSTRINGIFY(s) STRINGIFY(s)

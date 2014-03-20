@@ -64,19 +64,12 @@ enum LSM303_MODECONFIG {
 #define BANDWIDTH 	0x20  //bits 7,6,5,4
 #define MODE_CONFIG 0x30  //bits 1,0
 
+class LSM303D : public Accelerometer, public Thermometer, public Sensor {
+public:
+	LSM303D(int bus, uint8_t address, const char *name);
+	~LSM303D();
 
-LSM303Accelerometer::initializeRegisters() {
-    registerBuffer[0] = 0x80 | CTRL_REG1_A;
-    registerBuffer[1] = ((bfOutputDataRate<<4) & ODR_MASK) |
-    		((bfLowPowerEnable<<3) & LPEN_MASK) |
-    		((bfAxisEnable<<0) & XYZENABLE_MASK);
-    registerBuffer[2] = 0;
-    registerBuffer[3] = 0;
-    registerBuffer[4] = 0;
-    registerBuffer[5] = 0;
-    registerBuffer[6] = 0;
-    registerBuffer[7] = 0;
-}
+};
 
 
 #endif
