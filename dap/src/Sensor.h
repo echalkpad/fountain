@@ -21,19 +21,12 @@ private:
 	const char *deviceLabel;
 
 protected:
-
 	uint8_t registerBuffer[I2C_REGISTER_COUNT+1];
+	bool deviceTypeVerified;
 
 public:
 	Sensor(int bus, uint8_t address, const char *name);
-	Sensor() {
-		bus = 0;
-		deviceAddress = 0;
-		handle = 0;
-
-		deviceName = "<default>";
-		deviceLabel = "<default>";
-	}
+	Sensor();
 	virtual ~Sensor();
 
 	int writeRegisters(uint8_t adr, uint8_t registerValues[], int count);
@@ -46,7 +39,6 @@ public:
 
 	const char* getDeviceName() const { return deviceName; }
 	const char* getDeviceLabel() const { return deviceLabel; }
-
 
 };
 

@@ -8,8 +8,6 @@
 //#include <stdlib.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include <linux/i2c.h>
-#include <linux/i2c-dev.h>
 #include <sys/ioctl.h>
 //#include <stropts.h>
 #include <stdio.h>
@@ -18,8 +16,14 @@
 
 #include "Sensor.h"
 
-#define XSTRINGIFY(s) STRINGIFY(s)
-#define STRINGIFY(s) #s
+Sensor::Sensor() {
+		bus = 0;
+		deviceAddress = 0;
+		deviceName = "<default>";
+		deviceLabel = "<default>";
+		handle = 0;
+		deviceTypeVerified = false;
+	}
 
 Sensor::Sensor(int aBus, uint8_t anAddress, const char *aName) {
 	bus = aBus;
@@ -37,6 +41,7 @@ Sensor::Sensor(int aBus, uint8_t anAddress, const char *aName) {
 				busName, status);
 	}
 	handle = status;
+	deviceTypeVerified = false;
 }
 /*
  * Release the adapter handle.

@@ -57,21 +57,13 @@ enum LSM303_MODECONFIG {
 #define OUT_Z_L_A         0x2C
 #define OUT_Z_H_A         0x2D
 
-#define ACC_X_LSB 	0x02
-#define ACC_X_MSB 	0x03
-#define ACC_Y_LSB 	0x04
-#define ACC_Y_MSB 	0x05
-#define ACC_Z_LSB 	0x06
-#define ACC_Z_MSB 	0x07
-#define TEMP	  	0x08  //Temperature
-#define RANGE	  	0x35  //bits 3,2,1
-#define BANDWIDTH 	0x20  //bits 7,6,5,4
-#define MODE_CONFIG 0x30  //bits 1,0
 
 class LSM303DLHC : public Accelerometer, public Thermometer, public Sensor {
+private:
+	double accFullScale;
+
 public:
 	LSM303DLHC(int bus, uint8_t address, const char *name);
-
 	int refreshSensorData();
 
 };

@@ -18,23 +18,23 @@ Accelerometer::Accelerometer(double ax, double ay, double az) {
 }
 
 Accelerometer::Accelerometer() {
-	accX = 0.0;
-	accY = 0.0;
-	accZ = 0.0;
+	accX =  0;
+	accY = 0;
+	accZ = 0;
 }
 
 Accelerometer::~Accelerometer() {
 }
 
 
-int Accelerometer::getAccelerationX() {
+double Accelerometer::getAccelerationX() {
 	return accX;
 }
 
-int Accelerometer::getAccelerationY() {
+double Accelerometer::getAccelerationY() {
 	return accY;
 }
 
-int Accelerometer::getAccelerationZ() {
+double Accelerometer::getAccelerationZ() {
 	return accZ;
 }

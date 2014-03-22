@@ -23,9 +23,9 @@ public:
 	Accelerometer();
 	virtual ~Accelerometer();
 
-	virtual int getAccelerationX();
-	virtual int getAccelerationY();
-	virtual int getAccelerationZ();
+	virtual double getAccelerationX();
+	virtual double getAccelerationY();
+	virtual double getAccelerationZ();
 
 };
 
