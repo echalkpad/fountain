@@ -18,6 +18,13 @@
 int main(int argc, char* argv[]) {
 	printf("DAP - I2C Data Acquisition Program\n");
 	printf("Test program for sensor class development.\n");
+	
+	char filename[] = "test.csv";
+	printf("Writing data to %s\n",filename);
+	
+	FILE *datafile;
+	datafile=fopen(filename, "w");
+	fprintf(datafile, "sample,device,X,Y,Z\n");
 
 	LSM303DLHC *d1 = new LSM303DLHC(1, 0x19,"LSM303DLHC");
 	LSM303D *d2 = new LSM303D(1,0x1D,"LSM303D");
@@ -29,8 +36,12 @@ int main(int argc, char* argv[]) {
 
 		printf("%-10s Acc: X, Y, Z: %f, %f, %f.  Temp: %f\n",
 				d1->getDeviceName(),d1->getAccelerationX(),d1->getAccelerationY(),d1->getAccelerationZ(),d1->getTemperature());
+		fprintf(datafile,"%i,%s,%f,%f,%f\n",
+				idx,d1->getDeviceName(),d1->getAccelerationX(),d1->getAccelerationY(),d1->getAccelerationZ());
 		printf("%-10s Acc: X, Y, Z: %f, %f, %f.  Temp: %f\n",
 				d2->getDeviceName(),d2->getAccelerationX(),d2->getAccelerationY(),d2->getAccelerationZ(),d2->getTemperature());
+		fprintf(datafile,"%i,%s,%f,%f,%f\n",
+				idx,d2->getDeviceName(),d2->getAccelerationX(),d2->getAccelerationY(),d2->getAccelerationZ());
 
 		sleep(1);
 	}
