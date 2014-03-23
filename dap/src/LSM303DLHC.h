@@ -61,6 +61,7 @@ enum LSM303_MODECONFIG {
 class LSM303DLHC : public Accelerometer, public Thermometer, public Sensor {
 private:
 	double accFullScale;
+	uint8_t registerValues[I2C_REGISTER_COUNT];
 
 public:
 	LSM303DLHC(int bus, uint8_t address, const char *name);

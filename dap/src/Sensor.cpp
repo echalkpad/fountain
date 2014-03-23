@@ -57,9 +57,7 @@ Sensor::~Sensor(void) {
  *
  * return status == 0 if okay, status < 0 if error
  */
-int Sensor::writeRegisters(uint8_t adr, uint8_t registerValues[], int count) {
-
-	printf("wR: %#04x %i\n",adr,count);
+int Sensor::writeRegisters(uint8_t adr, uint8_t rv[], int count) {
 
 	if (count < 1) {
 		return -1;
@@ -79,10 +77,10 @@ int Sensor::writeRegisters(uint8_t adr, uint8_t registerValues[], int count) {
 	registerBuffer[0] =
 			(adr & I2C_ADDRESS_MASK) | ((count > 1) ? I2C_AUTOINCREMENT_MASK : 0);
 	for (int idx = 0; idx < count; idx++) {
-		registerBuffer[idx + 1] = registerValues[idx];
+		registerBuffer[idx + 1] = rv[idx];
 	}
 
-	printf("Sub address: %#04x %#04x\n",adr,registerBuffer[0]);
+	printf("[write] Starting register address: %#04x (as written %#04x).  Byte count: %i\n",adr,registerBuffer[0],count);
 
 	status = write(handle, registerBuffer, count + 1);
 	if (status != count + 1) {
@@ -100,7 +98,7 @@ int Sensor::writeRegisters(uint8_t adr, uint8_t registerValues[], int count) {
  * return status == 0 if okay, status < 0 if error
  */
 
-int Sensor::readRegisters(uint8_t adr, uint8_t registerValues[], int count) {
+int Sensor::readRegisters(uint8_t adr, uint8_t rv[], int count) {
 
 	if (count < 1) {
 		return -1;
@@ -130,7 +128,7 @@ int Sensor::readRegisters(uint8_t adr, uint8_t registerValues[], int count) {
 
 //  Read as requested
 
-	status = read(handle, registerValues, count);
+	status = read(handle, rv, count);
 	if (status != count) {
 		printf(
 				"Failed to read I2C device registers (%i starting at %#04x).  Status: %i\n",

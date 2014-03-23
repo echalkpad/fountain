@@ -20,8 +20,10 @@ private:
 	const char *deviceName;
 	const char *deviceLabel;
 
-protected:
 	uint8_t registerBuffer[I2C_REGISTER_COUNT+1];
+
+
+protected:
 	bool deviceTypeVerified;
 
 public:

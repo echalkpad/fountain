@@ -22,27 +22,22 @@ LSM303DLHC::LSM303DLHC(int bus, uint8_t address, const char *name) : Sensor(bus,
 
 	accFullScale = 2.0;
 
-    uint8_t buf[I2C_REGISTER_COUNT];
-    buf[0] = ((bfOutputDataRate<<4) & ODR_MASK) |  // CTRL_REG1_A
+    registerValues[0] = ((bfOutputDataRate<<4) & ODR_MASK) |  // CTRL_REG1_A
     		((bfLowPowerEnable<<3) & LPEN_MASK) |
     		((bfAxisEnable<<0) & XYZENABLE_MASK);
-    buf[1] = 0;  // CTRL_REG2_A
-    buf[2] = 0;  // CTRL_REG3_A
-    buf[3] = 0;  // CTRL_REG4_A
-    buf[4] = 0;  // CTRL_REG5_A
-    buf[5] = 0;  // CTRL_REG6_A
-    buf[6] = 0;  // REFERENCE_A
+    registerValues[1] = 0;  // CTRL_REG2_A
+    registerValues[2] = 0;  // CTRL_REG3_A
+    registerValues[3] = 0;  // CTRL_REG4_A
+    registerValues[4] = 0;  // CTRL_REG5_A
+    registerValues[5] = 0;  // CTRL_REG6_A
+    registerValues[6] = 0;  // REFERENCE_A
 
-	int status = this->writeRegisters(FIRST_REGISTER,buf,7);
-
-	printf("Device: %s at Bus %i, Address %#04x.\n", getDeviceName(),
-			getBus(), getDeviceAddress());
-
+	int status = this->writeRegisters(FIRST_REGISTER,registerValues,7);
 }
 
 int LSM303DLHC::refreshSensorData() {
 
-	int status = readRegisters(FIRST_REGISTER,registerBuffer,14);
+	int status = readRegisters(FIRST_REGISTER,registerValues,14);
 	if (status < 0) {
 		printf("Error: Acceleration read error %i.",status);
 		return -1;
@@ -50,17 +45,17 @@ int LSM303DLHC::refreshSensorData() {
 
     printf("\nReg: ");
     for (int j=0; j<14; j++) {
-    	printf("%#04x ",registerBuffer[j]);
+    	printf("%#04x ",registerValues[j]);
     }
     printf("\n");
 
-    int16_t iX = (registerBuffer[OUT_X_H_A-FIRST_REGISTER]<<8) | (registerBuffer[OUT_X_L_A-FIRST_REGISTER]);
-    int16_t iY = (registerBuffer[OUT_Y_H_A-FIRST_REGISTER]<<8) | (registerBuffer[OUT_Y_L_A-FIRST_REGISTER]);
-    int16_t iZ = (registerBuffer[OUT_Z_H_A-FIRST_REGISTER]<<8) | (registerBuffer[OUT_Z_L_A-FIRST_REGISTER]);
+    int16_t iX = (registerValues[OUT_X_H_A-FIRST_REGISTER]<<8) | (registerValues[OUT_X_L_A-FIRST_REGISTER]);
+    int16_t iY = (registerValues[OUT_Y_H_A-FIRST_REGISTER]<<8) | (registerValues[OUT_Y_L_A-FIRST_REGISTER]);
+    int16_t iZ = (registerValues[OUT_Z_H_A-FIRST_REGISTER]<<8) | (registerValues[OUT_Z_L_A-FIRST_REGISTER]);
 
     printf("Acc16: %i, %i, %i\n", iX,iY,iZ);
 
-    accX = (iX*accFullScale)/32767; // should be INT16_MAX, rather than 32767
+    accX = (iX*accFullScale)/32767;
     accY = (iY*accFullScale)/32767;
     accZ = (iZ*accFullScale)/32767;
 

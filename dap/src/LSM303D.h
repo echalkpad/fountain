@@ -129,6 +129,7 @@ class LSM303D : public Accelerometer, public Magnetometer, public Thermometer, p
 
 private:
 	double accFullScale;
+	uint8_t registerValues[I2C_REGISTER_COUNT];
 
 public:
 	LSM303D(int bus, uint8_t address, const char *name);
