@@ -3,6 +3,7 @@
 	<name>dap</name>
 	<comment></comment>
 	<projects>
+		<project>paho</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
