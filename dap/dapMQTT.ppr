@@ -1,0 +1,39 @@
+[Config]
+Compilator.SaveAll=0
+Compilator.Capture=0
+Compilator.HideOutput=0
+Compilator.LogType=0
+DefaultDir=E:\users\finson\repos\ews-bbb\dap
+DefaultCPIndex=0
+LogtoEnd=1
+DontOpen=0
+AbsolutePath=0
+FileFormat=0
+ProjectFilesOnly=0
+[Project tree]
+dapMQTT
+	+src
+		src\Thermometer.h
+		src\Thermometer.cpp
+		src\test.csv
+		src\Sensor.h
+		src\Sensor.cpp
+		src\Magnetometer.h
+		src\Magnetometer.cpp
+		src\LSM303DLHC.h
+		src\LSM303DLHC.cpp
+		src\LSM303D.h
+		src\LSM303D.cpp
+		src\i2c-master.h
+		src\dapMQTT.cpp
+		src\Accelerometer.h
+		src\Accelerometer.cpp
+		src\Makefile
+[Open project files]
+0=src\dapMQTT.cpp
+[Selected Project Files]
+Main=
+Selected=src\dapMQTT.cpp
+[src\dapMQTT.cpp]
+TopLine=150
+Caret=135,181
