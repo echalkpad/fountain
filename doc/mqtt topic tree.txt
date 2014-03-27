@@ -3,3 +3,60 @@
 raw/
 
 context/
+
+
+{ATT
+An ATT object is a vehicle-attitude report. It is returned by digital-compass and gyroscope sensors; depending on device, it may include: heading, pitch, roll, yaw, gyroscope, and magnetic-field readings. Because such sensors are often bundled as part of marine-navigation systems, the ATT response may also include water depth.
+
+The "class", "mode", and "tag" fields will reliably be present. Others may be reported or not depending on the specific device type.
+
+Table 5. ATT object
+
+Name	Always?	Type	Description
+class	Yes	string	Fixed: "ATT"
+tag	Yes	string	Type tag associated with this GPS sentence; from an NMEA device this is just the NMEA sentence type.
+device	Yes	string	Name of originating device
+time	Yes	numeric	Seconds since the Unix epoch, UTC. May have a fractional part of up to .001sec precision.
+heading	No	numeric	Heading, degrees from true north.
+mag_st	No	string	Magnetometer status.
+pitch	No	numeric	Pitch in degrees.
+pitch_st	No	string	Pitch sensor status.
+yaw	No	numeric	Yaw in degrees
+yaw_st	No	string	Yaw sensor status.
+roll	No	numeric	Roll in degrees.
+roll_st	No	string	Roll sensor status.
+dip	No	numeric	Local magnetic inclination, degrees, positive when the magnetic field points downward (into the Earth).
+mag_len	No	numeric	Scalar magnetic field strength.
+mag_x	No	numeric	X component of magnetic field strength.
+mag_y	No	numeric	Y component of magnetic field strength.
+mag_z	No	numeric	Z component of magnetic field strength.
+acc_len	No	numeric	Scalar acceleration.
+acc_x	No	numeric	X component of acceleration.
+acc_y	No	numeric	Y component of acceleration.
+acc_z	No	numeric	Z component of acceleration.
+gyro_x	No	numeric	X component of acceleration.
+gyro_y	No	numeric	Y component of acceleration.
+depth	No	numeric	Water depth in meters.
+temperature	No	numeric	Temperature at sensor, degrees centigrade.
+
+The heading, pitch, and roll status codes (if present) vary by device. For the TNT Revolution digital compasses, they are coded as follows:
+
+Table 6. Device flags
+
+Code	Description
+C	magnetometer calibration alarm
+L	low alarm
+M	low warning
+N	normal
+O	high warning
+P	high alarm
+V	magnetometer voltage level alarm
+
+When the C client library parses a response of this kind, it will assert ATT_IS.
+
+Here's an example:
+
+{"class":"ATT","tag":"PTNTHTM","time":1270938096.843,
+    "heading":14223.00,"mag_st":"N",
+    "pitch":169.00,"pitch_st":"N", "roll":-43.00,"roll_st":"N",
+    "dip":13641.000,"mag_x":2454.000}
