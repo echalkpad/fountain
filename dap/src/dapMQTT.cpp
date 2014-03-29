@@ -24,7 +24,7 @@
 const std::string ADDRESS("tcp://spark:1883");
 const std::string CLIENTID("dapMQTT");
 const std::string TOPIC_PREFIX("/ws/guid/1/raw");
-const std::string TOPIC("/ws/guid/acc");
+const std::string TOPIC("/ws/guid/pub/acc");
 
 const char* PAYLOAD1 = "Hello World!";
 const char* PAYLOAD2 = "Hi there!";
