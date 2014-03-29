@@ -1,0 +1,9 @@
+acc
+location
+mag compass
+
+
+switch
+dial
+ambient noise
+heartrate
