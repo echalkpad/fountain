@@ -97,17 +97,21 @@ int LSM303D::refreshSensorData() {
 		return -2;
 	}
 
+#ifdef DAP_VERBOSE
     printf("\nReg: ");
     for (int j=0; j<6; j++) {
     	printf("%#04x ",registerValues[j]);
     }
     printf("\n");
+#endif
 
     int16_t iX =  (registerValues[OUT_X_H_A-OUT_X_L_A]<<8) | (registerValues[OUT_X_L_A-OUT_X_L_A]);
     int16_t iY =  (registerValues[OUT_Y_H_A-OUT_X_L_A]<<8) | (registerValues[OUT_Y_L_A-OUT_X_L_A]);
     int16_t iZ =  (registerValues[OUT_Z_H_A-OUT_X_L_A]<<8) | (registerValues[OUT_Z_L_A-OUT_X_L_A]);
 
+#ifdef DAP_VERBOSE
     printf("Acc16: %i, %i, %i\n", iX,iY,iZ);
+#endif
 
     accX = (iX*accFullScale)/32767;
     accY = (iY*accFullScale)/32767;

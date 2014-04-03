@@ -80,7 +80,9 @@ int Sensor::writeRegisters(uint8_t adr, uint8_t rv[], int count) {
 		registerBuffer[idx + 1] = rv[idx];
 	}
 
+#ifdef DAP_VERBOSE
 	printf("[write] Starting register address: %#04x (as written %#04x).  Byte count: %i\n",adr,registerBuffer[0],count);
+#endif
 
 	status = write(handle, registerBuffer, count + 1);
 	if (status != count + 1) {

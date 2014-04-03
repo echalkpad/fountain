@@ -49,9 +49,11 @@ public:
 	}
 
 	virtual void delivery_complete(mqtt::idelivery_token_ptr tok) {
+#ifdef DAP_VERBOSE
 		std::cout << "Delivery complete for token: "
 				<< (tok ? tok->get_message_id() : -1) << std::endl;
-	}
+#endif
+		}
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -67,8 +69,10 @@ protected:
 	}
 
 	virtual void on_success(const mqtt::itoken& tok) {
+#ifdef DAP_VERBOSE
 		std::cout << "\n\tListener: Success on token: " << tok.get_message_id()
 				<< std::endl;
+#endif
 	}
 };
 
@@ -117,15 +121,36 @@ int main(int argc, char* argv[]) {
 
 	// Configuration
 
-	bool isVerbose = DAP_VERBOSE;
-	bool isWriteFile = DAP_WRITE_FILE;
-	bool isWriteConsole = DAP_WRITE_CONSOLE;
-	bool isWriteMQTT = DAP_WRITE_MQTT;
+	bool isVerbose = false;
+	bool isWriteFile = false;
+	bool isWriteConsole = false;
+	bool isWriteMQTT = true;
+
+#ifdef DAP_VERBOSE
+	isVerbose = true;
+#endif
+
+#ifdef DAP_WRITE_FILE
+	isWriteFile = true;
+#endif
+
+#ifdef DAP_WRITE_CONSOLE
+	isWriteConsole = true;
+#endif
+
+#ifdef DAP_WRITE_MQTT
+	isWriteMQTT = true;
+#endif
 
 	printf("Configuration:\n");
 	printf("  Write file    %s\n", ft[isWriteFile].c_str());
 	printf("  Write console %s\n", ft[isWriteConsole].c_str());
-	printf("  Write MQTT    %s\n", ft[isWriteMQTT].c_str());
+	printf("  Write MQTT    %s", ft[isWriteMQTT].c_str());
+	if (isWriteMQTT) {
+		printf(" broker: %s, topic: %s, client ID: %s\n",ADDRESS.c_str(),TOPIC_PREFIX.c_str(),CLIENTID.c_str());
+	} else {
+		printf("\n");
+	}
 	printf("  Verbose       %s\n", ft[isVerbose].c_str());
 
 //  Prepare to publish using MQTT
@@ -220,13 +245,17 @@ int main(int argc, char* argv[]) {
 					d2->getAccelerationZ());
 
 			try {
+#ifdef DAP_VERBOSE
 				std::cout << "Publish to MQTT..." << std::flush;
+#endif
 				mqtt::message_ptr pubmsg = std::make_shared<mqtt::message>(
 						message);
 				pubmsg->set_qos(QOS);
 				client.publish(TOPIC_PREFIX + '/' + d2->getDeviceName(), pubmsg)->wait_for_completion(
 						TIMEOUT);
+#ifdef DAP_VERBOSE
 				std::cout << "OK" << std::endl;
+#endif
 			} catch (const mqtt::exception& exc) {
 				std::cerr << std::endl << "Error (MQTT publish): " << exc.what()
 						<< std::endl;

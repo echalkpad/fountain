@@ -54,11 +54,9 @@
 									<listOptionValue builtIn="false" value="&quot;E:\users\finson\repos\org.eclipse.paho.mqtt.c\src&quot;"/>
 								</option>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.other.97980164" name="Other compiler flags" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.other" useByScannerDiscovery="true" value="-std=c++0x -D_GLIBCXX_USE_NANOSLEEP" valueType="string"/>
-								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.defs.393161114" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.defs" valueType="definedSymbols">
-									<listOptionValue builtIn="false" value="DAP_VERBOSE=false"/>
-									<listOptionValue builtIn="false" value="DAP_WRITE_FILE=false"/>
-									<listOptionValue builtIn="false" value="DAP_WRITE_CONSOLE=false"/>
-									<listOptionValue builtIn="false" value="DAP_WRITE_MQTT=false"/>
+								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.defs.393161114" name="Defined symbols (-D)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.defs" useByScannerDiscovery="false" valueType="definedSymbols">
+									<listOptionValue builtIn="false" value="DAP_WRITE_MQTT"/>
+									<listOptionValue builtIn="false" value="#DAP_VERBOSE"/>
 								</option>
 								<inputType id="ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler.input.659491425" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler.input"/>
 							</tool>
