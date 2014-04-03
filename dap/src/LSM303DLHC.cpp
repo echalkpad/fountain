@@ -32,7 +32,7 @@ LSM303DLHC::LSM303DLHC(int bus, uint8_t address, const char *name) : Sensor(bus,
     registerValues[5] = 0;  // CTRL_REG6_A
     registerValues[6] = 0;  // REFERENCE_A
 
-	int status = this->writeRegisters(FIRST_REGISTER,registerValues,7);
+	this->writeRegisters(FIRST_REGISTER,registerValues,7);
 }
 
 int LSM303DLHC::refreshSensorData() {
