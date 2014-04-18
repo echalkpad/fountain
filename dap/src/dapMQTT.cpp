@@ -113,7 +113,7 @@ int main(int argc, char* argv[]) {
 
 	const std::string ADDRESS("tcp://spark:1883");
 	const std::string CLIENTID("dapMQTT");
-	const std::string TOPIC_PREFIX("/ws/guid/raw");
+	const std::string TOPIC_PREFIX("/raw");
 
 	const int QOS = 0;
 	const long TIMEOUT = 10000L;
@@ -187,11 +187,11 @@ int main(int argc, char* argv[]) {
 
 //  Create sensor interface objects
 
-	LSM303DLHC *d1 = new LSM303DLHC(1, 0x19, "LSM303DLHC");
-	printf(
-			"Device initialization complete: %s at Bus %i, Address %#04x. Handle: %i\n",
-			d1->getDeviceName(), d1->getBus(), d1->getDeviceAddress(),
-			d1->getHandle());
+//	LSM303DLHC *d1 = new LSM303DLHC(1, 0x19, "LSM303DLHC");
+//	printf(
+//			"Device initialization complete: %s at Bus %i, Address %#04x. Handle: %i\n",
+//			d1->getDeviceName(), d1->getBus(), d1->getDeviceAddress(),
+//			d1->getHandle());
 
 	LSM303D *d2 = new LSM303D(1, 0x1D, "LSM303D");
 	printf(
@@ -205,16 +205,16 @@ int main(int argc, char* argv[]) {
 
 		// Acquire
 
-		d1->refreshSensorData();
+//		d1->refreshSensorData();
 		d2->refreshSensorData();
 
 		// Write to console
 
 		if (isWriteConsole) {
-			printf("%-10s Acc: X, Y, Z: %f, %f, %f.  Temp: %f\n",
-					d1->getDeviceName(), d1->getAccelerationX(),
-					d1->getAccelerationY(), d1->getAccelerationZ(),
-					d1->getTemperature());
+//			printf("%-10s Acc: X, Y, Z: %f, %f, %f.  Temp: %f\n",
+//					d1->getDeviceName(), d1->getAccelerationX(),
+//					d1->getAccelerationY(), d1->getAccelerationZ(),
+//					d1->getTemperature());
 
 			printf("%-10s Acc: X, Y, Z: %f, %f, %f.  Temp: %f\n",
 					d2->getDeviceName(), d2->getAccelerationX(),
@@ -225,9 +225,9 @@ int main(int argc, char* argv[]) {
 		// Write to disk
 
 		if (isWriteFile) {
-			fprintf(datafile, "%s,%i,%f,%f,%f\n", d1->getDeviceName(), idx,
-					d1->getAccelerationX(), d1->getAccelerationY(),
-					d1->getAccelerationZ());
+//			fprintf(datafile, "%s,%i,%f,%f,%f\n", d1->getDeviceName(), idx,
+//					d1->getAccelerationX(), d1->getAccelerationY(),
+//					d1->getAccelerationZ());
 			fprintf(datafile, "%s,%i,%f,%f,%f\n", d2->getDeviceName(), idx,
 					d2->getAccelerationX(), d2->getAccelerationY(),
 					d2->getAccelerationZ());
