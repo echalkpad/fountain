@@ -239,7 +239,7 @@ int main(int argc, char* argv[]) {
 			char message[MESSAGE_BUFFER_SIZE];
 
 			const char *jsonize =
-					"{\"class\":\"ATT\",\"tag\":\"PTNTHTM\",\"device\":%s,\"time\":%d,\"acc_x\":%f,\"acc_y\":%f,\"acc_z\":%f}";
+					"{\"class\":\"ATT\",\"tag\":\"PTNTHTM\",\"device\":\"%s\",\"time\":\"%d\",\"acc_x\":%f,\"acc_y\":%f,\"acc_z\":%f}";
 			snprintf(message, MESSAGE_BUFFER_SIZE, jsonize, d2->getDeviceName(),
 					time(NULL), d2->getAccelerationX(), d2->getAccelerationY(),
 					d2->getAccelerationZ());
