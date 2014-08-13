@@ -156,6 +156,8 @@ void parseCommand(char* command) {
     Serial.println(FFT_SIZE);
   } else if (strcmp(command, "GET SAMPLE_RATE_HZ") == 0) {
     Serial.println(SAMPLE_RATE_HZ);
+  } else if (strcmp(command, "GET AUDIO_CHANNELS") == 0) {
+    Serial.println(AUDIO_CHANNELS);
   }
 //  Serial.print("..");
 //  Serial.print(command);
