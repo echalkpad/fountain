@@ -19,6 +19,8 @@ VERSION = 'Spectrogram v1.0'
 
 # Add global version number/name
 
+#------------------------------------------------------------------------
+
 class SpectrogramCanvas(FigureCanvas):
 	def __init__(self, window):
 		"""Initialize spectrogram canvas graphs."""
@@ -36,9 +38,10 @@ class SpectrogramCanvas(FigureCanvas):
 		np.seterr(all='ignore')
 		# Set up figure to hold plots
 		self.figure = Figure(figsize=(1024,768), dpi=72, facecolor=(1,1,1), edgecolor=(0,0,0))
-		# Set up 4x4 grid to hold 2 plots and colorbar
-		gs = GridSpec(2, 2, height_ratios=[1,2], width_ratios=[9.5, 0.5])
+		# Set up 2x1 grid to hold initial plots
+		gs = GridSpec(2, 1, height_ratios=[1,2], width_ratios=[1])
 		gs.update(left=0.075, right=0.925, bottom=0.05, top=0.95, wspace=0.05)
+
 		# Set up frequency histogram bar plot
 		self.histAx = self.figure.add_subplot(gs[0])
 		self.histAx.set_title('Frequency Histogram')
@@ -46,8 +49,9 @@ class SpectrogramCanvas(FigureCanvas):
 		self.histAx.set_xlabel('Frequency Bin (hz)')
 		self.histAx.set_xticks([])
 		self.histPlot = self.histAx.bar(np.arange(self.binCount), np.zeros(self.binCount), width=1.0, linewidth=0.0, facecolor='blue')
+
 		# Set up spectrogram waterfall plot
-		self.spectAx = self.figure.add_subplot(gs[2])
+		self.spectAx = self.figure.add_subplot(gs[1])
 		self.spectAx.set_title('Spectrogram')
 		self.spectAx.set_ylabel('Sample Age (seconds)')
 		self.spectAx.set_xlabel('Frequency Bin (hz)')
@@ -55,12 +59,15 @@ class SpectrogramCanvas(FigureCanvas):
 		self.spectPlot = self.spectAx.imshow(self.magnitudes, aspect='auto', cmap=get_cmap('jet'))
 		# Add formatter to translate position to age in seconds
 		self.spectAx.yaxis.set_major_formatter(FuncFormatter(lambda x, pos: '%d' % (x*(1.0/self.graphUpdateHz))))
+
 		# Set up spectrogram color bar
-		cbAx = self.figure.add_subplot(gs[3])
-		self.figure.colorbar(self.spectPlot, cax=cbAx, use_gridspec=True, format=FuncFormatter(lambda x, pos: '%d' % (x*100.0)))
-		cbAx.set_ylabel('Intensity (decibels)')
+		#cbAx = self.figure.add_subplot(gs[3])
+		#self.figure.colorbar(self.spectPlot, cax=cbAx, use_gridspec=True, format=FuncFormatter(lambda x, pos: '%d' % (x*100.0)))
+		#cbAx.set_ylabel('Intensity (decibels)')
+
 		# Initialize canvas
 		super(SpectrogramCanvas, self).__init__(self.figure)
+		
 		# Hook up mouse and animation events
 		self.mpl_connect('motion_notify_event', self._mouseMove)
 		self.ani = FuncAnimation(self.figure, self._update, interval=1000.0/self.graphUpdateHz, blit=False)
@@ -131,6 +138,7 @@ class SpectrogramCanvas(FigureCanvas):
 		else:
 			return ()
 
+#------------------------------------------------------------------------
 
 class MainWindow(QtGui.QMainWindow):
 	def __init__(self, devices):
@@ -144,7 +152,7 @@ class MainWindow(QtGui.QMainWindow):
 		main.setLayout(self._setupMainLayout())
 		self.setCentralWidget(main)
 		self.status = self.statusBar()
-		self.setGeometry(10,10,1024,768)
+		self.setGeometry(20,40,1024,768)
 		self.setWindowTitle(VERSION)
 		self._sliderChanged(0) # Force graphs to update their limits with initial values.
 		self.show()
@@ -289,8 +297,8 @@ class MainWindow(QtGui.QMainWindow):
 
 	def _updateDeviceUI(self):
 		# Update UI to reflect current state of device.
-		sampleRate = self.openDevice.get_samplerate()
 		fftSize = self.openDevice.get_fftsize()
+		sampleRate = self.openDevice.get_samplerate()
 		audioChannels = self.openDevice.get_audiochannels()
 		
 		self.fftSize.setText('%d' % fftSize)
