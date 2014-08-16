@@ -18,8 +18,8 @@ import ws.tuxi.lib.cfg.ConfigurationException;
  */
 public class AudioSp extends AbstractComponent {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-    private PathSet searcher;
-    private PathReport reporter;
+    
+    private SpectrumAnalyzer source;
 
     /**
      * Initialize this instance, setting parameters according to the configuration file.
@@ -40,26 +40,26 @@ public class AudioSp extends AbstractComponent {
         for (int idx = 0; idx < sectionElements.size(); idx++) {
             Element sectionElement = sectionElements.get(idx);
             switch (sectionElement.getLocalName()) {
-            case "pathset":
-                searcher = app.getConfig().getInstanceUsingFactory(PathSet.class, sectionElement,
+            case "device":
+                source = app.getConfig().getInstanceUsingFactory(SpectrumAnalyzer.class, sectionElement,
                         new Object[] { this, sectionElement });
                 break;
-            case "report":
-                reporter = app.getConfig().getInstanceUsingFactory(PathReport.class, sectionElement,
-                        new Object[] { this, sectionElement });
-                break;
+//            case "report":
+//                reporter = app.getConfig().getInstanceUsingFactory(PathReport.class, sectionElement,
+//                        new Object[] { this, sectionElement });
+//                break;
             default:
                 logger.warn("Skipping <{}> element. Element not recognized.",
                         sectionElement.getLocalName());
                 break;
             }
         }
-        if (searcher == null) {
-            throw new ConfigurationException("A resourceset element must be specified.");
+        if (source == null) {
+            throw new ConfigurationException("A device element must be specified.");
         }
-        if (reporter == null) {
-            throw new ConfigurationException("A report element must be specified.");
-        }
+//        if (reporter == null) {
+//            throw new ConfigurationException("A report element must be specified.");
+//        }
     }
 
     /**
@@ -67,6 +67,7 @@ public class AudioSp extends AbstractComponent {
      */
     @Override
     public void preRun() throws ConfigurationException {
+        logger.info("preRun method in AudioSp");
     }
 
     /**
@@ -74,7 +75,7 @@ public class AudioSp extends AbstractComponent {
      */
     @Override
     public void run() {
-        reporter.printResourceSet(searcher);
+        logger.info("Run method in AudioSp");
     }
 
 }

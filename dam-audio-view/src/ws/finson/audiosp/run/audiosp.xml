@@ -1,13 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config id="AudioSp" title="GUI for a simple spectrograph.">
 	<application>
-		<component type="ws.finson.audiosp.app.AudioSp">
-			<pathset type="AnnotatedPathSet" basedir="." branchdir="ws/tuxi/lib">
-				<annotation name="org.junit.Test" level="method" />
-			</pathset>
-			<report type="PathListReport" basedir=".">
-				<delim value="," />
-			</report>
-		</component>
+		<component type="ws.finson.audiosp.app.AudioSp" name="diagnostic">
+			<device type="SerialSpectrumAnalyzer" id="in"></device></component>
 	</application>
 </config>
