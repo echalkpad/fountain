@@ -11,71 +11,79 @@ import ws.tuxi.lib.cfg.Application;
 import ws.tuxi.lib.cfg.ConfigurationException;
 
 /**
- * Find classes with the specified annotation(s) on one or more of the instance methods.
+ * Control an audio FFT device and provide a GUI for it.
  * 
- * @author Doug Johnson, Jul 28, 2013
- * 
+ * @author Doug Johnson
+ * @since August 2014
  */
 public class AudioAnalyzer extends AbstractComponent {
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
-    
-    private SpectrumAnalyzer source;
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    /**
-     * Initialize this instance, setting parameters according to the configuration file.
-     * 
-     * @param app
-     *            the Application for which this is an ApplicationComponent
-     * @param cE
-     *            the XML configuration element that is provided for this instance
-     * @throws ConfigurationException
-     */
-    public AudioAnalyzer(Application app, Element cE) throws ConfigurationException {
-        super(app,cE);
-        logger.trace("Constructor of {}", this.getClass().getSimpleName());
+	private SpectrumAnalyzerDevice source;
 
-        // Process each of the configuration sections
+	/**
+	 * Initialize this instance, setting parameters according to the
+	 * configuration file.
+	 * 
+	 * @param app
+	 *            the Application for which this is an ApplicationComponent
+	 * @param cE
+	 *            the XML configuration element that is provided for this
+	 *            instance
+	 * @throws ConfigurationException
+	 */
+	public AudioAnalyzer(Application app, Element cE)
+			throws ConfigurationException {
+		super(app, cE);
+		logger.trace("Constructor of {}", this.getClass().getSimpleName());
 
-        Elements sectionElements = cE.getChildElements();
-        for (int idx = 0; idx < sectionElements.size(); idx++) {
-            Element sectionElement = sectionElements.get(idx);
-            switch (sectionElement.getLocalName()) {
-            case "device":
-                source = app.getConfig().getInstanceUsingFactory(SpectrumAnalyzer.class, sectionElement,
-                        new Object[] { this, sectionElement });
-                break;
-//            case "report":
-//                reporter = app.getConfig().getInstanceUsingFactory(PathReport.class, sectionElement,
-//                        new Object[] { this, sectionElement });
-//                break;
-            default:
-                logger.warn("Skipping <{}> element. Element not recognized.",
-                        sectionElement.getLocalName());
-                break;
-            }
-        }
-        if (source == null) {
-            throw new ConfigurationException("A device element must be specified.");
-        }
-//        if (reporter == null) {
-//            throw new ConfigurationException("A report element must be specified.");
-//        }
-    }
+		// Process each of the configuration sections
 
-    /**
-     * @see ws.tuxi.lib.cfg.ApplicationComponent#preRun()
-     */
-    @Override
-    public void preRun() throws ConfigurationException {
-        logger.info("preRun method in AudioSp");
-    }
+		Elements sectionElements = cE.getChildElements();
+		for (int idx = 0; idx < sectionElements.size(); idx++) {
+			Element sectionElement = sectionElements.get(idx);
+			switch (sectionElement.getLocalName()) {
+			case "device":
+				source = app.getConfig().getInstanceUsingFactory(
+						SpectrumAnalyzerDevice.class, sectionElement,
+						new Object[] { this, sectionElement });
+				break;
+			// case "report":
+			// reporter =
+			// app.getConfig().getInstanceUsingFactory(PathReport.class,
+			// sectionElement,
+			// new Object[] { this, sectionElement });
+			// break;
+			default:
+				logger.warn("Skipping <{}> element. Element not recognized.",
+						sectionElement.getLocalName());
+				break;
+			}
+		}
+		if (source == null) {
+			throw new ConfigurationException(
+					"A device element must be specified.");
+		}
+		// if (reporter == null) {
+		// throw new
+		// ConfigurationException("A report element must be specified.");
+		// }
+	}
 
-    /**
-     * @see java.lang.Runnable#run()
-     */
-    @Override
-    public void run() {
-        logger.info("Run method in AudioSp");
-    }
+	/**
+	 * @see ws.tuxi.lib.cfg.ApplicationComponent#preRun()
+	 */
+	@Override
+	public void preRun() throws ConfigurationException {
+		logger.info("preRun method in {}",getClass().getSimpleName());
+	}
+
+	/**
+	 * @see java.lang.Runnable#run()
+	 */
+	@Override
+	public void run() {
+		logger.info("Run method in {}",getClass().getSimpleName());
+	}
 
 }
