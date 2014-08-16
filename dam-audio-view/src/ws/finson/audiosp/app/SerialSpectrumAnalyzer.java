@@ -5,6 +5,10 @@ package ws.finson.audiosp.app;
 
 import java.util.List;
 
+import nu.xom.Element;
+import ws.tuxi.lib.cfg.ApplicationComponent;
+import ws.tuxi.lib.cfg.ConfigurationException;
+
 /**
  * @author Doug Johnson
  * @since Aug 15, 2014
@@ -12,8 +16,8 @@ import java.util.List;
  */
 public class SerialSpectrumAnalyzer extends AbstractSpectrumAnalyzer {
 
-	public SerialSpectrumAnalyzer(String name, int size, int rate, int channels) {
-		super(name, size, rate, channels);
+	public SerialSpectrumAnalyzer(ApplicationComponent ac, Element cE) throws ConfigurationException {
+        super(ac, cE);
 	}
 
 	/**
