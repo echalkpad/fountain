@@ -1,5 +1,6 @@
 package ws.finson.audiosp.app;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -9,6 +10,7 @@ import nu.xom.Attribute;
 import nu.xom.Element;
 import ws.tuxi.lib.cfg.ApplicationComponent;
 import ws.tuxi.lib.cfg.ConfigurationException;
+import jssc.*;
 
 /**
  * Provide a specific implementation of the SpectrumAnalyzerDevice interface to match a serial
@@ -20,9 +22,10 @@ import ws.tuxi.lib.cfg.ConfigurationException;
  */
 public class SerialSpectrumAnalyzerDevice extends AbstractSpectrumAnalyzerDevice {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-    
+
     private String portName;
-    
+    private SerialPort theSerialPort;
+
     /**
      * Initialize the fields specific to a SerialSpectrumAnalyzerDevice using the attributes given
      * in the device configuration element.
@@ -41,7 +44,7 @@ public class SerialSpectrumAnalyzerDevice extends AbstractSpectrumAnalyzerDevice
     public SerialSpectrumAnalyzerDevice(ApplicationComponent ac, Element cE)
             throws ConfigurationException {
         super(ac, cE);
-        
+
         portName = null;
 
         int attributeCount = cE.getAttributeCount();
@@ -57,17 +60,32 @@ public class SerialSpectrumAnalyzerDevice extends AbstractSpectrumAnalyzerDevice
             }
         }
         if (portName == null) {
-            throw new ConfigurationException("The name of the serial port must be specified and must not be empty.");
+            throw new ConfigurationException(
+                    "The name of the serial port must be specified and must not be empty.");
         }
+        String[] portNames = SerialPortList.getPortNames();
+        for (String aPortName : portNames) {
+            logger.trace("Known serial port: {}", aPortName);
+        }
+
     }
 
     /**
+     * @throws IOException
      * @see ws.finson.audiosp.app.SpectrumAnalyzerDevice#open()
      */
     @Override
-    public void open() {
-        // TODO Auto-generated method stub
+    public void open() throws IOException {
+        theSerialPort = new SerialPort(portName);
+        // (SerialPort) portID.open(this.getClass().getName(), 1000);
+        // thePort.setSerialPortParams(9600, 8, 1, SerialPort.PARITY_NONE);
 
+        try {
+            theSerialPort.openPort();// Open serial port
+            theSerialPort.setParams(9600, 8, 1, 0);// Set params.
+        } catch (SerialPortException e) {
+            throw new IOException(e);
+        }
     }
 
     /**

@@ -1,5 +1,6 @@
 package ws.finson.audiosp.app;
 
+import java.io.IOException;
 import java.util.List;
 
 /***
@@ -18,8 +19,9 @@ import java.util.List;
 public interface SpectrumAnalyzerDevice {
 	/**
 	 * Open communication with the device.
+	 * @throws IOException 
 	 */
-	void open();
+	void open() throws IOException;
 	/**
 	 * Close communication with the device.
 	 */

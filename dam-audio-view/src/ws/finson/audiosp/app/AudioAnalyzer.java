@@ -1,5 +1,7 @@
 package ws.finson.audiosp.app;
 
+import java.io.IOException;
+
 import nu.xom.Element;
 import nu.xom.Elements;
 
@@ -76,6 +78,12 @@ public class AudioAnalyzer extends AbstractComponent {
 	@Override
 	public void preRun() throws ConfigurationException {
 		logger.info("preRun method in {}",getClass().getSimpleName());
+		
+		try {
+		    source.open();
+		} catch (IOException e) {
+		    throw new ConfigurationException(e);
+		}
 	}
 
 	/**
