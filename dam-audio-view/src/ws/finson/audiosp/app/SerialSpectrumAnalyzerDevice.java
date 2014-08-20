@@ -1,16 +1,26 @@
 package ws.finson.audiosp.app;
 
+/*
+ * RXTX binary builds provided as a courtesy of Mfizz Inc. (http://mfizz.com/).
+ * Please see http://mfizz.com/oss/rxtx-for-java for more information.
+ */
+import gnu.io.CommPortIdentifier;
+import gnu.io.PortInUseException;
+import gnu.io.SerialPort;
+import gnu.io.UnsupportedCommOperationException;
+
 import java.io.IOException;
+import java.util.Enumeration;
 import java.util.List;
+
+import nu.xom.Attribute;
+import nu.xom.Element;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import nu.xom.Attribute;
-import nu.xom.Element;
 import ws.tuxi.lib.cfg.ApplicationComponent;
 import ws.tuxi.lib.cfg.ConfigurationException;
-import jssc.*;
 
 /**
  * Provide a specific implementation of the SpectrumAnalyzerDevice interface to match a serial
@@ -24,7 +34,8 @@ public class SerialSpectrumAnalyzerDevice extends AbstractSpectrumAnalyzerDevice
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private String portName;
-    private SerialPort theSerialPort;
+    private CommPortIdentifier portID;
+    private SerialPort thePort;
 
     /**
      * Initialize the fields specific to a SerialSpectrumAnalyzerDevice using the attributes given
@@ -41,6 +52,7 @@ public class SerialSpectrumAnalyzerDevice extends AbstractSpectrumAnalyzerDevice
      * @since Aug 15, 2014
      * 
      */
+    @SuppressWarnings("unchecked")
     public SerialSpectrumAnalyzerDevice(ApplicationComponent ac, Element cE)
             throws ConfigurationException {
         super(ac, cE);
@@ -63,9 +75,21 @@ public class SerialSpectrumAnalyzerDevice extends AbstractSpectrumAnalyzerDevice
             throw new ConfigurationException(
                     "The name of the serial port must be specified and must not be empty.");
         }
-        String[] portNames = SerialPortList.getPortNames();
-        for (String aPortName : portNames) {
-            logger.trace("Known serial port: {}", aPortName);
+        Enumeration<CommPortIdentifier> ports = null;
+        ports = CommPortIdentifier.getPortIdentifiers();
+
+        portID = null;
+        while (ports.hasMoreElements()) {
+            CommPortIdentifier curPort = (CommPortIdentifier) ports.nextElement();
+            if (curPort.getPortType() == CommPortIdentifier.PORT_SERIAL) {
+                if (portName.equalsIgnoreCase(curPort.getName())) {
+                    portID = curPort;
+                }
+                logger.trace("Known serial port: {}", curPort.getName());
+            }
+        }
+        if (portID == null) {
+            throw new ConfigurationException("The serial port '" + portName + "' is not found.");
         }
 
     }
@@ -76,14 +100,12 @@ public class SerialSpectrumAnalyzerDevice extends AbstractSpectrumAnalyzerDevice
      */
     @Override
     public void open() throws IOException {
-        theSerialPort = new SerialPort(portName);
-        // (SerialPort) portID.open(this.getClass().getName(), 1000);
-        // thePort.setSerialPortParams(9600, 8, 1, SerialPort.PARITY_NONE);
-
         try {
-            theSerialPort.openPort();// Open serial port
-            theSerialPort.setParams(9600, 8, 1, 0);// Set params.
-        } catch (SerialPortException e) {
+            thePort = (SerialPort) portID.open(this.getClass().getName(), 1000);
+            thePort.setSerialPortParams(38400, 8, 1, SerialPort.PARITY_NONE);
+        } catch (PortInUseException e) {
+            throw new IOException(e);
+        } catch (UnsupportedCommOperationException e) {
             throw new IOException(e);
         }
     }
@@ -93,8 +115,7 @@ public class SerialSpectrumAnalyzerDevice extends AbstractSpectrumAnalyzerDevice
      */
     @Override
     public void close() {
-        // TODO Auto-generated method stub
-
+        thePort.close();
     }
 
     /**
