@@ -50,12 +50,6 @@ public class AudioAnalyzer extends AbstractComponent {
 						SpectrumAnalyzerDevice.class, sectionElement,
 						new Object[] { this, sectionElement });
 				break;
-			// case "report":
-			// reporter =
-			// app.getConfig().getInstanceUsingFactory(PathReport.class,
-			// sectionElement,
-			// new Object[] { this, sectionElement });
-			// break;
 			default:
 				logger.warn("Skipping <{}> element. Element not recognized.",
 						sectionElement.getLocalName());
@@ -66,10 +60,6 @@ public class AudioAnalyzer extends AbstractComponent {
 			throw new ConfigurationException(
 					"A device element must be specified.");
 		}
-		// if (reporter == null) {
-		// throw new
-		// ConfigurationException("A report element must be specified.");
-		// }
 	}
 
 	/**
@@ -84,6 +74,10 @@ public class AudioAnalyzer extends AbstractComponent {
 		} catch (IOException e) {
 		    throw new ConfigurationException(e);
 		}
+		logger.info("Attached to spectrum analyzer {}.",source.getName());
+        logger.info("FFT Size: {}",source.getFFTSize());
+        logger.info("sample rate: {}",source.getSampleRate());
+        logger.info("channels: {}",source.getChannelCount());
 	}
 
 	/**

@@ -9,7 +9,12 @@ import gnu.io.PortInUseException;
 import gnu.io.SerialPort;
 import gnu.io.UnsupportedCommOperationException;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.EOFException;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -36,6 +41,8 @@ public class SerialSpectrumAnalyzerDevice extends AbstractSpectrumAnalyzerDevice
     private String portName;
     private CommPortIdentifier portID;
     private SerialPort thePort;
+    private BufferedReader deviceReader;
+    private BufferedWriter deviceWriter;
 
     /**
      * Initialize the fields specific to a SerialSpectrumAnalyzerDevice using the attributes given
@@ -103,11 +110,56 @@ public class SerialSpectrumAnalyzerDevice extends AbstractSpectrumAnalyzerDevice
         try {
             thePort = (SerialPort) portID.open(this.getClass().getName(), 1000);
             thePort.setSerialPortParams(38400, 8, 1, SerialPort.PARITY_NONE);
+            deviceReader = new BufferedReader(new InputStreamReader(thePort.getInputStream()));
+            deviceWriter = new BufferedWriter(new OutputStreamWriter(thePort.getOutputStream()));
         } catch (PortInUseException e) {
             throw new IOException(e);
         } catch (UnsupportedCommOperationException e) {
             throw new IOException(e);
         }
+
+        // FFT size
+
+        deviceWriter.write("GET FFT_SIZE;");
+        deviceWriter.flush();
+        String response = deviceReader.readLine();
+        if (response == null) {
+            throw new EOFException("Unexpected null response (EOF) while reading FFT_SIZE from the device on "+thePort.getName()+".");
+        }
+        try {
+            FFTSize = Integer.parseInt(response);
+        } catch (NumberFormatException e) {
+            throw new IOException(e);
+        }
+        
+        // sample rate
+
+        deviceWriter.write("GET SAMPLE_RATE_HZ;");
+        deviceWriter.flush();
+        response = deviceReader.readLine();
+        if (response == null) {
+            throw new EOFException("Unexpected null response (EOF) while reading SAMPLE_RATE_HZ from the device on "+thePort.getName()+".");
+        }
+        try {
+            sampleRate = Integer.parseInt(response);
+        } catch (NumberFormatException e) {
+            throw new IOException(e);
+        }
+        
+        // channel count
+
+        deviceWriter.write("GET AUDIO_CHANNELS;");
+        deviceWriter.flush();
+        response = deviceReader.readLine();
+        if (response == null) {
+            throw new EOFException("Unexpected null response (EOF) while reading AUDIO_CHANNELS from the device on "+thePort.getName()+".");
+        }
+        try {
+            channelCount = Integer.parseInt(response);
+        } catch (NumberFormatException e) {
+            throw new IOException(e);
+        }
+        
     }
 
     /**
