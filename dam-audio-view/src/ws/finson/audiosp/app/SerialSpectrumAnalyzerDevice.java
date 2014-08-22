@@ -15,6 +15,7 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -82,9 +83,8 @@ public class SerialSpectrumAnalyzerDevice extends AbstractSpectrumAnalyzerDevice
             throw new ConfigurationException(
                     "The name of the serial port must be specified and must not be empty.");
         }
-        Enumeration<CommPortIdentifier> ports = null;
-        ports = CommPortIdentifier.getPortIdentifiers();
 
+        Enumeration<CommPortIdentifier> ports = CommPortIdentifier.getPortIdentifiers();
         portID = null;
         while (ports.hasMoreElements()) {
             CommPortIdentifier curPort = (CommPortIdentifier) ports.nextElement();
@@ -171,12 +171,32 @@ public class SerialSpectrumAnalyzerDevice extends AbstractSpectrumAnalyzerDevice
     }
 
     /**
+     * @throws IOException 
      * @see ws.finson.audiosp.app.SpectrumAnalyzerDevice#getMagnitudes()
      */
     @Override
-    public List<Double> getMagnitudes() {
-        // TODO Auto-generated method stub
-        return null;
+    public List<List<Double>> getMagnitudes() throws IOException {
+        String response;
+        List<List<Double>> result = new ArrayList<List<Double>>(channelCount);
+        
+        deviceWriter.write("GET MAGNITUDES;");
+        deviceWriter.flush();
+        
+        for (int cn = 0; cn < channelCount; cn++) {
+            result.add(new ArrayList<Double>(FFTSize));
+            for (int bin = 0; bin < FFTSize; bin++) {
+                response = deviceReader.readLine();
+                if (response == null) {
+                    throw new EOFException("Unexpected null response (EOF) while reading MAGNITUDES from the device on "+thePort.getName()+".");
+                }
+                try {
+                    result.get(cn).add(Double.parseDouble(response));
+                } catch (NumberFormatException e) {
+                    throw new IOException(e);
+                }
+            }
+        }
+        return result;
     }
 
 }

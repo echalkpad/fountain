@@ -65,7 +65,8 @@ public interface SpectrumAnalyzerDevice {
 	 * Return a list of magnitudes from an FFT run on the device. The size of
 	 * the returned magnitude list should be the same as the device's FFT
 	 * size.
+	 * @throws IOException 
 	 */
-	List<Double> getMagnitudes();
+	List<List<Double>> getMagnitudes() throws IOException;
 
 }

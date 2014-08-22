@@ -1,6 +1,7 @@
 package ws.finson.audiosp.app;
 
 import java.io.IOException;
+import java.util.List;
 
 import nu.xom.Element;
 import nu.xom.Elements;
@@ -11,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import ws.tuxi.lib.cfg.AbstractComponent;
 import ws.tuxi.lib.cfg.Application;
 import ws.tuxi.lib.cfg.ConfigurationException;
+import ws.tuxi.lib.cfg.Throwables;
 
 /**
  * Control an audio FFT device and provide a GUI for it.
@@ -86,6 +88,18 @@ public class AudioAnalyzer extends AbstractComponent {
 	@Override
 	public void run() {
 		logger.info("Run method in {}",getClass().getSimpleName());
+		try {
+            List<List<Double>> scan = source.getMagnitudes();
+            for (int idx = 0; idx<source.getChannelCount(); idx++) {
+                List<Double> channelHistogram = scan.get(idx);
+                for (int bin=0; bin<source.getFFTSize(); bin++) {
+                    logger.info("bin {}: {}",Integer.toString(bin),Double.toString(channelHistogram.get(bin)));
+                    
+                }
+            }
+        } catch (IOException e) {
+            Throwables.printThrowableChain(e,logger);
+        }
 	}
 
 }
