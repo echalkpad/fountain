@@ -53,7 +53,6 @@ public abstract class AbstractSpectrumAnalyzerDevice implements SpectrumAnalyzer
                 if (name == null) {
                     name = "";
                 }
-                logger.trace("name: {}", name);
                 break;
             case "size":
                 try {
@@ -64,7 +63,6 @@ public abstract class AbstractSpectrumAnalyzerDevice implements SpectrumAnalyzer
                 if (FFTSize < 16 || FFTSize > 1024) {
                     throw new ConfigurationException("Invalid size value: " + FFTSize);
                 }
-                logger.trace("FFT size: {}", FFTSize);
                 break;
             case "rate":
                 try {
@@ -76,7 +74,6 @@ public abstract class AbstractSpectrumAnalyzerDevice implements SpectrumAnalyzer
                 if (sampleRate < 1 || sampleRate > 40000) {
                     throw new ConfigurationException("Invalid sample rate value: " + sampleRate);
                 }
-                logger.trace("sample rate: {} {}", sampleRate, " Hz");
                 break;
             case "channels":
                 try {
@@ -88,8 +85,7 @@ public abstract class AbstractSpectrumAnalyzerDevice implements SpectrumAnalyzer
                 if (channelCount < 1) {
                     throw new ConfigurationException("Invalid channel count value: " + channelCount);
                 }
-                logger.trace("channel count: {}", channelCount);
-                break;
+               break;
             default:
                 break;
             }

@@ -2,7 +2,7 @@
 <config title="GUI for a simple spectrograph.">
 	<application>
 		<component type="ws.finson.audiosp.app.AudioAnalyzer" name="diagnostic">
-			<device type="SerialSpectrumAnalyzerDevice" id="in" name="TeensyBasedDevice" rate="5000" size="512" channels="2" port="COM12"></device>
+			<device type="SerialSpectrumAnalyzerDevice" id="in" name="TeensyBasedDevice" size="512" rate="5000" channels="2" port="COM12"></device>
 		</component>
 	</application>
 </config>

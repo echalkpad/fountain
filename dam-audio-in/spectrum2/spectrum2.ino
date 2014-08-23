@@ -15,7 +15,8 @@
 int SAMPLE_RATE_HZ = 9000;             // Sample rate of the audio in hertz.
 const int FFT_SIZE = 256;              // Size of the FFT.
 const int AUDIO_CHANNELS = 2;          // number of microphones connected                                       
-const int AUDIO_INPUT_PIN[AUDIO_CHANNELS] = {16,17};        // Input ADC pins for audio data.
+const int AUDIO_INPUT_PIN[AUDIO_CHANNELS] = {
+  16,17};        // Input ADC pins for audio data.
 const int ANALOG_READ_RESOLUTION = 10; // Bits of resolution for the ADC.
 const int ANALOG_READ_AVERAGING = 16;  // Number of samples to average with each ADC reading.
 const int POWER_LED_PIN = 13;          // Output pin for power LED (pin 13 to use Teensy 3.0's onboard LED).
@@ -40,22 +41,22 @@ int commandLength = 0;
 void setup() {
   // Set up serial port.
   Serial.begin(38400);
-    
+
   // Set up ADC and audio input.
   for (int idx=0; idx<AUDIO_CHANNELS; idx++) {
     pinMode(AUDIO_INPUT_PIN[idx], INPUT);
   }
-  
+
   analogReadResolution(ANALOG_READ_RESOLUTION);
   analogReadAveraging(ANALOG_READ_AVERAGING);
-  
+
   // Turn on the power indicator LED.
   pinMode(POWER_LED_PIN, OUTPUT);
   digitalWrite(POWER_LED_PIN, HIGH);
-  
+
   // Clear the input command buffer
   commandLength = 0;
-  
+
   // Begin sampling audio
   samplingBegin();
 }
@@ -74,7 +75,7 @@ void loop() {
     // Restart audio sampling.
     samplingBegin();
   }
-    
+
   // Parse any pending commands.
   parserLoop();
 }
@@ -91,7 +92,7 @@ void samplingCallback() {
     // Since we only have real data, set this coefficient to zero.
     samples[idx][sampleCounter+1] = 0.0;
   }
-  
+
   // Update sample buffer position and stop after the buffer is filled
   sampleCounter += 2;
   if (sampleCounter >= FFT_SIZE*2) {
@@ -133,7 +134,8 @@ void parserLoop() {
       // Parse the command because an end of command token was encountered.
       parseCommand(commandBuffer);
       commandLength = 0;
-    } else {
+    } 
+    else {
       if (commandLength < MAX_COMMAND_CHARS) {
         c = toupper(c);
         commandBuffer[commandLength++] = c;
@@ -145,22 +147,32 @@ void parserLoop() {
 void parseCommand(char* command) {
   command[commandLength] = '\0';
   if (strcmp(command, "GET MAGNITUDES") == 0) {
-    for (int i = 0; i < FFT_SIZE; ++i) {
-      Serial.println(magnitudes[0][i]);
+    for (int j=0; j<AUDIO_CHANNELS; j++) {
+      for (int i = 0; i < FFT_SIZE; i++) {
+        Serial.println(magnitudes[0][i]);
+      }
     }
-  } else if (strcmp(command, "GET SAMPLES") == 0) {
+  } 
+  else if (strcmp(command, "GET SAMPLES") == 0) {
     for (int i = 0; i < FFT_SIZE*2; i+=2) {
       Serial.println(samples[0][i]);
     }
-  } else if (strcmp(command, "GET FFT_SIZE") == 0) {
+  } 
+  else if (strcmp(command, "GET FFT_SIZE") == 0) {
     Serial.println(FFT_SIZE);
-  } else if (strcmp(command, "GET SAMPLE_RATE_HZ") == 0) {
+  } 
+  else if (strcmp(command, "GET SAMPLE_RATE_HZ") == 0) {
     Serial.println(SAMPLE_RATE_HZ);
-  } else if (strcmp(command, "GET AUDIO_CHANNELS") == 0) {
+  } 
+  else if (strcmp(command, "GET AUDIO_CHANNELS") == 0) {
     Serial.println(AUDIO_CHANNELS);
+  } 
+  else {
+    Serial.println();
   }
-//  Serial.print("..");
-//  Serial.print(command);
-//  Serial.println("..");
+  //  Serial.print("..");
+  //  Serial.print(command);
+  //  Serial.println("..");
 
 }
+

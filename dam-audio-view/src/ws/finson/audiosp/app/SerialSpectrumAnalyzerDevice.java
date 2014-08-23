@@ -85,14 +85,17 @@ public class SerialSpectrumAnalyzerDevice extends AbstractSpectrumAnalyzerDevice
         }
 
         Enumeration<CommPortIdentifier> ports = CommPortIdentifier.getPortIdentifiers();
+        if (!ports.hasMoreElements()) {
+            throw new ConfigurationException("No comm ports found by CommPortIdentifier.getPortIdentifiers().");
+        }
         portID = null;
         while (ports.hasMoreElements()) {
             CommPortIdentifier curPort = (CommPortIdentifier) ports.nextElement();
+            logger.trace("Known comm port: {}", curPort.getName());
             if (curPort.getPortType() == CommPortIdentifier.PORT_SERIAL) {
                 if (portName.equalsIgnoreCase(curPort.getName())) {
                     portID = curPort;
                 }
-                logger.trace("Known serial port: {}", curPort.getName());
             }
         }
         if (portID == null) {
@@ -185,6 +188,15 @@ public class SerialSpectrumAnalyzerDevice extends AbstractSpectrumAnalyzerDevice
         for (int cn = 0; cn < channelCount; cn++) {
             result.add(new ArrayList<Double>(FFTSize));
             for (int bin = 0; bin < FFTSize; bin++) {
+                long startTime = System.currentTimeMillis();
+                while (!deviceReader.ready()) {
+                    
+                }
+//                long deltaT = System.currentTimeMillis() - startTime;
+//                if (deltaT > 0) {
+//                    System.out.println("Not ready delta ms: "+Long.toString(deltaT));
+//                }
+
                 response = deviceReader.readLine();
                 if (response == null) {
                     throw new EOFException("Unexpected null response (EOF) while reading MAGNITUDES from the device on "+thePort.getName()+".");
