@@ -151,11 +151,11 @@ public class SerialSpectrumAnalyzerDevice extends AbstractSpectrumAnalyzerDevice
         
         // channel count
 
-        deviceWriter.write("GET AUDIO_CHANNELS;");
+        deviceWriter.write("GET AUDIO_CHANNEL_COUNT;");
         deviceWriter.flush();
         response = deviceReader.readLine();
         if (response == null) {
-            throw new EOFException("Unexpected null response (EOF) while reading AUDIO_CHANNELS from the device on "+thePort.getName()+".");
+            throw new EOFException("Unexpected null response (EOF) while reading AUDIO_CHANNEL_COUNT from the device on "+thePort.getName()+".");
         }
         try {
             channelCount = Integer.parseInt(response);

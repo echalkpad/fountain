@@ -18,6 +18,7 @@ import ws.tuxi.lib.cfg.ConfigurationException;
  * 
  */
 public abstract class AbstractSpectrumAnalyzerDevice implements SpectrumAnalyzerDevice {
+    @SuppressWarnings("unused")
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private String name;

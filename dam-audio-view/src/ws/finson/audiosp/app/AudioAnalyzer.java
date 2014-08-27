@@ -90,14 +90,14 @@ public class AudioAnalyzer extends AbstractComponent {
                 long startTime = System.currentTimeMillis();
                 List<List<Double>> scan = source.getMagnitudes();
                 deltas[pass] = System.currentTimeMillis() - startTime;
-                // for (int idx = 0; idx < source.getChannelCount(); idx++) {
-                // List<Double> channelHistogram = scan.get(idx);
-                // System.out.print("Channel " + idx);
-                // for (int bin = 0; bin < source.getFFTSize(); bin++) {
-                // System.out.print(" " + Double.toString(channelHistogram.get(bin)));
-                // }
-                // System.out.println();
-                // }
+                for (int idx = 0; idx < source.getChannelCount(); idx++) {
+                    List<Double> channelHistogram = scan.get(idx);
+                    System.out.print("Channel " + idx);
+                    for (int bin = 0; bin < source.getFFTSize(); bin++) {
+                        System.out.print(" " + Double.toString(channelHistogram.get(bin)));
+                    }
+                    System.out.println();
+                }
             } catch (IOException e) {
                 Throwables.printThrowableChain(e, logger);
             }

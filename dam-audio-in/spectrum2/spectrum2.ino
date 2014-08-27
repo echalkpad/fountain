@@ -173,7 +173,7 @@ void parseCommand(char* command) {
   if (strcmp(command, "GET MAGNITUDES") == 0) {
     for (int j=0; j<AUDIO_CHANNEL_COUNT; j++) {
       for (int i = 0; i < FFT_SIZE; i++) {
-        Serial.println(magnitudes[0][i]);
+        Serial.println(magnitudes[j][i]);
       }
     }
   } 
