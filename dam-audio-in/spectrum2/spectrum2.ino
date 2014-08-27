@@ -3,23 +3,30 @@
 
 // This code was part of the guide at http://learn.adafruit.com/fft-fun-with-fourier-transforms/
 
-// Aug 2014 DWJ Modified to support two audio channels in, and to remove the NEO pixel display support
+// Aug 2014 DWJ
+// * access two input audio channels
+// * switch to pedvide/ADC library for teensy 3.1.  https://github.com/pedvide/ADC
+// * remove the NEO pixel display support
 
 #define ARM_MATH_CM4
 #include <arm_math.h>
+
+#include <ADC.h>
 
 ////////////////////////////////////////////////////////////////////////////////
 // CONFIGURATION 
 ////////////////////////////////////////////////////////////////////////////////
 
-int SAMPLE_RATE_HZ = 9000;             // Sample rate of the audio in hertz.
+#define AUDIO_CHANNEL_COUNT 2          // number of microphones connected
+#define ADC_COUNT 2                    // number of available concurrent ADCs
+#define ANALOG_READ_RESOLUTION 12      // Bits of resolution for the ADC.
+#define ANALOG_READ_AVERAGING 16       // Number of samples to average with each ADC reading.
+#define SAMPLING_SPEED ADC_MED_SPEED
+#define CONVERSION_SPEED ADC_MED_SPEED
+
+const int SAMPLE_RATE_HZ = 9000;
 const int FFT_SIZE = 256;              // Size of the FFT.
-const int AUDIO_CHANNELS = 2;          // number of microphones connected                                       
-const int AUDIO_INPUT_PIN[AUDIO_CHANNELS] = {
-  16,17};        // Input ADC pins for audio data.
-const int ANALOG_READ_RESOLUTION = 10; // Bits of resolution for the ADC.
-const int ANALOG_READ_AVERAGING = 16;  // Number of samples to average with each ADC reading.
-const int POWER_LED_PIN = 13;          // Output pin for power LED (pin 13 to use Teensy 3.0's onboard LED).
+const int AUDIO_INPUT_PIN[AUDIO_CHANNEL_COUNT] = {16,17};        // Input ADC pins for audio data.
 const int MAX_COMMAND_CHARS = 65;      // Max number of characters in a single command
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -28,36 +35,54 @@ const int MAX_COMMAND_CHARS = 65;      // Max number of characters in a single c
 ////////////////////////////////////////////////////////////////////////////////
 
 IntervalTimer samplingTimer;
-float samples[AUDIO_CHANNELS][FFT_SIZE*2];
-float magnitudes[AUDIO_CHANNELS][FFT_SIZE];
+float samples[AUDIO_CHANNEL_COUNT][FFT_SIZE*2];
+float magnitudes[AUDIO_CHANNEL_COUNT][FFT_SIZE];
 int sampleCounter = 0;
 char commandBuffer[MAX_COMMAND_CHARS+1];
 int commandLength = 0;
+
+ADC *adc = new ADC(); // adc object
+ADC::Sync_result result;
 
 ////////////////////////////////////////////////////////////////////////////////
 // MAIN SKETCH FUNCTIONS
 ////////////////////////////////////////////////////////////////////////////////
 
 void setup() {
+  
   // Set up serial port.
+  
   Serial.begin(38400);
 
-  // Set up ADC and audio input.
-  for (int idx=0; idx<AUDIO_CHANNELS; idx++) {
+  // Enable output pin for LED
+  
+  pinMode(LED_BUILTIN, OUTPUT);
+
+  // Enable input pins for audio
+  
+  for (int idx=0; idx<AUDIO_CHANNEL_COUNT; idx++) {
     pinMode(AUDIO_INPUT_PIN[idx], INPUT);
   }
 
-  analogReadResolution(ANALOG_READ_RESOLUTION);
-  analogReadAveraging(ANALOG_READ_AVERAGING);
+  // Set up ADCs
+  
+  for (int idx=0; idx<ADC_COUNT; idx++) {
+    adc->setAveraging(ANALOG_READ_AVERAGING,idx);    // set number of averages
+    adc->setResolution(ANALOG_READ_RESOLUTION,idx);  // set bits of resolution
+    adc->setConversionSpeed(CONVERSION_SPEED,idx);   // change the conversion speed
+    adc->setSamplingSpeed(SAMPLING_SPEED,idx);       // change the sampling speed
+  }
 
-  // Turn on the power indicator LED.
-  pinMode(POWER_LED_PIN, OUTPUT);
-  digitalWrite(POWER_LED_PIN, HIGH);
+  // Turn on the LED.
+  
+  digitalWrite(LED_BUILTIN, HIGH);
 
   // Clear the input command buffer
+  
   commandLength = 0;
 
   // Begin sampling audio
+  
   samplingBegin();
 }
 
@@ -66,7 +91,7 @@ void loop() {
   if (samplingIsDone()) {
     // Run FFT on sample data.
     arm_cfft_radix4_instance_f32 fft_inst;
-    for (int idx=0; idx<AUDIO_CHANNELS; idx++) {
+    for (int idx=0; idx<AUDIO_CHANNEL_COUNT; idx++) {
       arm_cfft_radix4_init_f32(&fft_inst, FFT_SIZE, 0, 1);
       arm_cfft_radix4_f32(&fft_inst, &samples[idx][0]);
       // Calculate magnitude of complex numbers output by the FFT.
@@ -85,17 +110,16 @@ void loop() {
 ////////////////////////////////////////////////////////////////////////////////
 
 void samplingCallback() {
-  for (int idx=0; idx<AUDIO_CHANNELS; idx++) {
-    // Read from the ADC and store the sample data
-    samples[idx][sampleCounter] = (float32_t)analogRead(AUDIO_INPUT_PIN[idx]);
-    // Complex FFT functions require a coefficient for the imaginary part of the input.
-    // Since we only have real data, set this coefficient to zero.
-    samples[idx][sampleCounter+1] = 0.0;
-  }
+  result = adc->analogSynchronizedRead(AUDIO_INPUT_PIN[0], AUDIO_INPUT_PIN[1]);
+  samples[0][sampleCounter] = result.result_adc0;
+  samples[0][sampleCounter+1] = 0.0;
+
+  samples[1][sampleCounter] = result.result_adc1;
+  samples[1][sampleCounter+1] = 0.0;
 
   // Update sample buffer position and stop after the buffer is filled
   sampleCounter += 2;
-  if (sampleCounter >= FFT_SIZE*2) {
+  if (samplingIsDone()) {
     samplingTimer.end();
   }
 }
@@ -147,7 +171,7 @@ void parserLoop() {
 void parseCommand(char* command) {
   command[commandLength] = '\0';
   if (strcmp(command, "GET MAGNITUDES") == 0) {
-    for (int j=0; j<AUDIO_CHANNELS; j++) {
+    for (int j=0; j<AUDIO_CHANNEL_COUNT; j++) {
       for (int i = 0; i < FFT_SIZE; i++) {
         Serial.println(magnitudes[0][i]);
       }
@@ -164,15 +188,15 @@ void parseCommand(char* command) {
   else if (strcmp(command, "GET SAMPLE_RATE_HZ") == 0) {
     Serial.println(SAMPLE_RATE_HZ);
   } 
-  else if (strcmp(command, "GET AUDIO_CHANNELS") == 0) {
-    Serial.println(AUDIO_CHANNELS);
+  else if (strcmp(command, "GET AUDIO_CHANNEL_COUNT") == 0) {
+    Serial.println(AUDIO_CHANNEL_COUNT);
+  } 
+  else if (strcmp(command, "GET ADC_COUNT") == 0) {
+    Serial.println(ADC_COUNT);
   } 
   else {
     Serial.println();
   }
-  //  Serial.print("..");
-  //  Serial.print(command);
-  //  Serial.println("..");
 
 }
 
