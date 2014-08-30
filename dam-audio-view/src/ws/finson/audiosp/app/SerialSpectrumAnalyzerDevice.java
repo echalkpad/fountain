@@ -188,7 +188,7 @@ public class SerialSpectrumAnalyzerDevice extends AbstractSpectrumAnalyzerDevice
         for (int cn = 0; cn < channelCount; cn++) {
             result.add(new ArrayList<Double>(FFTSize));
             for (int bin = 0; bin < FFTSize; bin++) {
-                long startTime = System.currentTimeMillis();
+//                long startTime = System.currentTimeMillis();
                 while (!deviceReader.ready()) {
                     
                 }

@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config title="GUI for a simple spectrograph.">
-	<application>
-		<component type="ws.finson.audiosp.app.AudioAnalyzer" name="diagnostic">
+	<application classpath="ws.finson.audiosp.app">
+		<component type="AudioAnalyzer">
 			<device type="SerialSpectrumAnalyzerDevice" id="in" name="TeensyBasedDevice" size="512" rate="5000" channels="2" port="COM12"></device>
+		</component>
+		<component type="SwingStarter">
+			<view type="ws.finson.audiosp.app.SpectrumAnalyzerGui" sourceName="TeensyBasedDevice" />
 		</component>
 	</application>
 </config>

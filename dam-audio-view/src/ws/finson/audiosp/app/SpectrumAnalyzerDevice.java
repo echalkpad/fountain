@@ -7,8 +7,8 @@ import java.util.List;
  * Identify the methods that a class must implement in order to fill the role of
  * a spectrum analyzer device.
  * 
- * Historical note:  These methods were originally copied directly from the definition that 
- * Tony DiCola (tony@tonydicola.com) used in his sample Python code from the Adafruit 
+ * Historical note:  Most of these method signatures were originally copied directly from the 
+ * definition that Tony DiCola (tony@tonydicola.com) used in his sample Python code from the Adafruit 
  * tutorial FFT: Fun with Fourier Transforms.
  * @see <a href="https://learn.adafruit.com/fft-fun-with-fourier-transforms/">https://learn.adafruit.com/fft-fun-with-fourier-transforms/</a>
  * 
@@ -16,23 +16,10 @@ import java.util.List;
  * @since August 2014
  * 
  */
-public interface SpectrumAnalyzerDevice {
-	/**
-	 * Open communication with the device.
-	 * @throws IOException 
-	 */
-	void open() throws IOException;
-	/**
-	 * Close communication with the device.
-	 */
-	void close();
-	/**
-	 * Return name of the device.
-	 */
-	String getName();
-
+public interface SpectrumAnalyzerDevice extends HardwareDevice {
 	/**
 	 * Return device's FFT size.
+	 * @return  Number of entries in the FFTs being performed.
 	 */
 	int getFFTSize();
 
