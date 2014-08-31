@@ -5,7 +5,7 @@
 			<device type="SerialSpectrumAnalyzerDevice" id="in" name="TeensyBasedDevice" size="512" rate="5000" channels="2" port="COM12"></device>
 		</component>
 		<component type="SwingStarter">
-			<view type="ws.finson.audiosp.app.SpectrumAnalyzerGui" sourceName="TeensyBasedDevice" />
+			<view type="ws.finson.audiosp.app.gui.SpectrumAnalyzerGui" sourceName="TeensyBasedDevice" />
 		</component>
 	</application>
 </config>

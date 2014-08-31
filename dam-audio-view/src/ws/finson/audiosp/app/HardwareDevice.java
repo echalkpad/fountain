@@ -11,6 +11,8 @@ import java.io.IOException;
  * 
  */
 public interface HardwareDevice {
+    
+    //TODO change open() to connect()
 	/**
 	 * Open communication with the device.
 	 * @throws IOException 
@@ -25,9 +27,33 @@ public interface HardwareDevice {
 	 */
 	String getName();
 	
+	// Map<String,String> getProperties()
+	// String getProperty(String)
+	
 	// read
 	// status
 	// write
 	// control
+	
+	/*     
+    Map<String,String> infoMap = new HashMap<String,String>();
+    infoMap.put("identifier",device.getIdentifier())
+    infoMap.put("title",device.getTitle());
+    infoMap.put(x,device., value)
+getDeviceClass
+getDeviceID
+getDeviceLabel
+getDeviceName
+getDeviceType
+getDeviceVersion
+getLibraryVersion
+getSerialNumber
+getServerAddress
+getServerID
+getServerPort
+isAttached
+isAttachedToServer
+*/
+
 
 }
