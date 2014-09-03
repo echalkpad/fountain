@@ -3,9 +3,7 @@ package ws.finson.audiosp.app.gui;
 import java.awt.GridLayout;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.swing.JLabel;
@@ -36,10 +34,10 @@ public class SpectrumAnalyzerStatusPanel extends JPanel implements PropertyChang
 	private Map<String,JLabel> propertyMap = new HashMap<>();
 
 	/**
-	 * Initialize a new PositionPanel.
+	 * Initialize a new SpectrumAnalyzerStatusPanel.
 	 * 
 	 * @param device
-	 *            the Actuator that this panel is associated with
+	 *            the SpectrumAnalyzerDevice that this panel is associated with
 	 */
 	public SpectrumAnalyzerStatusPanel(SpectrumAnalyzerDevice device) {
 

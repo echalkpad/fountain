@@ -4,8 +4,8 @@
 		<component type="AudioAnalyzer">
 			<device type="SerialSpectrumAnalyzerDevice" id="in" name="TeensyBasedDevice" size="512" rate="5000" channels="2" port="COM12"></device>
 		</component>
-		<component type="SwingStarter">
-			<view type="ws.finson.audiosp.app.gui.SpectrumAnalyzerGui" sourceName="TeensyBasedDevice" />
+		<component type="SwingStarter" classpath="ws.finson.audiosp.app.gui">
+			<view type="SpectrumAnalyzerView" sourceName="TeensyBasedDevice" />
 		</component>
 	</application>
 </config>

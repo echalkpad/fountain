@@ -15,12 +15,12 @@ import ws.tuxi.lib.cfg.Application;
 import ws.tuxi.lib.cfg.ConfigurationException;
 
 /**
- * Control an attached audio FFT device.
+ * Control one or more attached audio FFT devices.
  * 
  * @author Doug Johnson
  * @since August 2014
  */
-public class AudioAnalyzer extends AbstractComponent implements DeviceRack {
+public class AudioAnalyzer extends AbstractComponent {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private List<SpectrumAnalyzerDevice> devices = new ArrayList<SpectrumAnalyzerDevice>();
@@ -58,6 +58,17 @@ public class AudioAnalyzer extends AbstractComponent implements DeviceRack {
             throw new ConfigurationException(
                     "At least one device element must be specified for an AudioAnalyzer.");
         }
+        
+        // Connect to the specified devices
+        
+        for (HardwareDevice d : devices) {
+            try {
+                logger.info("Connecting to device '{}'.", d.getName());
+                d.open();
+            } catch (IOException e) {
+                throw new ConfigurationException(e);
+            }
+        }
     }
 
     /**
@@ -66,14 +77,6 @@ public class AudioAnalyzer extends AbstractComponent implements DeviceRack {
     @Override
     public void preRun() throws ConfigurationException {
         logger.info("preRun method in {}", getClass().getSimpleName());
-        for (HardwareDevice d : devices) {
-            try {
-                d.open();
-                logger.info("Connected to device '{}' on specified port.", d.getName());
-            } catch (IOException e) {
-                throw new ConfigurationException(e);
-            }
-        }
     }
 
     /**
@@ -118,10 +121,6 @@ public class AudioAnalyzer extends AbstractComponent implements DeviceRack {
         // }
     }
 
-    /**
-     * @see ws.finson.audiosp.app.DeviceRack#getDevices()
-     */
-    @Override
     public List<HardwareDevice> getDevices() {
         return new ArrayList<HardwareDevice>(devices);
     }
