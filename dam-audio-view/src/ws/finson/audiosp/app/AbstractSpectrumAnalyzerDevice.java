@@ -17,11 +17,10 @@ import ws.tuxi.lib.cfg.ConfigurationException;
  * @since August 2014
  * 
  */
-public abstract class AbstractSpectrumAnalyzerDevice implements SpectrumAnalyzerDevice {
+public abstract class AbstractSpectrumAnalyzerDevice extends AbstractHardwareDevice implements SpectrumAnalyzerDevice {
     @SuppressWarnings("unused")
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private String name;
     protected int FFTSize;
     protected int sampleRate;
     protected int channelCount;
@@ -39,8 +38,12 @@ public abstract class AbstractSpectrumAnalyzerDevice implements SpectrumAnalyzer
      */
     public AbstractSpectrumAnalyzerDevice(ApplicationComponent ac, Element cE)
             throws ConfigurationException {
+        super(ac,cE);
+        
+        deviceParameters.add(new Parameter("FFT_SIZE","FFT Size",true));
+        deviceParameters.add(new Parameter("SAMPLE_RATE_HZ","Sample rate (Hz)",true));
+        deviceParameters.add(new Parameter("AUDIO_CHANNEL_COUNT","Channel Count",false));
 
-        this.name = "";
         this.FFTSize = 256;
         this.sampleRate = 10000;
         this.channelCount = 1;
@@ -49,12 +52,6 @@ public abstract class AbstractSpectrumAnalyzerDevice implements SpectrumAnalyzer
         for (int i = 0; i < attributeCount; i++) {
             Attribute a = cE.getAttribute(i);
             switch (a.getLocalName()) {
-            case "name":
-                this.name = a.getValue();
-                if (name == null) {
-                    name = "";
-                }
-                break;
             case "size":
                 try {
                     this.FFTSize = Integer.valueOf(a.getValue());
@@ -93,13 +90,6 @@ public abstract class AbstractSpectrumAnalyzerDevice implements SpectrumAnalyzer
         }
     }
 
-    /**
-     * @see ws.finson.audiosp.app.SpectrumAnalyzerDevice#getName()
-     */
-    @Override
-    public String getName() {
-        return name;
-    }
 
     /**
      * @see ws.finson.audiosp.app.SpectrumAnalyzerDevice#getFFTSize()
@@ -114,7 +104,7 @@ public abstract class AbstractSpectrumAnalyzerDevice implements SpectrumAnalyzer
      */
     @Override
     public void setFFTSize(int size) {
-        throw new UnsupportedOperationException("Cannot set FFT size for device " + name);
+        throw new UnsupportedOperationException("Cannot set FFT size for device " + getDeviceName());
     }
 
     /**
@@ -130,7 +120,7 @@ public abstract class AbstractSpectrumAnalyzerDevice implements SpectrumAnalyzer
      */
     @Override
     public void setSampleRate(int frequency) {
-        throw new UnsupportedOperationException("Cannot set sample rate for device " + name);
+        throw new UnsupportedOperationException("Cannot set sample rate for device " + getDeviceName());
     }
 
     /**
@@ -146,6 +136,14 @@ public abstract class AbstractSpectrumAnalyzerDevice implements SpectrumAnalyzer
      */
     @Override
     public void setChannelCount(int count) {
-        throw new UnsupportedOperationException("Cannot set channel count for device " + name);
+        throw new UnsupportedOperationException("Cannot set channel count for device " + getDeviceName());
+    }
+
+    /**
+     * @see ws.finson.audiosp.app.HardwareDevice#getDeviceClass()
+     */
+    @Override
+    public HardwareDevice.ClassID getDeviceClass() {
+        return HardwareDevice.ClassID.SpectrumAnalyzer;
     }
 }

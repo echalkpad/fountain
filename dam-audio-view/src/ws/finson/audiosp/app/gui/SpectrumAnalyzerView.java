@@ -6,6 +6,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.List;
 
 import javax.swing.JFrame;
@@ -122,11 +124,11 @@ public class SpectrumAnalyzerView extends JFrame implements DeviceView, ActionLi
         for (AudioAnalyzer inst : instruments) {
             List<HardwareDevice> devices = inst.getDevices();
             for (HardwareDevice d : devices) {
-                if (d.getName().equals(sourceName)) {
+                if (d.getDeviceName().equals(sourceName)) {
                     if (d instanceof SpectrumAnalyzerDevice) {
                         device = (SpectrumAnalyzerDevice) d;
                     } else {
-                        throw new ConfigurationException("Device '" + d.getName()
+                        throw new ConfigurationException("Device '" + d.getDeviceName()
                                 + "' is not a SpectrumAnalyzerDevice.");
                     }
                 }
@@ -136,6 +138,8 @@ public class SpectrumAnalyzerView extends JFrame implements DeviceView, ActionLi
             throw new ConfigurationException(
                     "SwingStarter cannot find a SpectrumAnalyzerDevice object in the parent Application configuration.");
         }
+        
+        device.addPropertyChangeListener(new PropertyChangeHandler());
 
         // Create HardwareDevice information panel and add it to the content pane
 
@@ -153,13 +157,13 @@ public class SpectrumAnalyzerView extends JFrame implements DeviceView, ActionLi
         rules.weightx = 0;
         rules.weighty = 0;
 
-        getContentPane().add(new HardwareDeviceInfoPanel(device), rules);
+        getContentPane().add(new HardwareDevicePanel(device), rules);
 
         // Create SpectrumAnalyzerDevice status panel and add it to the content pane
 
          rules.gridx = 0;
          rules.gridy = 1;
-         getContentPane().add(new SpectrumAnalyzerStatusPanel(device), rules);
+         getContentPane().add(new SpectrumAnalyzerDevicePanel(device), rules);
 
         // rules.gridx = 0;
         // rules.gridy = 1;
@@ -188,6 +192,19 @@ public class SpectrumAnalyzerView extends JFrame implements DeviceView, ActionLi
         assert SwingUtilities.isEventDispatchThread() : "DeviceView methods must run on Swing Dispatch Thread only.";
         pack();
         super.setVisible(b);
+    }
+    
+    private class PropertyChangeHandler implements PropertyChangeListener {
+
+        /**
+         * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
+         */
+        @Override
+        public void propertyChange(PropertyChangeEvent evt) {
+            logger.trace(evt.toString());
+            String propName = evt.getPropertyName();
+        }
+        
     }
 
     /**

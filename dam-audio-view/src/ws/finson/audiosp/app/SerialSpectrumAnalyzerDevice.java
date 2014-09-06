@@ -106,10 +106,10 @@ public class SerialSpectrumAnalyzerDevice extends AbstractSpectrumAnalyzerDevice
 
     /**
      * @throws IOException
-     * @see ws.finson.audiosp.app.SpectrumAnalyzerDevice#open()
+     * @see ws.finson.audiosp.app.SpectrumAnalyzerDevice#attach()
      */
     @Override
-    public void open() throws IOException {
+    public void attach() throws IOException {
         try {
             thePort = (SerialPort) portID.open(this.getClass().getName(), 1000);
             thePort.setSerialPortParams(38400, 8, 1, SerialPort.PARITY_NONE);
@@ -162,15 +162,16 @@ public class SerialSpectrumAnalyzerDevice extends AbstractSpectrumAnalyzerDevice
         } catch (NumberFormatException e) {
             throw new IOException(e);
         }
-        
+        super.attach();
     }
 
     /**
-     * @see ws.finson.audiosp.app.SpectrumAnalyzerDevice#close()
+     * @see ws.finson.audiosp.app.SpectrumAnalyzerDevice#detach()
      */
     @Override
-    public void close() {
+    public void detach() {
         thePort.close();
+        super.detach();
     }
 
     /**

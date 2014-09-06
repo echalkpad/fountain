@@ -59,12 +59,12 @@ public class AudioAnalyzer extends AbstractComponent {
                     "At least one device element must be specified for an AudioAnalyzer.");
         }
         
-        // Connect to the specified devices
+        // Connect drivers to their specified devices
         
         for (HardwareDevice d : devices) {
             try {
-                logger.info("Connecting to device '{}'.", d.getName());
-                d.open();
+                logger.info("{} driver attaching to device '{}'.", d.getClass().getSimpleName(),d.getDeviceName());
+                d.attach();
             } catch (IOException e) {
                 throw new ConfigurationException(e);
             }
