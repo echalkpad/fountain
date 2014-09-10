@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 import nu.xom.Element;
@@ -80,7 +81,8 @@ public class SwingStarter extends AbstractComponent {
     }
 
     /**
-     * Give the subordinate views a chance to finish linking to data sources.
+     * Give the views a chance to finish linking to data sources now that
+     * everything has been constructed.
      * 
      * @see ws.tuxi.lib.cfg.AbstractComponent#preRun()
      */
@@ -116,7 +118,8 @@ public class SwingStarter extends AbstractComponent {
         Runnable delegate = new Runnable() {
             public void run() {
                 for (DeviceView v : views) {
-                    v.setVisible(true);
+                    ((JFrame)v).pack();
+                    ((JFrame)v).setVisible(true);
                 }
             }
         };

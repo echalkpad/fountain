@@ -9,6 +9,7 @@ import gnu.io.PortInUseException;
 import gnu.io.SerialPort;
 import gnu.io.UnsupportedCommOperationException;
 
+import java.beans.PropertyChangeEvent;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.EOFException;
@@ -22,11 +23,13 @@ import java.util.List;
 import nu.xom.Attribute;
 import nu.xom.Element;
 
+import org.apache.log4j.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ws.tuxi.lib.cfg.ApplicationComponent;
 import ws.tuxi.lib.cfg.ConfigurationException;
+import ws.tuxi.lib.cfg.Throwables;
 
 /**
  * Provide a specific implementation of the SpectrumAnalyzerDevice interface to match a serial
@@ -86,7 +89,8 @@ public class SerialSpectrumAnalyzerDevice extends AbstractSpectrumAnalyzerDevice
 
         Enumeration<CommPortIdentifier> ports = CommPortIdentifier.getPortIdentifiers();
         if (!ports.hasMoreElements()) {
-            throw new ConfigurationException("No comm ports found by CommPortIdentifier.getPortIdentifiers().");
+            throw new ConfigurationException(
+                    "No comm ports found by CommPortIdentifier.getPortIdentifiers().");
         }
         portID = null;
         while (ports.hasMoreElements()) {
@@ -105,102 +109,97 @@ public class SerialSpectrumAnalyzerDevice extends AbstractSpectrumAnalyzerDevice
     }
 
     /**
-     * @throws IOException
-     * @see ws.finson.audiosp.app.SpectrumAnalyzerDevice#attach()
+     * @see java.lang.Runnable#run()
      */
     @Override
-    public void attach() throws IOException {
+    public void run() {
         try {
             thePort = (SerialPort) portID.open(this.getClass().getName(), 1000);
             thePort.setSerialPortParams(38400, 8, 1, SerialPort.PARITY_NONE);
             deviceReader = new BufferedReader(new InputStreamReader(thePort.getInputStream()));
             deviceWriter = new BufferedWriter(new OutputStreamWriter(thePort.getOutputStream()));
-        } catch (PortInUseException e) {
-            throw new IOException(e);
-        } catch (UnsupportedCommOperationException e) {
-            throw new IOException(e);
-        }
 
-        // FFT size
+            int val;
 
-        deviceWriter.write("GET FFT_SIZE;");
-        deviceWriter.flush();
-        String response = deviceReader.readLine();
-        if (response == null) {
-            throw new EOFException("Unexpected null response (EOF) while reading FFT_SIZE from the device on "+thePort.getName()+".");
-        }
-        try {
-            FFTSize = Integer.parseInt(response);
-        } catch (NumberFormatException e) {
-            throw new IOException(e);
-        }
-        
-        // sample rate
+            // FFT size
 
-        deviceWriter.write("GET SAMPLE_RATE_HZ;");
-        deviceWriter.flush();
-        response = deviceReader.readLine();
-        if (response == null) {
-            throw new EOFException("Unexpected null response (EOF) while reading SAMPLE_RATE_HZ from the device on "+thePort.getName()+".");
-        }
-        try {
-            sampleRate = Integer.parseInt(response);
-        } catch (NumberFormatException e) {
-            throw new IOException(e);
-        }
-        
-        // channel count
+            deviceWriter.write("GET FFT_SIZE;");
+            deviceWriter.flush();
+            String response = deviceReader.readLine();
+            if (response == null) {
+                throw new EOFException(
+                        "Unexpected null response (EOF) while reading FFT_SIZE from the device on "
+                                + thePort.getName() + ".");
+            }
+            val = Integer.parseInt(response);
+            setParameterValue("FFT_SIZE", val);
 
-        deviceWriter.write("GET AUDIO_CHANNEL_COUNT;");
-        deviceWriter.flush();
-        response = deviceReader.readLine();
-        if (response == null) {
-            throw new EOFException("Unexpected null response (EOF) while reading AUDIO_CHANNEL_COUNT from the device on "+thePort.getName()+".");
+            // sample rate
+
+            deviceWriter.write("GET SAMPLE_RATE_HZ;");
+            deviceWriter.flush();
+            response = deviceReader.readLine();
+            if (response == null) {
+                throw new EOFException(
+                        "Unexpected null response (EOF) while reading SAMPLE_RATE_HZ from the device on "
+                                + thePort.getName() + ".");
+            }
+            val = Integer.parseInt(response);
+            setParameterValue("SAMPLE_RATE_HZ", val);
+
+            // channel count
+
+            deviceWriter.write("GET AUDIO_CHANNEL_COUNT;");
+            deviceWriter.flush();
+            response = deviceReader.readLine();
+            if (response == null) {
+                throw new EOFException(
+                        "Unexpected null response (EOF) while reading AUDIO_CHANNEL_COUNT from the device on "
+                                + thePort.getName() + ".");
+            }
+
+            val = Integer.parseInt(response);
+            setParameterValue("AUDIO_CHANNEL_COUNT", val);
+            
+            pcs.firePropertyChange(new PropertyChangeEvent(this,null, null, null));
+            
+        } catch (PortInUseException | UnsupportedCommOperationException | IOException e) {
+            Throwables.printThrowableChain(e,logger,Level.ERROR);
         }
-        try {
-            channelCount = Integer.parseInt(response);
-        } catch (NumberFormatException e) {
-            throw new IOException(e);
-        }
-        super.attach();
     }
 
     /**
-     * @see ws.finson.audiosp.app.SpectrumAnalyzerDevice#detach()
-     */
-    @Override
-    public void detach() {
-        thePort.close();
-        super.detach();
-    }
-
-    /**
-     * @throws IOException 
+     * @throws IOException
      * @see ws.finson.audiosp.app.SpectrumAnalyzerDevice#getMagnitudes()
      */
     @Override
     public List<List<Double>> getMagnitudes() throws IOException {
         String response;
+        int channelCount = (Integer) getParameterValue("AUDIO_CHANNEL_COUNT");
+        int FFTSize = (Integer) getParameterValue("FFT_SIZE");
+
         List<List<Double>> result = new ArrayList<List<Double>>(channelCount);
-        
+
         deviceWriter.write("GET MAGNITUDES;");
         deviceWriter.flush();
-        
+
         for (int cn = 0; cn < channelCount; cn++) {
             result.add(new ArrayList<Double>(FFTSize));
             for (int bin = 0; bin < FFTSize; bin++) {
-//                long startTime = System.currentTimeMillis();
+                // long startTime = System.currentTimeMillis();
                 while (!deviceReader.ready()) {
-                    
+
                 }
-//                long deltaT = System.currentTimeMillis() - startTime;
-//                if (deltaT > 0) {
-//                    System.out.println("Not ready delta ms: "+Long.toString(deltaT));
-//                }
+                // long deltaT = System.currentTimeMillis() - startTime;
+                // if (deltaT > 0) {
+                // System.out.println("Not ready delta ms: "+Long.toString(deltaT));
+                // }
 
                 response = deviceReader.readLine();
                 if (response == null) {
-                    throw new EOFException("Unexpected null response (EOF) while reading MAGNITUDES from the device on "+thePort.getName()+".");
+                    throw new EOFException(
+                            "Unexpected null response (EOF) while reading MAGNITUDES from the device on "
+                                    + thePort.getName() + ".");
                 }
                 try {
                     result.get(cn).add(Double.parseDouble(response));

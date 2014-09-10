@@ -19,9 +19,9 @@ import ws.finson.audiosp.app.SpectrumAnalyzerDevice;
 import ws.finson.audiosp.app.UpdateJLabel;
 
 /**
- * This PositionPanel
+ * This SpectrumAnalyzerDevicePanel
  * 
- * @author Doug Johnson, 2012
+ * @author Doug Johnson, 2014
  */
 @SuppressWarnings("serial")
 public class SpectrumAnalyzerDevicePanel extends JPanel implements PropertyChangeListener {
@@ -43,7 +43,7 @@ public class SpectrumAnalyzerDevicePanel extends JPanel implements PropertyChang
 
         // What are the parameters for this device?
 
-        List<HardwareDevice.Parameter> params = sad.getParameterList();
+        List<HardwareDevice.Parameter> params = sad.getParameterDescriptorList();
 
         // Build a data table to display the parameters
 
@@ -71,14 +71,18 @@ public class SpectrumAnalyzerDevicePanel extends JPanel implements PropertyChang
      */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
+        logger.trace(evt.toString());
         JLabel labelToUpdate = null;
         String propName = evt.getPropertyName();
         if (propName == null) {
-            logger.warn("Unexpected null property name in PropertyChangeEvent.");
+            for (Map.Entry<String,JLabel> me : parameterMap.entrySet()) {
+                String newValue = sad.getParameterValue(me.getKey()).toString();
+                SwingUtilities.invokeLater(new UpdateJLabel(me.getValue(), newValue));
+            }
         } else {
             labelToUpdate = parameterMap.get(propName);
             if (labelToUpdate == null) {
-                logger.warn("Changed property '{}' is not being displayed.", propName);
+                logger.warn("Changed property '{}' is not currently being displayed.", propName);
             } else {
                 SwingUtilities.invokeLater(new UpdateJLabel(labelToUpdate, evt.getNewValue()
                         .toString()));

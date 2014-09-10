@@ -5,9 +5,11 @@ package ws.finson.audiosp.app;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.locks.ReentrantLock;
 
 import nu.xom.Attribute;
 import nu.xom.Element;
@@ -27,17 +29,20 @@ public abstract class AbstractHardwareDevice implements HardwareDevice {
     @SuppressWarnings("unused")
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    private final ReentrantLock parameterLock = new ReentrantLock();
+
     private String deviceName = null;
-    private boolean attached = false;
-    
-    protected final List<HardwareDevice.Parameter> deviceParameters = new ArrayList<>();
-    
-    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+    protected HardwareDevice.ClassID deviceClass = HardwareDevice.ClassID.GenericHardwareDevice;
+
+    protected final Map<String, HardwareDevice.Parameter> deviceParameterMap = new HashMap<>();
+    protected final Map<String, Object> deviceParameterValues = new HashMap<>();
+
+    protected final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
     /**
-     * Initialize the common fields of a HardwareDevice using the attributes given in the
-     * device configuration element. Attributes and child elements specific to a subclass should be
-     * dealt with in the subclass constructor after this constructor has returned.
+     * Initialize the common fields of a HardwareDevice using the attributes given in the device
+     * configuration element. Attributes and child elements specific to a subclass should be dealt
+     * with in the subclass constructor after this constructor has returned.
      * 
      * @param ac
      *            the ApplicationComponent for which this object is being constructed
@@ -59,37 +64,13 @@ public abstract class AbstractHardwareDevice implements HardwareDevice {
                 break;
             }
         }
-        
-        //TODO add test for uniqueness
-        
+
+        // TODO add test for uniqueness
+
         if ((deviceName == null) || deviceName.isEmpty()) {
             throw new ConfigurationException(
                     "The name of each HardwareDevice must be specified, unique, and not empty.");
         }
-   }
-
-    /**
-     * @see ws.finson.audiosp.app.HardwareDevice#attach()
-     */
-    @Override
-    public void attach() throws IOException {
-        attached = true;
-    }
-
-    /**
-     * @see ws.finson.audiosp.app.HardwareDevice#detach()
-     */
-    @Override
-    public void detach() {
-        attached = false;
-    }
-
-    /**
-     * @see ws.finson.audiosp.app.HardwareDevice#isAttached()
-     */
-    @Override
-    public boolean isAttached() {
-        return attached;
     }
 
     /**
@@ -98,6 +79,22 @@ public abstract class AbstractHardwareDevice implements HardwareDevice {
     @Override
     public String getDeviceName() {
         return deviceName;
+    }
+
+    /**
+     * @see ws.finson.audiosp.app.HardwareDevice#getDeviceClass()
+     */
+    @Override
+    public HardwareDevice.ClassID getDeviceClass() {
+        return deviceClass;
+    }
+
+    /**
+     * @see ws.finson.audiosp.app.HardwareDevice#getParameterDescriptorList()
+     */
+    @Override
+    public List<Parameter> getParameterDescriptorList() {
+        return new ArrayList<Parameter>(deviceParameterMap.values());
     }
 
     /**
@@ -117,12 +114,59 @@ public abstract class AbstractHardwareDevice implements HardwareDevice {
     }
 
     /**
-     * @see ws.finson.audiosp.app.HardwareDevice#getParameterList()
+     * @see ws.finson.audiosp.app.HardwareDevice#getParameterValue(java.lang.String)
      */
     @Override
-    public List<Parameter> getParameterList() {
-        return new ArrayList<Parameter>(deviceParameters);
+    public Object getParameterValue(String s) {
+        parameterLock.lock();
+        try {
+            return deviceParameterValues.get(s);
+        } finally {
+            parameterLock.unlock();
+        }
     }
 
+    /**
+     * @see ws.finson.audiosp.app.HardwareDevice#getParameterValue(ws.finson.audiosp.app.HardwareDevice.Parameter)
+     */
+    @Override
+    public Object getParameterValue(Parameter p) {
+        parameterLock.lock();
+        try {
+            return deviceParameterValues.get(p.getName());
+        } finally {
+            parameterLock.unlock();
+        }
+    }
+
+    /**
+     * @see ws.finson.audiosp.app.HardwareDevice#setParameterValue(java.lang.String)
+     */
+    @Override
+    public void setParameterValue(String s, Object v) {
+        parameterLock.lock();
+        try {
+            Parameter p = deviceParameterMap.get(s);
+            setParameterValue(p, v);
+        } finally {
+            parameterLock.unlock();
+        }
+    }
+
+    /**
+     * @see ws.finson.audiosp.app.HardwareDevice#setParameterValue(ws.finson.audiosp.app.HardwareDevice.Parameter)
+     */
+    @Override
+    public void setParameterValue(Parameter p, Object v) {
+        parameterLock.lock();
+        try {
+            if (p.getWritable()) {
+                Object o = p.getType().cast(v);
+                deviceParameterValues.put(p.getName(), o);
+            }
+        } finally {
+            parameterLock.unlock();
+        }
+    }
 
 }

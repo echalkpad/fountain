@@ -1,6 +1,5 @@
 package ws.finson.audiosp.app;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,17 +57,6 @@ public class AudioAnalyzer extends AbstractComponent {
             throw new ConfigurationException(
                     "At least one device element must be specified for an AudioAnalyzer.");
         }
-        
-        // Connect drivers to their specified devices
-        
-        for (HardwareDevice d : devices) {
-            try {
-                logger.info("{} driver attaching to device '{}'.", d.getClass().getSimpleName(),d.getDeviceName());
-                d.attach();
-            } catch (IOException e) {
-                throw new ConfigurationException(e);
-            }
-        }
     }
 
     /**
@@ -85,6 +73,15 @@ public class AudioAnalyzer extends AbstractComponent {
     @Override
     public void run() {
         logger.info("Run method in {}", getClass().getSimpleName());
+
+        // Start device drivers running in their own threads.
+
+        for (HardwareDevice d : devices) {
+            Thread t = new Thread(d);
+            t.setName("HardwareDevice-" + d.getDeviceClass() + "@" + Integer.toHexString(d.hashCode()));
+            t.start();
+            logger.info("Starting {} driver attaching to device '{}' in thread {}.", d.getDeviceClass(), d.getDeviceName(),t.getName());
+        }
         // int passCount = 20;
         // long[] deltas = new long[passCount];
         // for (int pass = 0; pass < passCount; pass++) {

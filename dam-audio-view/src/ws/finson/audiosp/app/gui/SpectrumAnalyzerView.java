@@ -4,10 +4,6 @@ import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.List;
 
 import javax.swing.JFrame;
@@ -36,7 +32,7 @@ import ws.tuxi.lib.cfg.ConfigurationException;
  * @since August 2014
  */
 @SuppressWarnings("serial")
-public class SpectrumAnalyzerView extends JFrame implements DeviceView, ActionListener {
+public class SpectrumAnalyzerView extends JFrame implements DeviceView {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final ApplicationComponent parent;
@@ -93,7 +89,7 @@ public class SpectrumAnalyzerView extends JFrame implements DeviceView, ActionLi
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle(getClass().getSimpleName());
         
-        // Why new content pane??
+        //TODO Why new content pane??
 
         JPanel theContentPane = new JPanel();
         theContentPane.setOpaque(true);
@@ -103,19 +99,12 @@ public class SpectrumAnalyzerView extends JFrame implements DeviceView, ActionLi
         setContentPane(theContentPane);
     }
 
-    // FixtureExecutive exec = (FixtureExecutive)
-    // cfg.getApplication().getApplicationComponents(FixtureExecutive.class).get(0);
-    // List<FixtureTask> tasks = exec.getTasks();
-    //
-    // device = cfg.getActuators().get(0);
-    // taskMap = new HashMap<JButton, FixtureTask>();
-
     /**
-     * @throws ConfigurationException
-     * @see ws.finson.audiosp.app.gui.DeviceView#setDataSource()
+     * @throws ConfigurationException 
+     * @see ws.finson.audiosp.app.gui.DeviceView#setDataSource(java.lang.String)
      */
     @Override
-    public void setDataSource() throws ConfigurationException {
+    public void setDataSource(String s) throws ConfigurationException {
         assert SwingUtilities.isEventDispatchThread() : "DeviceView methods must run on Swing Dispatch Thread only.";
 
         List<AudioAnalyzer> instruments = parent.getApplication().getApplicationComponents(
@@ -124,7 +113,7 @@ public class SpectrumAnalyzerView extends JFrame implements DeviceView, ActionLi
         for (AudioAnalyzer inst : instruments) {
             List<HardwareDevice> devices = inst.getDevices();
             for (HardwareDevice d : devices) {
-                if (d.getDeviceName().equals(sourceName)) {
+                if (d.getDeviceName().equals(s)) {
                     if (d instanceof SpectrumAnalyzerDevice) {
                         device = (SpectrumAnalyzerDevice) d;
                     } else {
@@ -139,8 +128,6 @@ public class SpectrumAnalyzerView extends JFrame implements DeviceView, ActionLi
                     "SwingStarter cannot find a SpectrumAnalyzerDevice object in the parent Application configuration.");
         }
         
-        device.addPropertyChangeListener(new PropertyChangeHandler());
-
         // Create HardwareDevice information panel and add it to the content pane
 
         GridBagConstraints rules = new GridBagConstraints();
@@ -182,105 +169,15 @@ public class SpectrumAnalyzerView extends JFrame implements DeviceView, ActionLi
         // rules.gridy += 1;
         // }
         // }
+         setVisible(true);
     }
 
     /**
-     * @see ws.finson.audiosp.app.gui.DeviceView#setVisible(java.lang.Boolean)
+     * @throws ConfigurationException
+     * @see ws.finson.audiosp.app.gui.DeviceView#setDataSource()
      */
     @Override
-    public void setVisible(Boolean b) {
-        assert SwingUtilities.isEventDispatchThread() : "DeviceView methods must run on Swing Dispatch Thread only.";
-        pack();
-        super.setVisible(b);
+    public void setDataSource() throws ConfigurationException {
+        setDataSource(sourceName);
     }
-    
-    private class PropertyChangeHandler implements PropertyChangeListener {
-
-        /**
-         * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
-         */
-        @Override
-        public void propertyChange(PropertyChangeEvent evt) {
-            logger.trace(evt.toString());
-            String propName = evt.getPropertyName();
-        }
-        
-    }
-
-    /**
-     * Start a task thread running. First disable the task buttons, then start a task thread, then
-     * set up a thread to listen for the task thread to exit.
-     * 
-     * @param e
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        assert SwingUtilities.isEventDispatchThread() : "DeviceView methods must run on Swing Dispatch Thread only.";
-        // logger.debug("Action event {}", e.getActionCommand());
-        // for (JButton b : taskMap.keySet()) {
-        // b.setEnabled(false);
-        // }
-        // ApplicationComponent task = taskMap.get(e.getSource());
-        // Thread taskThread = new Thread(task, "Task-"+task.getClass().getSimpleName());
-        // logger.debug("New thread to run {} task.", task.getClass()
-        // .getSimpleName());
-        // taskThread.start();
-        //
-        // Runnable helper = new WaitAndEnable(taskThread);
-        // Thread helperThread = new Thread(helper,"WaitAndEnable");
-        // helperThread.start();
-    }
-
-    // --------------
-
-    // /**
-    // * This WaitAndEnable class helps the ExecutiveGui class leave the
-    // * task buttons disabled while one of the tasks executes. When the
-    // * task thread exits, the thread this object is running on wakes up
-    // * and schedules a Swing task to re-enable the buttons.
-    // *
-    // * @author Doug Johnson, 2012
-    // */
-    // private class WaitAndEnable implements Runnable {
-    // private Thread threadToJoin;
-    //
-    // public WaitAndEnable(Thread t) {
-    // threadToJoin = t;
-    // }
-    //
-    // /**
-    // *
-    // * @see java.lang.Runnable#run()
-    // */
-    // @Override
-    // public void run() {
-    // logger.debug("Executive's WaitAndEnable run method waiting for {} to exit.",threadToJoin.getName());
-    //
-    // // Wait for the task thread to exit
-    //
-    // while (threadToJoin.isAlive()) {
-    // try {
-    // threadToJoin.join();
-    // } catch (InterruptedException e) {
-    // // TODO Auto-generated catch block
-    // e.printStackTrace();
-    // }
-    // }
-    //
-    // logger.debug("{} has exited.",threadToJoin.getName());
-    //
-    // // Re-enable the task start buttons
-    //
-    // javax.swing.SwingUtilities.invokeLater(new Runnable() {
-    // public void run() {
-    // for (JButton b : taskMap.keySet()) {
-    // b.setEnabled(true);
-    // }
-    // }
-    // });
-    //
-    // }
-    // }
-
 }

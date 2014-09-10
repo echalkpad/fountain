@@ -17,15 +17,14 @@ public interface DeviceView {
      * Connect to data source(s), other GUI components, etc.  Called during the 
      * preRun() phase of ApplicationComponent initialization which is after the
      * entire configuration file has been processed and all the active objects
-     * defined therein are present.  The class that implements this interface
-     * must remember the name of the data source specified during configuration, 
-     * because it is not supplied in this call.
+     * defined therein are present.  The name of the data source used is the one
+     * specified during configuration.
      */
     void setDataSource() throws ConfigurationException;
+    
     /**
-     * Show or hide this view.
-     * @param b true to show, false to hide
+     * @param sourceName
+     * @throws ConfigurationException
      */
-    void setVisible(Boolean b);
-
+    void setDataSource(String sourceName) throws ConfigurationException;
 }

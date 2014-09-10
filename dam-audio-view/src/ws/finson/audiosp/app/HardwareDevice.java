@@ -1,8 +1,9 @@
 package ws.finson.audiosp.app;
 
 import java.beans.PropertyChangeListener;
-import java.io.IOException;
 import java.util.List;
+
+import ws.tuxi.lib.cfg.ConfigurationException;
 
 /***
  * Identify the methods that a class must implement in order to fill the role of a hardware device.
@@ -11,26 +12,7 @@ import java.util.List;
  * @since August 2014
  * 
  */
-public interface HardwareDevice {
-
-    /**
-     * Open communication between the device driver and the device.
-     * 
-     * @throws IOException
-     */
-    void attach() throws IOException;
-
-    /**
-     * Close communication with the device.
-     */
-    void detach();
-
-    /**
-     * Get state of driver connection to device
-     * 
-     * @return true if connection has been established to the device
-     */
-    boolean isAttached();
+public interface HardwareDevice extends Runnable {
 
     /**
      * Return name of the device.
@@ -47,11 +29,39 @@ public interface HardwareDevice {
     ClassID getDeviceClass();
 
     /**
-     * Get list of device parameter names
+     * Get list of device parameter descriptors
      * 
-     * @return List of parameters that are available for this device
+     * @return List of descriptor objects for the parameters that are available for this device
      */
-    List<HardwareDevice.Parameter> getParameterList();
+    List<HardwareDevice.Parameter> getParameterDescriptorList();
+    
+    /**
+     * Get a particular parameter value from the device driver.
+     * @param s the String name of the parameter as recognized by the device driver
+     * @return the value of the named parameter
+     */
+    Object getParameterValue(String s);
+    
+    /**
+     * Get a particular parameter value from the device driver.
+     * @param p the Parameter descriptor that identifies the parameter of interest
+     * @return the value of the named parameter
+     */
+    Object getParameterValue(HardwareDevice.Parameter p);
+    
+    /**
+     * Set a particular parameter value in the device driver and the device
+     * @param s the String name of the parameter as recognized by the device driver
+     * @param v the new value of the named parameter
+     */
+    void setParameterValue(String s, Object v);
+    
+    /**
+     * Set a particular parameter value in the device driver and the device
+     * @param p the Parameter descriptor that identifies the parameter of interest
+     * @param v the new value of the named parameter
+     */
+    void setParameterValue(HardwareDevice.Parameter p, Object v);
 
     /**
      * Add a PropertyChangeListener to the listener list.
@@ -73,18 +83,30 @@ public interface HardwareDevice {
         private String name;
         private String label;
         private Boolean writable;
+        private Class<?> type;
+        private Object initialValue;
 
         /**
+         * Note that the class of the initial value object is taken to be the class
+         * of the parameter.
+         * 
          * @param name String name of the parameter as recognized by the device firmware
          * @param label User friendlier String display label
          * @param writable true if the parameter can be set, false if read only
+         * @param value the initial value of the parameter expressed as an Object
+         * @throws ConfigurationException 
          */
-        public Parameter(String name, String label, Boolean writable) {
-            super();
+        public Parameter(String name, String label, Boolean writable, Object value) throws ConfigurationException {
             this.name = name;
             this.label = label;
             this.writable = writable;
-        }
+            this.initialValue = value;
+            try {
+                this.type = value.getClass();
+            } catch (SecurityException e) {
+                throw new ConfigurationException(e);
+            }
+       }
 
         public String getName() {
             return name;
@@ -98,7 +120,18 @@ public interface HardwareDevice {
             return writable;
         }
 
+        public Class<?> getType() {
+            return type;
+        }
+        
+        public Object getInitialValue() {
+            return initialValue;
+        }
+
     }
+
+    // ------------------------
+
     /***
      * Identify the top level hardware device classes for which drivers are expected to exist in the
      * Interchangeable Virtual Instrument scheme of things. I'm using the same taxonomy just for general
@@ -106,6 +139,7 @@ public interface HardwareDevice {
      * 
      */
     enum ClassID {
+        GenericHardwareDevice,
         DigitalMultiMeter,
         Oscilloscope,
         ArbitraryWaveformGenerator,
@@ -116,6 +150,7 @@ public interface HardwareDevice {
         RFSignalGenerator
     };
 
+    // ------------------------
 
     /*
      * possible additions ...

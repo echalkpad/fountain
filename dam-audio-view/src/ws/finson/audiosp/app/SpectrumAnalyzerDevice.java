@@ -21,7 +21,7 @@ public interface SpectrumAnalyzerDevice extends HardwareDevice {
 	 * Return device's FFT size.
 	 * @return  Number of entries in the FFTs being performed.
 	 */
-	int getFFTSize();
+	Integer getFFTSize();
 
 	/**
 	 * Set the device's FFT size to the specified number of bins.
@@ -31,7 +31,7 @@ public interface SpectrumAnalyzerDevice extends HardwareDevice {
 	/**
 	 * Return device's sample rate in hertz.
 	 */
-	int getSampleRate();
+	Integer getSampleRate();
 
 	/**
 	 * Set the device's sample rate to the specified frequency in hertz.
@@ -41,7 +41,7 @@ public interface SpectrumAnalyzerDevice extends HardwareDevice {
 	/**
 	 * Return number of channels the device is analyzing.
 	 */
-	int getChannelCount();
+	Integer getChannelCount();
 
 	/**
 	 * Set the number of channels the caller would like to have analyzed.

@@ -6,11 +6,13 @@ import java.beans.PropertyChangeListener;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ws.finson.audiosp.app.HardwareDevice;
+import ws.finson.audiosp.app.UpdateJLabel;
 
 /**
  * This HardwareDevicePanel displays various bits of information about an arbitrary HardwareDevice.
@@ -19,7 +21,7 @@ import ws.finson.audiosp.app.HardwareDevice;
  * @since August 2014
  */
 @SuppressWarnings("serial")
-public class HardwareDevicePanel extends JPanel {
+public class HardwareDevicePanel extends JPanel implements PropertyChangeListener {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private HardwareDevice theDevice;
@@ -46,28 +48,34 @@ public class HardwareDevicePanel extends JPanel {
         // device name and class
 
         valueTable.add(new JLabel("Device Name"));
-        deviceNameValue = new JLabel(device.getDeviceName());
+        deviceNameValue = new JLabel("----");
         valueTable.add(deviceNameValue);
 
         valueTable.add(new JLabel("Device Class"));
-        deviceClassValue = new JLabel(device.getDeviceClass().toString());
+        deviceClassValue = new JLabel("----");
         valueTable.add(deviceClassValue);
 
         this.add(valueTable);
 
-        device.addPropertyChangeListener(new PropertyChangeHandler());
+        device.addPropertyChangeListener(this);
     }
 
-    // ---------------------------
+    /**
+     * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
+     */
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        logger.trace(evt.toString());
+        String theName;
+        String theClass;
+        
+        if (evt.getPropertyName() == null) {
+            theName = theDevice.getDeviceName();
+            theClass = theDevice.getDeviceClass().toString();
 
-    private class PropertyChangeHandler implements PropertyChangeListener {
-        /**
-         * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
-         */
-        @Override
-        public void propertyChange(PropertyChangeEvent evt) {
-            logger.trace(evt.toString());
-            String propName = evt.getPropertyName();
+            SwingUtilities.invokeLater(new UpdateJLabel(deviceNameValue, theName));
+            SwingUtilities.invokeLater(new UpdateJLabel(deviceClassValue, theClass));
+
         }
     }
 }
