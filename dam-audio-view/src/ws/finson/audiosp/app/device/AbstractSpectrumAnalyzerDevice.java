@@ -12,8 +12,6 @@ import nu.xom.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ws.finson.audiosp.app.device.HardwareDevice.ClassID;
-import ws.finson.audiosp.app.device.HardwareDevice.Parameter;
 import ws.tuxi.lib.cfg.ApplicationComponent;
 import ws.tuxi.lib.cfg.ConfigurationException;
 
@@ -24,13 +22,12 @@ import ws.tuxi.lib.cfg.ConfigurationException;
  */
 public abstract class AbstractSpectrumAnalyzerDevice extends AbstractHardwareDevice implements
         SpectrumAnalyzerDevice {
-    @SuppressWarnings("unused")
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final Parameter[] ini = {
-            new Parameter("FFT_SIZE", "FFT Size", true, new Integer(256)),
-            new Parameter("SAMPLE_RATE_HZ", "Sample rate (Hz)", true, new Integer(10000)),
-            new Parameter("AUDIO_CHANNEL_COUNT", "Channel Count", true, new Integer(1)) };
+            new Parameter("FFT_SIZE", "FFT Size", true, Integer.class),
+            new Parameter("SAMPLE_RATE_HZ", "Sample rate (Hz)", true, Integer.class),
+            new Parameter("AUDIO_CHANNEL_COUNT", "Channel Count", true, Integer.class) };
 
     /**
      * Initialize the common fields of a SpectrumAnalyzerDevice using the attributes given in the
@@ -47,74 +44,36 @@ public abstract class AbstractSpectrumAnalyzerDevice extends AbstractHardwareDev
             throws ConfigurationException {
         super(ac, cE);
         deviceClass = HardwareDevice.ClassID.SpectrumAnalyzer;
+        
+        // Save the parameter descriptors
 
         for (int idx = 0; idx < ini.length; idx++) {
             deviceParameterMap.put(ini[idx].getName(), ini[idx]);
-            deviceParameterValues.put(ini[idx].getName(), ini[idx].getInitialValue());
         }
+        
+        // Save any initial values provided in the setup
 
         int attributeCount = cE.getAttributeCount();
         for (int i = 0; i < attributeCount; i++) {
             Attribute a = cE.getAttribute(i);
-            if (deviceParameterMap.containsKey(a)) {
+            if (deviceParameterMap.containsKey(a.getLocalName())) {
                 String s = a.getValue();
                 try {
                     Parameter p = deviceParameterMap.get(a);
                     Constructor<?> c;
-                    if (p != null) {
+                    if (p.getWritable()) {
                         c = p.getType().getConstructor(String.class);
                         deviceParameterValues.put(s, c.newInstance(s));
+                    } else {
+                        throw new ReadOnlyParameterException("'"+p.getName()+"' is read-only and cannot be set.");
                     }
                 } catch (SecurityException | InstantiationException | IllegalAccessException
                         | IllegalArgumentException | InvocationTargetException
-                        | NoSuchMethodException e) {
+                        | NoSuchMethodException | ReadOnlyParameterException e) {
                     throw new ConfigurationException(e);
                 }
             }
         }
-
-        // int attributeCount = cE.getAttributeCount();
-        // for (int i = 0; i < attributeCount; i++) {
-        // int temp;
-        // Attribute a = cE.getAttribute(i);
-        // switch (a.getLocalName()) {
-        // case "size":
-        // try {
-        // temp = Integer.valueOf(a.getValue());
-        // } catch (NumberFormatException e) {
-        // throw new ConfigurationException("Invalid size format: " + a.getValue(), e);
-        // }
-        // if (temp < 16 || temp > 1024) {
-        // throw new ConfigurationException("Invalid size value: " + temp);
-        // }
-        //
-        // break;
-        // case "rate":
-        // try {
-        // this.sampleRate = Integer.valueOf(a.getValue());
-        // } catch (NumberFormatException e) {
-        // throw new ConfigurationException("Invalid sample rate format: " + a.getValue(),
-        // e);
-        // }
-        // if (sampleRate < 1 || sampleRate > 40000) {
-        // throw new ConfigurationException("Invalid sample rate value: " + sampleRate);
-        // }
-        // break;
-        // case "channels":
-        // try {
-        // this.channelCount = Integer.valueOf(a.getValue());
-        // } catch (NumberFormatException e) {
-        // throw new ConfigurationException("Invalid channel count format: "
-        // + a.getValue(), e);
-        // }
-        // if (channelCount < 1) {
-        // throw new ConfigurationException("Invalid channel count value: " + channelCount);
-        // }
-        // break;
-        // default:
-        // break;
-        // }
-        // }
     }
 
     /**
@@ -123,14 +82,6 @@ public abstract class AbstractSpectrumAnalyzerDevice extends AbstractHardwareDev
     @Override
     public Integer getFFTSize() {
         return (Integer) getParameterValue("FFT_SIZE");
-    }
-
-    /**
-     * @see ws.finson.audiosp.app.device.HardwareDevice#getDeviceClass()
-     */
-    @Override
-    public HardwareDevice.ClassID getDeviceClass() {
-        return HardwareDevice.ClassID.SpectrumAnalyzer;
     }
 
     /**

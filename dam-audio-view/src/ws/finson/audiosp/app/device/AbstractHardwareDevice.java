@@ -5,6 +5,7 @@ package ws.finson.audiosp.app.device;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,8 +18,6 @@ import nu.xom.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ws.finson.audiosp.app.device.HardwareDevice.ClassID;
-import ws.finson.audiosp.app.device.HardwareDevice.Parameter;
 import ws.tuxi.lib.cfg.ApplicationComponent;
 import ws.tuxi.lib.cfg.ConfigurationException;
 
@@ -116,6 +115,7 @@ public abstract class AbstractHardwareDevice implements HardwareDevice {
     }
 
     /**
+     * @throws IOException
      * @see ws.finson.audiosp.app.device.HardwareDevice#getParameterValue(java.lang.String)
      */
     @Override
@@ -142,33 +142,55 @@ public abstract class AbstractHardwareDevice implements HardwareDevice {
     }
 
     /**
+     * @throws IOException
      * @see ws.finson.audiosp.app.device.HardwareDevice#setParameterValue(java.lang.String)
      */
     @Override
-    public void setParameterValue(String s, Object v) {
+    public void setParameterValue(String s, Object v) throws IOException {
+        setParameterValue(deviceParameterMap.get(s), v);
+    }
+
+    /**
+     * @throws IOException
+     * @see ws.finson.audiosp.app.device.HardwareDevice#setParameterValue(ws.finson.audiosp.app.device.HardwareDevice.Parameter,
+     *      java.lang.Object)
+     */
+    @Override
+    public void setParameterValue(Parameter p, Object v) throws IOException {
         parameterLock.lock();
         try {
-            Parameter p = deviceParameterMap.get(s);
-            setParameterValue(p, v);
+            if (p.getWritable()) {
+                Object o = p.getType().cast(v);
+                writeDeviceParameterValue(p.getName(), o);
+            }
         } finally {
             parameterLock.unlock();
         }
     }
 
     /**
-     * @see ws.finson.audiosp.app.device.HardwareDevice#setParameterValue(ws.finson.audiosp.app.device.HardwareDevice.Parameter)
+     * Read the named parameter value from the actual device, then store it with the cached values
+     * in deviceParameterValues and also return it directly to the caller. Must be implemented by
+     * the subclass that actually talks to the device.
+     * 
+     * @param pname
+     * @return the requested parameter value
+     * @throws IOException
      */
-    @Override
-    public void setParameterValue(Parameter p, Object v) {
-        parameterLock.lock();
-        try {
-            if (p.getWritable()) {
-                Object o = p.getType().cast(v);
-                deviceParameterValues.put(p.getName(), o);
-            }
-        } finally {
-            parameterLock.unlock();
-        }
+    public Object readDeviceParameterValue(String pname) throws IOException {
+        throw new IOException("BUG:  readDeviceParameterValue not implemented for " + deviceName);
+    }
+
+    /**
+     * Write the given value out to the actual device and store it with the cached values in
+     * deviceParameterValues. Must be implemented by the subclass that actually talks to the device.
+     * 
+     * @param pname
+     * @param pvalue
+     * @throws IOException
+     */
+    public void writeDeviceParameterValue(String pname, Object pvalue) throws IOException {
+        throw new IOException("BUG:  writeDeviceParameterValue not implemented for " + deviceName);
     }
 
 }

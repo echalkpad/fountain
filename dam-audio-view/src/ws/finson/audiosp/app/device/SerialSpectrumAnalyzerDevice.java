@@ -16,6 +16,8 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -27,6 +29,7 @@ import org.apache.log4j.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ws.finson.audiosp.app.device.HardwareDevice.Parameter;
 import ws.tuxi.lib.cfg.ApplicationComponent;
 import ws.tuxi.lib.cfg.ConfigurationException;
 import ws.tuxi.lib.cfg.Throwables;
@@ -113,59 +116,66 @@ public class SerialSpectrumAnalyzerDevice extends AbstractSpectrumAnalyzerDevice
      */
     @Override
     public void run() {
+        logger.debug("Run method in {}", this.getClass().getSimpleName());
         try {
             thePort = (SerialPort) portID.open(this.getClass().getName(), 1000);
             thePort.setSerialPortParams(38400, 8, 1, SerialPort.PARITY_NONE);
             deviceReader = new BufferedReader(new InputStreamReader(thePort.getInputStream()));
             deviceWriter = new BufferedWriter(new OutputStreamWriter(thePort.getOutputStream()));
 
-            int val;
+            // Initialize the device and the cached parameter values
 
-            // FFT size
+            for (String s : deviceParameterMap.keySet()) {
+                logger.trace("Initializing parameter '{}'.", s);
+                if (deviceParameterValues.containsKey(s)) {
+                    writeDeviceParameterValue(s, deviceParameterValues.get(s));
+                } else {
+                    readDeviceParameterValue(s);
+                }
+                logger.trace("Parameter '{}' has value '{}'.", s, deviceParameterValues.get(s));
+            }
 
-            deviceWriter.write("GET FFT_SIZE;");
+            pcs.firePropertyChange(new PropertyChangeEvent(this, null, null, null));
+
+        } catch (PortInUseException | UnsupportedCommOperationException | IOException e) {
+            Throwables.printThrowableChain(e, logger, Level.ERROR);
+        }
+    }
+
+    /**
+     * 
+     * @see ws.finson.audiosp.app.device.AbstractHardwareDevice#readDeviceParameterValue(java.lang.String)
+     */
+    @Override
+    public Object readDeviceParameterValue(String pname) throws IOException {
+        if (deviceParameterMap.containsKey(pname)) {
+            deviceWriter.write("GET " + pname + ";");
             deviceWriter.flush();
             String response = deviceReader.readLine();
             if (response == null) {
                 throw new EOFException(
-                        "Unexpected null response (EOF) while reading FFT_SIZE from the device on "
+                        "Unexpected null response (EOF) while reading pname from the device on "
                                 + thePort.getName() + ".");
             }
-            val = Integer.parseInt(response);
-            setParameterValue("FFT_SIZE", val);
-
-            // sample rate
-
-            deviceWriter.write("GET SAMPLE_RATE_HZ;");
-            deviceWriter.flush();
-            response = deviceReader.readLine();
-            if (response == null) {
-                throw new EOFException(
-                        "Unexpected null response (EOF) while reading SAMPLE_RATE_HZ from the device on "
-                                + thePort.getName() + ".");
+            try {
+                Parameter p = deviceParameterMap.get(pname);
+                deviceParameterValues.put(pname, p.getType().getConstructor(String.class)
+                        .newInstance(response));
+            } catch (SecurityException | IllegalArgumentException | NoSuchMethodException
+                    | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+                throw new IOException(e);
             }
-            val = Integer.parseInt(response);
-            setParameterValue("SAMPLE_RATE_HZ", val);
-
-            // channel count
-
-            deviceWriter.write("GET AUDIO_CHANNEL_COUNT;");
-            deviceWriter.flush();
-            response = deviceReader.readLine();
-            if (response == null) {
-                throw new EOFException(
-                        "Unexpected null response (EOF) while reading AUDIO_CHANNEL_COUNT from the device on "
-                                + thePort.getName() + ".");
-            }
-
-            val = Integer.parseInt(response);
-            setParameterValue("AUDIO_CHANNEL_COUNT", val);
-            
-            pcs.firePropertyChange(new PropertyChangeEvent(this,null, null, null));
-            
-        } catch (PortInUseException | UnsupportedCommOperationException | IOException e) {
-            Throwables.printThrowableChain(e,logger,Level.ERROR);
         }
+        return deviceParameterValues.get(pname);
+    }
+
+    /**
+     * @see ws.finson.audiosp.app.device.AbstractHardwareDevice#writeDeviceParameterValue(java.lang.String,
+     *      java.lang.Object)
+     */
+    @Override
+    public void writeDeviceParameterValue(String pname, Object pvalue) throws IOException {
+        throw new IOException("Cannot write parameter values to device " + getDeviceName());
     }
 
     /**
