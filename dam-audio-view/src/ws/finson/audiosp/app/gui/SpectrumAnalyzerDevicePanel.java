@@ -14,9 +14,8 @@ import javax.swing.SwingUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ws.finson.audiosp.app.HardwareDevice;
-import ws.finson.audiosp.app.SpectrumAnalyzerDevice;
-import ws.finson.audiosp.app.UpdateJLabel;
+import ws.finson.audiosp.app.device.HardwareDevice;
+import ws.finson.audiosp.app.device.SpectrumAnalyzerDevice;
 
 /**
  * This SpectrumAnalyzerDevicePanel

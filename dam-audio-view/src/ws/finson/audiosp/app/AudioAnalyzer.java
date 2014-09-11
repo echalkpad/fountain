@@ -9,6 +9,8 @@ import nu.xom.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ws.finson.audiosp.app.device.HardwareDevice;
+import ws.finson.audiosp.app.device.SpectrumAnalyzerDevice;
 import ws.tuxi.lib.cfg.AbstractComponent;
 import ws.tuxi.lib.cfg.Application;
 import ws.tuxi.lib.cfg.ConfigurationException;
@@ -79,8 +81,8 @@ public class AudioAnalyzer extends AbstractComponent {
         for (HardwareDevice d : devices) {
             Thread t = new Thread(d);
             t.setName("HardwareDevice-" + d.getDeviceClass() + "@" + Integer.toHexString(d.hashCode()));
-            t.start();
             logger.info("Starting {} driver attaching to device '{}' in thread {}.", d.getDeviceClass(), d.getDeviceName(),t.getName());
+            t.start();
         }
         // int passCount = 20;
         // long[] deltas = new long[passCount];

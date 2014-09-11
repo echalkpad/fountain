@@ -11,8 +11,7 @@ import javax.swing.SwingUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ws.finson.audiosp.app.HardwareDevice;
-import ws.finson.audiosp.app.UpdateJLabel;
+import ws.finson.audiosp.app.device.HardwareDevice;
 
 /**
  * This HardwareDevicePanel displays various bits of information about an arbitrary HardwareDevice.

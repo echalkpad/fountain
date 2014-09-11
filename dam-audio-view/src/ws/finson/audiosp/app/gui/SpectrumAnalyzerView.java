@@ -17,8 +17,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ws.finson.audiosp.app.AudioAnalyzer;
-import ws.finson.audiosp.app.HardwareDevice;
-import ws.finson.audiosp.app.SpectrumAnalyzerDevice;
+import ws.finson.audiosp.app.device.HardwareDevice;
+import ws.finson.audiosp.app.device.SpectrumAnalyzerDevice;
 import ws.tuxi.lib.cfg.ApplicationComponent;
 import ws.tuxi.lib.cfg.ConfigurationException;
 
