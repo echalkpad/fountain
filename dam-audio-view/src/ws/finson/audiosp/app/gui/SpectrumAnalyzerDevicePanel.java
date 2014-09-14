@@ -14,7 +14,7 @@ import javax.swing.SwingUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ws.finson.audiosp.app.device.HardwareDevice;
+import ws.finson.audiosp.app.device.DeviceParameter;
 import ws.finson.audiosp.app.device.SpectrumAnalyzerDevice;
 
 /**
@@ -42,7 +42,7 @@ public class SpectrumAnalyzerDevicePanel extends JPanel implements PropertyChang
 
         // What are the parameters for this device?
 
-        List<HardwareDevice.Parameter> params = sad.getParameterDescriptorList();
+        List<DeviceParameter> params = sad.getParameterDescriptorList();
 
         // Build a data table to display the parameters
 
@@ -51,7 +51,7 @@ public class SpectrumAnalyzerDevicePanel extends JPanel implements PropertyChang
         valueTable.setOpaque(false);
         ((GridLayout) (valueTable.getLayout())).setHgap(5);
 
-        for (HardwareDevice.Parameter p : params) {
+        for (DeviceParameter p : params) {
             JLabel nameLabel = new JLabel(p.getLabel());
             JLabel valueLabel = new JLabel("-----");
             nameLabel.setLabelFor(valueLabel);

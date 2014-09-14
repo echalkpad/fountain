@@ -9,14 +9,12 @@ import gnu.io.PortInUseException;
 import gnu.io.SerialPort;
 import gnu.io.UnsupportedCommOperationException;
 
-import java.beans.PropertyChangeEvent;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -25,14 +23,11 @@ import java.util.List;
 import nu.xom.Attribute;
 import nu.xom.Element;
 
-import org.apache.log4j.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ws.finson.audiosp.app.device.HardwareDevice.Parameter;
 import ws.tuxi.lib.cfg.ApplicationComponent;
 import ws.tuxi.lib.cfg.ConfigurationException;
-import ws.tuxi.lib.cfg.Throwables;
 
 /**
  * Provide a specific implementation of the SpectrumAnalyzerDevice interface to match a serial
@@ -109,36 +104,15 @@ public class SerialSpectrumAnalyzerDevice extends AbstractSpectrumAnalyzerDevice
             throw new ConfigurationException("The serial port '" + portName + "' is not found.");
         }
 
-    }
+        // Connect to the device
 
-    /**
-     * @see java.lang.Runnable#run()
-     */
-    @Override
-    public void run() {
-        logger.debug("Run method in {}", this.getClass().getSimpleName());
         try {
             thePort = (SerialPort) portID.open(this.getClass().getName(), 1000);
             thePort.setSerialPortParams(38400, 8, 1, SerialPort.PARITY_NONE);
             deviceReader = new BufferedReader(new InputStreamReader(thePort.getInputStream()));
             deviceWriter = new BufferedWriter(new OutputStreamWriter(thePort.getOutputStream()));
-
-            // Initialize the device and the cached parameter values
-
-            for (String s : deviceParameterMap.keySet()) {
-                logger.trace("Initializing parameter '{}'.", s);
-                if (deviceParameterValues.containsKey(s)) {
-                    writeDeviceParameterValue(s, deviceParameterValues.get(s));
-                } else {
-                    readDeviceParameterValue(s);
-                }
-                logger.trace("Parameter '{}' has value '{}'.", s, deviceParameterValues.get(s));
-            }
-
-            pcs.firePropertyChange(new PropertyChangeEvent(this, null, null, null));
-
         } catch (PortInUseException | UnsupportedCommOperationException | IOException e) {
-            Throwables.printThrowableChain(e, logger, Level.ERROR);
+            throw new ConfigurationException(e);
         }
     }
 
@@ -147,10 +121,13 @@ public class SerialSpectrumAnalyzerDevice extends AbstractSpectrumAnalyzerDevice
      * @see ws.finson.audiosp.app.device.AbstractHardwareDevice#readDeviceParameterValue(java.lang.String)
      */
     @Override
-    public Object readDeviceParameterValue(String pname) throws IOException {
+    protected Object readDeviceParameterValue(String pname) throws IOException {
         if (deviceParameterMap.containsKey(pname)) {
             deviceWriter.write("GET " + pname + ";");
             deviceWriter.flush();
+            while (!deviceReader.ready()) {
+            }
+
             String response = deviceReader.readLine();
             if (response == null) {
                 throw new EOFException(
@@ -158,7 +135,7 @@ public class SerialSpectrumAnalyzerDevice extends AbstractSpectrumAnalyzerDevice
                                 + thePort.getName() + ".");
             }
             try {
-                Parameter p = deviceParameterMap.get(pname);
+                DeviceParameter p = deviceParameterMap.get(pname);
                 deviceParameterValues.put(pname, p.getType().getConstructor(String.class)
                         .newInstance(response));
             } catch (SecurityException | IllegalArgumentException | NoSuchMethodException
@@ -174,7 +151,7 @@ public class SerialSpectrumAnalyzerDevice extends AbstractSpectrumAnalyzerDevice
      *      java.lang.Object)
      */
     @Override
-    public void writeDeviceParameterValue(String pname, Object pvalue) throws IOException {
+    protected void writeDeviceParameterValue(String pname, Object pvalue) throws IOException {
         throw new IOException("Cannot write parameter values to device " + getDeviceName());
     }
 

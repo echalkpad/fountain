@@ -22,12 +22,13 @@ import ws.tuxi.lib.cfg.ConfigurationException;
  */
 public abstract class AbstractSpectrumAnalyzerDevice extends AbstractHardwareDevice implements
         SpectrumAnalyzerDevice {
+    @SuppressWarnings("unused")
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private final Parameter[] ini = {
-            new Parameter("FFT_SIZE", "FFT Size", true, Integer.class),
-            new Parameter("SAMPLE_RATE_HZ", "Sample rate (Hz)", true, Integer.class),
-            new Parameter("AUDIO_CHANNEL_COUNT", "Channel Count", true, Integer.class) };
+    private final DeviceParameter[] ini = {
+            new DeviceParameter("FFT_SIZE", "FFT Size", true, Integer.class,true),
+            new DeviceParameter("SAMPLE_RATE_HZ", "Sample rate (Hz)", true, Integer.class,true),
+            new DeviceParameter("AUDIO_CHANNEL_COUNT", "Channel Count", true, Integer.class,true) };
 
     /**
      * Initialize the common fields of a SpectrumAnalyzerDevice using the attributes given in the
@@ -43,7 +44,7 @@ public abstract class AbstractSpectrumAnalyzerDevice extends AbstractHardwareDev
     public AbstractSpectrumAnalyzerDevice(ApplicationComponent ac, Element cE)
             throws ConfigurationException {
         super(ac, cE);
-        deviceClass = HardwareDevice.ClassID.SpectrumAnalyzer;
+        deviceClass = DeviceClassID.SpectrumAnalyzer;
         
         // Save the parameter descriptors
 
@@ -59,7 +60,7 @@ public abstract class AbstractSpectrumAnalyzerDevice extends AbstractHardwareDev
             if (deviceParameterMap.containsKey(a.getLocalName())) {
                 String s = a.getValue();
                 try {
-                    Parameter p = deviceParameterMap.get(a);
+                    DeviceParameter p = deviceParameterMap.get(a);
                     Constructor<?> c;
                     if (p.getWritable()) {
                         c = p.getType().getConstructor(String.class);

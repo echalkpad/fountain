@@ -25,14 +25,14 @@ public interface HardwareDevice extends Runnable {
      * 
      * @return class identifier
      */
-    ClassID getDeviceClass();
+    DeviceClassID getDeviceClass();
 
     /**
      * Get list of device parameter descriptors
      * 
      * @return List of descriptor objects for the parameters that are available for this device
      */
-    List<HardwareDevice.Parameter> getParameterDescriptorList();
+    List<DeviceParameter> getParameterDescriptorList();
 
     /**
      * Get a particular parameter value from the device driver.
@@ -48,10 +48,10 @@ public interface HardwareDevice extends Runnable {
      * Get a particular parameter value from the device driver.
      * 
      * @param p
-     *            the Parameter descriptor that identifies the parameter of interest
+     *            the DeviceParameter descriptor that identifies the parameter of interest
      * @return the value of the named parameter
      */
-    Object getParameterValue(HardwareDevice.Parameter p);
+    Object getParameterValue(DeviceParameter p);
 
     /**
      * Set a particular parameter value in the device driver and the device
@@ -68,12 +68,12 @@ public interface HardwareDevice extends Runnable {
      * Set a particular parameter value in the device driver and the device
      * 
      * @param p
-     *            the Parameter descriptor that identifies the parameter of interest
+     *            the DeviceParameter descriptor that identifies the parameter of interest
      * @param v
      *            the new value of the named parameter
      * @throws IOException 
      */
-    void setParameterValue(HardwareDevice.Parameter p, Object v) throws IOException;
+    void setParameterValue(DeviceParameter p, Object v) throws IOException;
 
     /**
      * Add a PropertyChangeListener to the listener list.
@@ -81,6 +81,12 @@ public interface HardwareDevice extends Runnable {
      * @param listener
      */
     void addPropertyChangeListener(PropertyChangeListener listener);
+    /**
+     * Add a PropertyChangeListener for a specific property.
+     * @param propertyName
+     * @param listener
+     */
+    void addPropertyChangeListener(String propertyName, PropertyChangeListener listener);
 
     /**
      * Remove a PropertyChangeListener from the listener list.
@@ -88,73 +94,13 @@ public interface HardwareDevice extends Runnable {
      * @param listener
      */
     void removePropertyChangeListener(PropertyChangeListener listener);
-
-    // ------------------------
-
-    class Parameter {
-        private String name;
-        private String label;
-        private Boolean writable;
-        private Class<?> type;
-
-        /**
-         * Store information about a particular device parameter.
-         * 
-         * @param name
-         *            String name of the parameter as recognized by the device firmware
-         * @param label
-         *            User friendlier String display label
-         * @param writable
-         *            true if the parameter can be set, false if read only
-         * @param type
-         *            the Java class of this parameter
-         */
-        public Parameter(String name, String label, Boolean writable, Class<?> type) {
-            this.name = name;
-            this.label = label;
-            this.writable = writable;
-            this.type = type;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getLabel() {
-            return label;
-        }
-
-        public Boolean getWritable() {
-            return writable;
-        }
-
-        public Class<?> getType() {
-            return type;
-        }
-
-    }
-
-    // ------------------------
-
-    /***
-     * Identify the top level hardware device classes for which drivers are expected to exist in the
-     * Interchangeable Virtual Instrument scheme of things. I'm using the same taxonomy just for
-     * general consistency, there is no plan or design that any of this work is IVI compatible.
-     * 
+    /**
+     * Remove a PropertyChangeListener for a specific property.
+     * @param propertyName
+     * @param listener
      */
-    enum ClassID {
-        GenericHardwareDevice,
-        DigitalMultiMeter,
-        Oscilloscope,
-        ArbitraryWaveformGenerator,
-        PowerSupply,
-        Switch,
-        PowerMeter,
-        SpectrumAnalyzer,
-        RFSignalGenerator
-    };
+    void removePropertyChangeListener(String propertyName, PropertyChangeListener listener);
 
-    // ------------------------
 
     /*
      * possible additions ...
@@ -176,9 +122,6 @@ public interface HardwareDevice extends Runnable {
      * 
      * getKeys("class.protocol")
      * 
-     * Class IVI Driver Digital multimeter (DMM) IviDmm Oscilloscope IviScope Arbitrary
-     * waveform/function generator IviFgen DC power supply IviDCPwr Switch IviSwitch Power meter
-     * IviPwrMeter Spectrum analyzer IviSpecAn RF signal generator IviRFSigGen
      */
 
 }
