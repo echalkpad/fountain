@@ -108,12 +108,16 @@ public class BuildAnalysisTree implements PipelineOperation<Document, Document> 
 
         Nodes scanNodes = scanSequenceElement.query("scan");
         logger.debug("scan count: {}", scanNodes.size());
-
-        // Prepare the (scan_count) x (key_count+1) Map matrix
-
-        Map<String, String[]> matrix = new HashMap<>(keySet.size() + 1);
-        matrix.put("timetag", new String[scanNodes.size()]);
         
+        // For the timetag data, create a 0-filled array
+
+        String[] timeValues = new String[scanNodes.size()];
+        Arrays.fill(timeValues, "0");
+
+        // Prepare the (scan_count) x (key_count) Map matrix
+
+        Map<String, String[]> matrix = new HashMap<>(keySet.size());
+
         // For each primary key value, put a 0-filled sensor value array in the Map
 
         Iterator<String> iter = keySet.iterator();
@@ -130,12 +134,8 @@ public class BuildAnalysisTree implements PipelineOperation<Document, Document> 
             // First, store the time tag of this scan
             
             Node timetagElement = (Element) scanNodes.get(scanIndex).query("timetag").get(0);
-            String timetag = timetagElement.getValue();
-
-            String[] valueArray = matrix.get("timetag");
-            valueArray[scanIndex] = timetag;
-
-            logger.trace("Time tag value: {}", valueArray[scanIndex]);
+            timeValues[scanIndex] = timetagElement.getValue();
+            logger.trace("Time tag value: {}", timeValues[scanIndex]);
             
             // Next, store data values from the scan into the sensor arrays in the Map 
 
@@ -150,24 +150,35 @@ public class BuildAnalysisTree implements PipelineOperation<Document, Document> 
             for (int sensorIndex = 0; sensorIndex < parameterValueNodes.size(); sensorIndex++) {
                 logger.trace("{} {} {}", sensorIndex, keyValueNodes.get(sensorIndex).getValue(),
                         parameterValueNodes.get(sensorIndex).getValue());
-                valueArray = matrix.get(keyValueNodes.get(sensorIndex).getValue());
+                String[] valueArray = matrix.get(keyValueNodes.get(sensorIndex).getValue());
                 valueArray[scanIndex] = parameterValueNodes.get(sensorIndex).getValue();
             }
         }
 
-        // write the sensor arrays from the map to the analysis XML tree
+        // write the timetag array to the analysis tree
 
         Element sensorSequenceElement = new Element("sensor-sequence");
 
-        Element f;
+        Element f = new Element("column");
+        Attribute m = new Attribute("label","timetag");
+        f.addAttribute(m);
+        for (int scanIndex=0; scanIndex < timeValues.length; scanIndex++) {
+            Element ve = new Element("value");
+            ve.appendChild(timeValues[scanIndex]);
+            f.appendChild(ve);
+        }
+        sensorSequenceElement.appendChild(f);
+
+        // write the parameter arrays from the map to the analysis tree
+        
         for (String key : matrix.keySet()) {
-            String[] values = matrix.get(key);
             f = new Element("column");
-            Attribute m = new Attribute("label", key.replace(':', '-'));
+            m = new Attribute("label", key.replace(':', '-'));
             f.addAttribute(m);
-            for (int vidx = 0; vidx < values.length; vidx++) {
+            String[] parameterValues = matrix.get(key);
+            for (int scanIndex = 0; scanIndex < parameterValues.length; scanIndex++) {
                 Element ve = new Element("value");
-                ve.appendChild(values[vidx]);
+                ve.appendChild(parameterValues[scanIndex]);
                 f.appendChild(ve);
             }
             sensorSequenceElement.appendChild(f);
