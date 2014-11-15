@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config id="ReadRawWiFi" title="Process Raw Wifi Data" >
+	<application>
+		<component type="ws.tuxi.lib.pipeline.ACPipelineEngine" classpath="ws.tuxi.lib.pipeline;ws.finson.wifix.app">
+			<source type="GetXMLFromDAP">
+				<file>data-file-1415406529.txt</file>
+			</source>
+            <step type="SendXMLToSink">
+				<file>capture-file-1415406529.xml</file>
+			</step>
+			<step type="BuildAnalysisTree">
+				<primary-key>BSSID</primary-key>
+				<parameter>RSSI</parameter>				
+			</step>
+            <step type="SendXMLToSink">
+				<file>analysis-file-1415406529.xml</file>
+			</step>
+			<step type="WriteCSVFromColumnarXML">
+				<file>analysis-file-1415406529.csv</file>
+			</step>
+		</component>
+	</application>
+</config>
