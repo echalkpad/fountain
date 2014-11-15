@@ -23,7 +23,7 @@ public class WiFiRecord extends AbstractRecord {
             .compile("^\\s*(\\w+)\\s+(\\w+)\\s+(\\w+)\\s+(\\w+)\\s+(\\w+)\\s+(\\w+)\\s+(\\w+).*$");
 
     private final Pattern valueLinePattern = Pattern
-            .compile("^(.{32})\\s*(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+).*$");
+            .compile("^(.{32})\\s*(\\S+)\\s+(\\S+)\\s+([^\\s,]+)(?:,\\S+)?\\s+(\\S+)\\s+(\\S+)\\s+(\\S+).*$");
 
     /**
      * @throws PipelineSourceException
