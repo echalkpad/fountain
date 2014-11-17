@@ -69,45 +69,30 @@ public class WriteCSVFromColumnarXML implements PipelineOperation<Document, Docu
     }
 
     /**
-     * @see ws.tuxi.lib.pipeline.PipelineOperation#doStep(java.lang.Object)
-     */
-    // @Override
-    // public Document doStep(Document tree)
-    // throws PipelineOperationException {
-    //
-    // sinkWriter.println(tree.toXML());
-    // sinkWriter.close();
-    // return tree;
-    // }
-    //
-    // }
-    // }
-
-    /**
-     * This code copies any "column" Elements out of the XML file and writes them to a CSV file. The
-     * column header is the column's "label" attribute. The column contents are the values of each
-     * column child element.
+     * This code copies any "values" Elements out of the XML file and writes them to a CSV file. The
+     * column header is the values' Element "label" attribute. The column contents are the values of each
+     * values child element.
      * 
      * @see ws.tuxi.lib.pipeline.PipelineOperation#doStep(java.lang.Object)
      */
     @Override
     public Document doStep(Document in) throws PipelineOperationException {
 
-        // Get all the columns
+        // Get all the values branches
 
-        Nodes columns = in.getRootElement().query("*//column");
-        if (columns.size() == 0) {
-            throw new PipelineOperationException("No 'column' elements found.");
+        Nodes valuesBranches = in.getRootElement().query("*//sensor-values");
+        if (valuesBranches.size() == 0) {
+            throw new PipelineOperationException("No 'sensor-values' elements found.");
         }
 
-        // Check that the columns all have labels and have the same number of children
+        // Check that the values elements all have labels and have the same number of children
 
         Integer rowCount = null;
-        for (int idx = 0; idx < columns.size(); idx++) {
-            Element col = (Element) columns.get(idx);
+        for (int idx = 0; idx < valuesBranches.size(); idx++) {
+            Element col = (Element) valuesBranches.get(idx);
             Attribute labelAttribute = col.getAttribute("label");
             if (labelAttribute == null) {
-                throw new PipelineOperationException("Column " + Integer.toString(idx)
+                throw new PipelineOperationException("Values Element " + Integer.toString(idx)
                         + " has no label attribute.");
             }
             int count = col.getChildCount();
@@ -115,19 +100,19 @@ public class WriteCSVFromColumnarXML implements PipelineOperation<Document, Docu
                 rowCount = count;
             } else {
                 if (count != rowCount) {
-                    throw new PipelineOperationException("Column " + Integer.toString(idx)
-                            + " is not the same length as the first column.");
+                    throw new PipelineOperationException("Values collection " + Integer.toString(idx)
+                            + " is not the same length as the first collection.");
                 }
             }
         }
 
-        logger.debug("Col x Row : {} x {}", columns.size(), rowCount);
+        logger.debug("Col x Row : {} x {}", valuesBranches.size(), rowCount);
 
         // Write the CSV file header rows
 
         StringBuilder buf = new StringBuilder();
-        for (int idx = 0; idx < columns.size(); idx++) {
-            Element col = (Element) columns.get(idx);
+        for (int idx = 0; idx < valuesBranches.size(); idx++) {
+            Element col = (Element) valuesBranches.get(idx);
             Attribute labelAttribute = col.getAttribute("label");
             buf.append(labelAttribute.getValue() + ", ");
             logger.trace(labelAttribute.getValue());
@@ -140,8 +125,8 @@ public class WriteCSVFromColumnarXML implements PipelineOperation<Document, Docu
         buf = new StringBuilder();
         for (int rowIndex = 0; rowIndex < rowCount; rowIndex++) {
             buf.setLength(0);
-            for (int colIndex = 0; colIndex < columns.size(); colIndex++) {
-                Element col = (Element) columns.get(colIndex);
+            for (int colIndex = 0; colIndex < valuesBranches.size(); colIndex++) {
+                Element col = (Element) valuesBranches.get(colIndex);
                 Element val = (Element) col.getChild(rowIndex);
                 buf.append(val.getValue() + ", ");
             }

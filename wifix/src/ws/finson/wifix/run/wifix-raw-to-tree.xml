@@ -2,17 +2,17 @@
 <config id="ReadRawWiFi" title="Process Raw Wifi Data" >
 	<application>
 		<component type="ws.tuxi.lib.pipeline.ACPipelineEngine" classpath="ws.tuxi.lib.pipeline;ws.finson.wifix.app">
-			<source type="GetXMLFromDAP">
+			<source type="ImportCaptureScans">
 				<file id="in">data-file-1415406529.txt</file>
 			</source>
             <step type="SendXMLToSink">
 				<file>capture-file-1415406529.xml</file>
 			</step>
-			<step type="BuildAnalysisTree">
+			<step type="BuildSensorBranch">
 				<primary-key>BSSID</primary-key>
 				<parameter id="param">RSSI</parameter>				
 			</step>
-            <step type="SendXMLToSink">
+            <step type="SendXMLDocumentToSink">
 				<file>analysis-file-1415406529.xml</file>
 			</step>
 			<step type="WriteCSVFromColumnarXML">
