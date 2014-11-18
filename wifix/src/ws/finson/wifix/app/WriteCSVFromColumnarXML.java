@@ -10,6 +10,7 @@ import nu.xom.Attribute;
 import nu.xom.Document;
 import nu.xom.Element;
 import nu.xom.Elements;
+import nu.xom.Node;
 import nu.xom.Nodes;
 
 import org.slf4j.Logger;
@@ -30,7 +31,7 @@ public class WriteCSVFromColumnarXML implements PipelineOperation<Document, Docu
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private String sinkName = null;
-    private PrintWriter sinkWriter = null;
+    private String sinkNameRoot = null;
 
     /**
      * @param ac
@@ -55,8 +56,6 @@ public class WriteCSVFromColumnarXML implements PipelineOperation<Document, Docu
                             sectionElement.getLocalName());
                 } else {
                     sinkName = sectionElement.getValue();
-                    sinkWriter = new PrintWriter(Files.newBufferedWriter(FileSystems.getDefault()
-                            .getPath(".", sinkName), Charset.defaultCharset()));
                 }
             } else {
                 logger.warn("Skipping <{}> element. Element not recognized.",
@@ -70,73 +69,68 @@ public class WriteCSVFromColumnarXML implements PipelineOperation<Document, Docu
 
     /**
      * This code copies any "values" Elements out of the XML file and writes them to a CSV file. The
-     * column header is the values' Element "label" attribute. The column contents are the values of each
-     * values child element.
+     * column header is the values' Element "label" attribute. The column contents are the values of
+     * each values child element.
      * 
      * @see ws.tuxi.lib.pipeline.PipelineOperation#doStep(java.lang.Object)
      */
     @Override
     public Document doStep(Document in) throws PipelineOperationException {
 
-        // Get all the values branches
+        // Get all the sensor parameter nodes
 
-        Nodes valuesBranches = in.getRootElement().query("*//sensor-values");
-        if (valuesBranches.size() == 0) {
-            throw new PipelineOperationException("No 'sensor-values' elements found.");
-        }
+        Nodes parameterBranches = in.getRootElement().query("sensor-sequence/sensor");
+        logger.debug("Sensor parameter count: {}", parameterBranches.size());
 
-        // Check that the values elements all have labels and have the same number of children
+        // Create a separate CSV file for each sensor parameter
 
-        Integer rowCount = null;
-        for (int idx = 0; idx < valuesBranches.size(); idx++) {
-            Element col = (Element) valuesBranches.get(idx);
-            Attribute labelAttribute = col.getAttribute("label");
-            if (labelAttribute == null) {
-                throw new PipelineOperationException("Values Element " + Integer.toString(idx)
-                        + " has no label attribute.");
+        for (int parameterIndex = 0; parameterIndex < parameterBranches.size(); parameterIndex++) {
+
+            String parameterName = ((Element) parameterBranches.get(parameterIndex))
+                    .getAttributeValue("label");
+
+            PrintWriter sinkWriter;
+            try {
+                sinkWriter = new PrintWriter(Files.newBufferedWriter(FileSystems.getDefault()
+                        .getPath(".", sinkName + "-" + parameterName + ".csv"), Charset
+                        .defaultCharset()));
+            } catch (IOException e) {
+                throw new PipelineOperationException(e);
             }
-            int count = col.getChildCount();
-            if (rowCount == null) {
-                rowCount = count;
-            } else {
-                if (count != rowCount) {
-                    throw new PipelineOperationException("Values collection " + Integer.toString(idx)
-                            + " is not the same length as the first collection.");
-                }
+
+            // Get the timetag-values and sensor-values nodes for this sensor parameter
+
+            Node timetagValuesNode = parameterBranches.get(parameterIndex).query("timetag-values")
+                    .get(0);
+            int rowCount = timetagValuesNode.getChildCount();
+            Nodes sensorValuesNodes = parameterBranches.get(parameterIndex).query("sensor-values");
+
+            // Write the CSV file header row
+
+            StringBuilder buf = new StringBuilder("timetag");
+            for (int idx = 0; idx < sensorValuesNodes.size(); idx++) {
+                Element col = (Element) sensorValuesNodes.get(idx);
+                Attribute labelAttribute = col.getAttribute("label");
+                buf.append(", " + labelAttribute.getValue());
             }
-        }
-
-        logger.debug("Col x Row : {} x {}", valuesBranches.size(), rowCount);
-
-        // Write the CSV file header rows
-
-        StringBuilder buf = new StringBuilder();
-        for (int idx = 0; idx < valuesBranches.size(); idx++) {
-            Element col = (Element) valuesBranches.get(idx);
-            Attribute labelAttribute = col.getAttribute("label");
-            buf.append(labelAttribute.getValue() + ", ");
-            logger.trace(labelAttribute.getValue());
-        }
-        buf.setLength(buf.length() - 2);
-        sinkWriter.println(buf.toString());
-
-        // Write the CSV file value rows
-
-        buf = new StringBuilder();
-        for (int rowIndex = 0; rowIndex < rowCount; rowIndex++) {
-            buf.setLength(0);
-            for (int colIndex = 0; colIndex < valuesBranches.size(); colIndex++) {
-                Element col = (Element) valuesBranches.get(colIndex);
-                Element val = (Element) col.getChild(rowIndex);
-                buf.append(val.getValue() + ", ");
-            }
-            buf.setLength(buf.length() - 2);
             sinkWriter.println(buf.toString());
+            logger.trace(buf.toString());
+
+            // Write the CSV file value rows
+
+            for (int rowIndex = 0; rowIndex < rowCount; rowIndex++) {
+                buf = new StringBuilder(timetagValuesNode.getChild(rowIndex).getValue());
+                for (int colIndex = 0; colIndex < sensorValuesNodes.size(); colIndex++) {
+                    Element col = (Element) sensorValuesNodes.get(colIndex);
+                    Element val = (Element) col.getChild(rowIndex);
+                    buf.append(", " + val.getValue());
+                }
+                sinkWriter.println(buf.toString());
+            }
+
+            sinkWriter.close();
         }
-
-        sinkWriter.close();
-        
         return in;
-    }
 
+    }
 }

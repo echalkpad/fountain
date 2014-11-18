@@ -93,7 +93,7 @@ public class ImportCaptureScans implements PipelineSource<Document> {
                     scans.add(maker.newInstance(sourceReader));
                 } else {
                     throw new PipelineSourceException(
-                            "Unrecognized input line.  Expecting start of scan '+++ Scan'");
+                            "Unrecognized input line.  Expecting start of scan '+++ Scan': "+line);
                 }
             }
         } catch (IOException | IllegalArgumentException | ReflectiveOperationException
@@ -124,7 +124,7 @@ public class ImportCaptureScans implements PipelineSource<Document> {
             Map<String, List<String>> table = currentScan
                     .getValues(new String[] {"SSID", "BSSID", "RSSI","CHANNEL", "CC" });
             if (table != null) {
-                logger.debug("Data table fields: {}",table.keySet().toString());
+                logger.trace("Data table fields: {}",table.keySet().toString());
                 for (String key : table.keySet()) {
                     scanValuesElement = new Element("scan-values");
                     scanValuesElement.addAttribute(new Attribute("field",key));

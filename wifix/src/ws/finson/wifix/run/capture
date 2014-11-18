@@ -1,0 +1,35 @@
+#!/bin/bash
+# capture 1 or more data scans
+
+scan() {
+echo "+++ Scan" >> data-file.txt
+echo "+++ Date" >> data-file.txt
+date >> data-file.txt
+date +%s >> data-file.txt
+echo "---" >> data-file.txt
+echo "+++ WiFi" >> data-file.txt
+airport -s >> data-file.txt
+echo "---" >> data-file.txt
+echo "---" >> data-file.txt
+}
+
+rm -f data-file.txt
+
+if [ -z "$1" ]                           # Is parameter #1 zero length?
+then
+  scan_count=1
+else
+  scan_count=$1
+fi
+echo "Scan count: ${scan_count}"
+
+for idx in $(seq ${scan_count})
+do
+echo "+++ $idx of ${scan_count}"
+scan
+done
+
+echo "Done."
+archive_name="data-file-$(date +%s).txt"
+mv data-file.txt ${archive_name}
+echo "Data stored in ${archive_name}"

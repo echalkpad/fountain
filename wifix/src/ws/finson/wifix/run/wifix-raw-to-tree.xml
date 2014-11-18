@@ -3,20 +3,22 @@
 	<application>
 		<component type="ws.tuxi.lib.pipeline.ACPipelineEngine" classpath="ws.tuxi.lib.pipeline;ws.finson.wifix.app">
 			<source type="ImportCaptureScans">
-				<file id="in">data-file-1415406529.txt</file>
+				<file id="in">data-file-1416275870.txt</file>
 			</source>
             <step type="SendXMLToSink">
-				<file>capture-file-1415406529.xml</file>
+				<file>capture-file-1416275870.xml</file>
 			</step>
 			<step type="BuildSensorBranch">
 				<primary-key>BSSID</primary-key>
-				<parameter id="param">RSSI</parameter>				
+				<parameter>RSSI</parameter>
+				<parameter>CHANNEL</parameter>	
+				<parameter>SSID</parameter>
 			</step>
             <step type="SendXMLDocumentToSink">
-				<file>analysis-file-1415406529.xml</file>
+				<file>analysis-file-1416275870.xml</file>
 			</step>
 			<step type="WriteCSVFromColumnarXML">
-				<file>analysis-file-1415406529.csv</file>
+				<file>processed-file-1416275870</file>
 			</step>
 		</component>
 	</application>

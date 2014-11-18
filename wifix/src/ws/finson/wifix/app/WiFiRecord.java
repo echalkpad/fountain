@@ -25,6 +25,8 @@ public class WiFiRecord extends AbstractRecord {
     private final Pattern valueLinePattern = Pattern
             .compile("^(.{32})\\s*(\\S+)\\s+(\\S+)\\s+([^\\s,]+)(?:,\\S+)?\\s+(\\S+)\\s+(\\S+)\\s+(\\S+).*$");
 
+    private final Pattern blankLinePattern = Pattern.compile("^\\s*$");
+
     /**
      * @throws PipelineSourceException
      * 
@@ -39,6 +41,7 @@ public class WiFiRecord extends AbstractRecord {
         }
 
         // First line is (probably) the column labels.
+        // but it might be data if they left the label line out for some reason!
 
         Matcher m = firstLinePattern.matcher(line);
         if (!m.matches()) {
@@ -46,7 +49,10 @@ public class WiFiRecord extends AbstractRecord {
                 skipRemainderOfCurrentRecord(src);
                 return;
             } else {
-                throw new PipelineSourceException("Unexpected line format: " + line);
+                logger.error("Unexpected first line format: {}" + line);
+                logger.error("This whole record will be skipped.");
+                skipRemainderOfCurrentRecord(src);
+                return;
             }
         }
 
@@ -56,23 +62,33 @@ public class WiFiRecord extends AbstractRecord {
         }
         recordValues.add(row);
 
-        // Following lines are the actual data values
+        // the following lines are (mostly) actual data values
 
-        line = getNextLineOfCurrentRecord(src);
-        while (!isEndOfRecordIndicator(line)) {
+        do {
+            line = getNextLineOfCurrentRecord(src);
             logger.trace(line);
+            if (isEndOfRecordIndicator(line)) {
+                break;
+            }
+            if (blankLinePattern.matcher(line).matches()) {
+                continue;
+            }
             m = valueLinePattern.matcher(line);
             if (!m.matches()) {
-                throw new PipelineSourceException("Unexpected line format: " + line);
+                logger.error("Unexpected WiFi value line format: {}" + line);
+                logger.error("The rest of this record will be skipped.");
+                skipRemainderOfCurrentRecord(src);
+                return;
             }
             row = new String[6];
             for (int idx = 0; idx < row.length; idx++) {
                 row[idx] = m.group(idx + 1).trim();
             }
             recordValues.add(row);
-            line = getNextLineOfCurrentRecord(src);
-        }
+        } while (true);
+        
         logger.debug("{} values for each field in this record.", recordValues.size() - 1);
+        
         return;
     }
 }
