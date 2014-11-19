@@ -49,8 +49,8 @@ public class WiFiRecord extends AbstractRecord {
                 skipRemainderOfCurrentRecord(src);
                 return;
             } else {
-                logger.error("Unexpected first line format: {}" + line);
-                logger.error("This whole record will be skipped.");
+                logger.warn("Unexpected first line format: " + line);
+                logger.warn("This whole record will be skipped.");
                 skipRemainderOfCurrentRecord(src);
                 return;
             }
@@ -75,8 +75,8 @@ public class WiFiRecord extends AbstractRecord {
             }
             m = valueLinePattern.matcher(line);
             if (!m.matches()) {
-                logger.error("Unexpected WiFi value line format: {}" + line);
-                logger.error("The rest of this record will be skipped.");
+                logger.warn("Unexpected WiFi value line format: " + line);
+                logger.warn("The rest of this record will be skipped.");
                 skipRemainderOfCurrentRecord(src);
                 return;
             }

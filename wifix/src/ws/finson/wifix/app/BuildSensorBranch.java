@@ -37,7 +37,7 @@ public class BuildSensorBranch implements PipelineOperation<Document, Document> 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private String primaryKeyName = null;
-    private final List<String> parameterNames = new ArrayList<>();
+    private final List<String> sensorNames = new ArrayList<>();
 
     /**
      * @param ac
@@ -63,8 +63,8 @@ public class BuildSensorBranch implements PipelineOperation<Document, Document> 
                 } else {
                     primaryKeyName = sectionElement.getValue();
                 }
-            } else if ("parameter".equals(sectionElement.getLocalName())) {
-                parameterNames.add(sectionElement.getValue());
+            } else if ("sensor".equals(sectionElement.getLocalName())) {
+                sensorNames.add(sectionElement.getValue());
             } else {
                 logger.warn("Skipping <{}> element. Element not recognized.",
                         sectionElement.getLocalName());
@@ -73,8 +73,8 @@ public class BuildSensorBranch implements PipelineOperation<Document, Document> 
         if (primaryKeyName == null) {
             throw new ConfigurationException("Name of the primary (unique) key must be specified.");
         }
-        if (parameterNames.size() == 0) {
-            throw new ConfigurationException("Name of at least one parameter must be specified.");
+        if (sensorNames.size() == 0) {
+            throw new ConfigurationException("Name of at least one sensor must be specified.");
         }
     }
 
@@ -107,17 +107,39 @@ public class BuildSensorBranch implements PipelineOperation<Document, Document> 
         Nodes scanNodes = scanSequenceElement.query("scan");
         logger.debug("scan count: {}", scanNodes.size());
 
-        // Repeat the following steps for each requested parameter
+        // For the timetag data, create a String value array and fill it in
+
+        String[] timeValues = new String[scanNodes.size()];
+        for (int idx = 0; idx < scanNodes.size(); idx++) {
+            Nodes timeValueNodes = scanNodes.get(idx).query("scan-values[@field='timetag']/value");
+            if ((timeValueNodes.size() != 1)) {
+                String ordinal = ((Element)(scanNodes.get(idx))).getAttributeValue("ordinal");
+                if (ordinal == null) {
+                    ordinal = "??";
+                }
+                throw new PipelineOperationException("Unexpected XML structure in scan "+ordinal+".  One and only one timetag value element allowed.");
+            } else {
+                timeValues[idx] = timeValueNodes.get(0).getValue();
+            }
+        }
+        
+        // write the timetag-values element to the sensor-sequence branch
+
+        Element f = new Element("timetag-values");
+        for (int scanIndex = 0; scanIndex < timeValues.length; scanIndex++) {
+            Element ve = new Element("value");
+            ve.appendChild(timeValues[scanIndex]);
+            f.appendChild(ve);
+        }
+        
+        Element sensorSequenceElement = new Element("sensor-sequence");
+        sensorSequenceElement.appendChild(f);
+
+        // Repeat the following steps for each requested sensor
 
         // 2. Prepare the empty data structures to receive the collated data
 
-        Element sensorSequenceElement = new Element("sensor-sequence");
-        for (String parameterName : parameterNames) {
-
-            // For the timetag data, create a 0-filled array
-
-            String[] timeValues = new String[scanNodes.size()];
-            Arrays.fill(timeValues, "0");
+        for (String sensorName : sensorNames) {
 
             // Prepare the (scan_count) x (key_count) Map matrix
 
@@ -137,65 +159,44 @@ public class BuildSensorBranch implements PipelineOperation<Document, Document> 
 
             for (int scanIndex = 0; scanIndex < scanNodes.size(); scanIndex++) {
 
-                // First, store the time tag of this scan
-
-                Nodes timetagFieldValueElements = scanNodes.get(scanIndex).query(
-                        "scan-values[@field='timetag']/value");
-                logger.trace("timetag query result size: {}", timetagFieldValueElements.size());
-
-                Node timetagElement = (Element) scanNodes.get(scanIndex)
-                        .query("scan-values[@field='timetag']/value").get(0);
-                timeValues[scanIndex] = timetagElement.getValue();
-                logger.trace("Time tag value: {}", timeValues[scanIndex]);
-
-                // Next, store data values from the scan into the sensor arrays in the Map
+                // Store data values from the scan into the sensor arrays in the Map
 
                 Nodes keyValueNodes = scanNodes.get(scanIndex).query(
                         "scan-values[@field='" + primaryKeyName + "']/value");
-                Nodes parameterValueNodes = scanNodes.get(scanIndex).query(
-                        "scan-values[@field='" + parameterName + "']/value");
+                Nodes sensorValueNodes = scanNodes.get(scanIndex).query(
+                        "scan-values[@field='" + sensorName + "']/value");
 
                 logger.trace("primary key count: {}", keyValueNodes.size());
-                logger.trace("parameter '{}' value count: {}", parameterName,
-                        parameterValueNodes.size());
+                logger.trace("sensor '{}' value count: {}", sensorName,
+                        sensorValueNodes.size());
 
-                assert (keyValueNodes.size() == parameterValueNodes.size()) : "key count and value count must be equal.";
+                assert (keyValueNodes.size() == sensorValueNodes.size()) : "key count and value count must be equal.";
 
-                for (int sensorIndex = 0; sensorIndex < parameterValueNodes.size(); sensorIndex++) {
+                for (int sensorIndex = 0; sensorIndex < sensorValueNodes.size(); sensorIndex++) {
                     logger.trace("{} {} {}", sensorIndex,
                             keyValueNodes.get(sensorIndex).getValue(),
-                            parameterValueNodes.get(sensorIndex).getValue());
+                            sensorValueNodes.get(sensorIndex).getValue());
                     String[] valueArray = matrix.get(keyValueNodes.get(sensorIndex).getValue());
-                    valueArray[scanIndex] = parameterValueNodes.get(sensorIndex).getValue();
+                    valueArray[scanIndex] = sensorValueNodes.get(sensorIndex).getValue();
                 }
             }
 
             // 4. Model the new data structures in an XML tree branch.
 
-            // write the timetag array to the sensor branch
+            // write the sensor arrays from the map to the sensor branch
 
             Element sensorElement = new Element("sensor");
-            Attribute m = new Attribute("label", parameterName);
+            Attribute m = new Attribute("label", sensorName);
             sensorElement.addAttribute(m);
-
-            Element f = new Element("timetag-values");
-            for (int scanIndex = 0; scanIndex < timeValues.length; scanIndex++) {
-                Element ve = new Element("value");
-                ve.appendChild(timeValues[scanIndex]);
-                f.appendChild(ve);
-            }
-            sensorElement.appendChild(f);
-
-            // write the parameter arrays from the map to the sensor branch
 
             for (String key : matrix.keySet()) {
                 f = new Element("sensor-values");
                 m = new Attribute("label", key.replace(':', '-'));
                 f.addAttribute(m);
-                String[] parameterValues = matrix.get(key);
-                for (int scanIndex = 0; scanIndex < parameterValues.length; scanIndex++) {
+                String[] sensorValues = matrix.get(key);
+                for (int scanIndex = 0; scanIndex < sensorValues.length; scanIndex++) {
                     Element ve = new Element("value");
-                    ve.appendChild(parameterValues[scanIndex]);
+                    ve.appendChild(sensorValues[scanIndex]);
                     f.appendChild(ve);
                 }
                 sensorElement.appendChild(f);

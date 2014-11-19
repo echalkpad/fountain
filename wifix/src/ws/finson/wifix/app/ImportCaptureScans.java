@@ -146,7 +146,7 @@ public class ImportCaptureScans implements PipelineSource<Document> {
         Element contextBranch = new Element("context");
         contextBranch.appendChild(sourceElement);
 
-        Element root = new Element("capture");
+        Element root = new Element("session");
         root.appendChild(contextBranch);
         root.appendChild(scanBranch);
 
