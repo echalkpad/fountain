@@ -10,24 +10,25 @@
 				<file>post/capture-file-1416332067.xml</file>
 			</step>
 			<step type="BuildSensorBranch">
-				<primary-key>BSSID</primary-key>
+				<key>BSSID</key>
 				<sensor>RSSI</sensor>
 				<sensor>CHANNEL</sensor>
 				<sensor>SSID</sensor>
 			</step>
 			<step type="SendXMLDocumentToSink">
-				<file>post/analysis-file-1416332067.xml</file>
+				<file>post/sensor-file-1416332067.xml</file>
 			</step>
-			<step type="BuildParameterBranch">
-				<parameter>RSSI</parameter>
-				<parameter>Count(RSSI)</parameter>
-				<parameter>Time</parameter>
-				<parameter>DeltaTime</parameter>
-				<parameter>Max(RSSI)</parameter>
-				<parameter>Count(CHANNEL)</parameter>
+			<step type="BuildParameters">
+				<parameter name="max-channel-strength">
+					<expression>Max(RSSI)</expression>
+					<key>CHANNEL</key>
+				</parameter>
+			</step>
+			<step type="SendXMLDocumentToSink">
+				<file>post/parameter-file-1416332067.xml</file>
 			</step>
 			<step type="WriteCSVFromColumnarXML">
-				<file>post/processed-file-1416332067</file>
+				<file>post/spreadsheet-file-1416332067</file>
 			</step>
 		</component>
 	</application>

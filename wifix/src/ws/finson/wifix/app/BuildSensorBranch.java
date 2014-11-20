@@ -14,7 +14,6 @@ import nu.xom.Attribute;
 import nu.xom.Document;
 import nu.xom.Element;
 import nu.xom.Elements;
-import nu.xom.Node;
 import nu.xom.Nodes;
 
 import org.slf4j.Logger;
@@ -56,7 +55,7 @@ public class BuildSensorBranch implements PipelineOperation<Document, Document> 
         for (int idx = 0; idx < sectionElements.size(); idx++) {
             Element sectionElement = sectionElements.get(idx);
             logger.debug("Begin section element <{}>", sectionElement.getLocalName());
-            if ("primary-key".equals(sectionElement.getLocalName())) {
+            if ("key".equals(sectionElement.getLocalName())) {
                 if (primaryKeyName != null) {
                     logger.warn("Ignoring extra <{}> definition, only one is allowed.",
                             sectionElement.getLocalName());
@@ -123,17 +122,20 @@ public class BuildSensorBranch implements PipelineOperation<Document, Document> 
             }
         }
         
-        // write the timetag-values element to the sensor-sequence branch
+        // create and attach the sensor twig for timetag
+        
+        Element sensorSequenceElement = new Element("sensor-sequence");
+        Element sensorElement = new Element("sensor");
+        sensorElement.addAttribute(new Attribute("name", "timetag"));
+        sensorSequenceElement.appendChild(sensorElement);
 
-        Element f = new Element("timetag-values");
+        Element valueContainer = new Element("sensor-values");
         for (int scanIndex = 0; scanIndex < timeValues.length; scanIndex++) {
             Element ve = new Element("value");
             ve.appendChild(timeValues[scanIndex]);
-            f.appendChild(ve);
-        }
-        
-        Element sensorSequenceElement = new Element("sensor-sequence");
-        sensorSequenceElement.appendChild(f);
+            valueContainer.appendChild(ve);
+        } 
+        sensorElement.appendChild(valueContainer);
 
         // Repeat the following steps for each requested sensor
 
@@ -185,21 +187,19 @@ public class BuildSensorBranch implements PipelineOperation<Document, Document> 
 
             // write the sensor arrays from the map to the sensor branch
 
-            Element sensorElement = new Element("sensor");
-            Attribute m = new Attribute("label", sensorName);
-            sensorElement.addAttribute(m);
+            sensorElement = new Element("sensor");
+            sensorElement.addAttribute(new Attribute("name", sensorName));
 
             for (String key : matrix.keySet()) {
-                f = new Element("sensor-values");
-                m = new Attribute("label", key.replace(':', '-'));
-                f.addAttribute(m);
+                valueContainer = new Element("sensor-values");
+                valueContainer.addAttribute(new Attribute("key", key.replace(':', '-')));
                 String[] sensorValues = matrix.get(key);
                 for (int scanIndex = 0; scanIndex < sensorValues.length; scanIndex++) {
                     Element ve = new Element("value");
                     ve.appendChild(sensorValues[scanIndex]);
-                    f.appendChild(ve);
+                    valueContainer.appendChild(ve);
                 }
-                sensorElement.appendChild(f);
+                sensorElement.appendChild(valueContainer);
             }
 
             // attach the new sensor twig to the sensor-sequence branch
