@@ -19,10 +19,11 @@
 				<file>post/sensor-file-1416332067.xml</file>
 			</step>
 			<step type="BuildParameters">
-				<parameter name="max-channel-strength">
+				<parameter name="RSSI">
 					<expression>Max(RSSI)</expression>
-					<key>CHANNEL</key>
+					<by>CHANNEL</by>
 				</parameter>
+				<parameter name="CHANNEL"/>
 			</step>
 			<step type="SendXMLDocumentToSink">
 				<file>post/parameter-file-1416332067.xml</file>

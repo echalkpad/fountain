@@ -77,41 +77,54 @@ public class WriteCSVFromColumnarXML implements PipelineOperation<Document, Docu
     @Override
     public Document doStep(Document in) throws PipelineOperationException {
 
-        // Get all the sensor parameter nodes
+        Element sensorSequenceElement = in.getRootElement().getFirstChildElement("sensor-sequence");
 
-        Nodes parameterBranches = in.getRootElement().query("sensor-sequence/sensor");
-        logger.debug("Sensor parameter count: {}", parameterBranches.size());
+        // Get the timetag-values nodes for this sensor sequence
 
-        // Create a separate CSV file for each sensor parameter
+        Node timetagValuesNode = sensorSequenceElement.query(
+                "sensor[@name='timetag']/sensor-values").get(0);
+        int rowCount = timetagValuesNode.getChildCount();
 
-        for (int parameterIndex = 0; parameterIndex < parameterBranches.size(); parameterIndex++) {
+        // Get the sensor and parameter nodes in the sensor-sequence
 
-            String parameterName = ((Element) parameterBranches.get(parameterIndex))
-                    .getAttributeValue("label");
+        Nodes sensorBranches = sensorSequenceElement.query("sensor | parameter");
+        logger.debug("Sensor and parameter count: {}", sensorBranches.size());
+
+        // Create a separate CSV file for each sensor or parameter
+
+        for (int branchIndex = 0; branchIndex < sensorBranches.size(); branchIndex++) {
+
+            String branchName = ((Element) sensorBranches.get(branchIndex))
+                    .getAttributeValue("name");
+
+            if ("timetag".equals(branchName)) {
+                continue;
+            }
+
+            logger.debug("Create CSV file for {}", branchName);
 
             PrintWriter sinkWriter;
             try {
                 sinkWriter = new PrintWriter(Files.newBufferedWriter(FileSystems.getDefault()
-                        .getPath(".", sinkName + "-" + parameterName + ".csv"), Charset
+                        .getPath(".", sinkName + "-" + branchName + ".csv"), Charset
                         .defaultCharset()));
             } catch (IOException e) {
                 throw new PipelineOperationException(e);
             }
 
-            // Get the timetag-values and sensor-values nodes for this sensor parameter
-
-            Node timetagValuesNode = parameterBranches.get(parameterIndex).query("timetag-values")
-                    .get(0);
-            int rowCount = timetagValuesNode.getChildCount();
-            Nodes sensorValuesNodes = parameterBranches.get(parameterIndex).query("sensor-values");
+            Nodes sensorValuesNodes = sensorBranches.get(branchIndex).query("sensor-values");
 
             // Write the CSV file header row
 
             StringBuilder buf = new StringBuilder("timetag");
             for (int idx = 0; idx < sensorValuesNodes.size(); idx++) {
                 Element col = (Element) sensorValuesNodes.get(idx);
-                Attribute labelAttribute = col.getAttribute("label");
-                buf.append(", " + labelAttribute.getValue());
+                Attribute labelAttribute = col.getAttribute("key");
+                if (labelAttribute == null) {
+                    buf.append(", " + Integer.toString(idx));
+                } else {
+                    buf.append(", " + labelAttribute.getValue());
+                }
             }
             sinkWriter.println(buf.toString());
             logger.trace(buf.toString());

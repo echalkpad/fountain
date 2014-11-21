@@ -83,28 +83,30 @@ public class BuildSensorBranch implements PipelineOperation<Document, Document> 
     @Override
     public Document doStep(Document in) throws PipelineOperationException {
 
-        // 1. What are the dimensions of the data tables?
-
-        // collect all the primary key value nodes in the scan data
-
+        Element sensorSequenceElement = new Element("sensor-sequence");
         Element scanSequenceElement = in.getRootElement().getFirstChildElement("scan-sequence");
+
+        // How many scans?
+
+        Nodes scanNodes = scanSequenceElement.query("scan");
+        logger.debug("scan count: {}", scanNodes.size());
+
+        // How many distinct key values for use with 'by' sorting?
+        // Collect all the primary key value nodes in the scan data
+
+        Set<String> keySet;
         Nodes result = scanSequenceElement.query("scan/scan-values[@field='" + primaryKeyName
                 + "']/value");
         logger.debug("Total primary key ({}) occurences: {}", primaryKeyName, result.size());
 
         // and eliminate the duplicates
 
-        Set<String> keySet = new HashSet<>(result.size());
+        keySet = new HashSet<>(result.size());
         for (int idx = 0; idx < result.size(); idx++) {
             String id = result.get(idx).getValue();
             keySet.add(id);
         }
         logger.debug("Unique primary key values: {}", keySet.size());
-
-        // How many scans?
-
-        Nodes scanNodes = scanSequenceElement.query("scan");
-        logger.debug("scan count: {}", scanNodes.size());
 
         // For the timetag data, create a String value array and fill it in
 
@@ -112,30 +114,30 @@ public class BuildSensorBranch implements PipelineOperation<Document, Document> 
         for (int idx = 0; idx < scanNodes.size(); idx++) {
             Nodes timeValueNodes = scanNodes.get(idx).query("scan-values[@field='timetag']/value");
             if ((timeValueNodes.size() != 1)) {
-                String ordinal = ((Element)(scanNodes.get(idx))).getAttributeValue("ordinal");
+                String ordinal = ((Element) (scanNodes.get(idx))).getAttributeValue("ordinal");
                 if (ordinal == null) {
                     ordinal = "??";
                 }
-                throw new PipelineOperationException("Unexpected XML structure in scan "+ordinal+".  One and only one timetag value element allowed.");
+                throw new PipelineOperationException("Unexpected XML structure in scan " + ordinal
+                        + ".  One and only one timetag value element allowed.");
             } else {
                 timeValues[idx] = timeValueNodes.get(0).getValue();
             }
         }
-        
+
         // create and attach the sensor twig for timetag
-        
-        Element sensorSequenceElement = new Element("sensor-sequence");
+
         Element sensorElement = new Element("sensor");
         sensorElement.addAttribute(new Attribute("name", "timetag"));
-        sensorSequenceElement.appendChild(sensorElement);
 
         Element valueContainer = new Element("sensor-values");
         for (int scanIndex = 0; scanIndex < timeValues.length; scanIndex++) {
             Element ve = new Element("value");
             ve.appendChild(timeValues[scanIndex]);
             valueContainer.appendChild(ve);
-        } 
+        }
         sensorElement.appendChild(valueContainer);
+        sensorSequenceElement.appendChild(sensorElement);
 
         // Repeat the following steps for each requested sensor
 
@@ -147,7 +149,7 @@ public class BuildSensorBranch implements PipelineOperation<Document, Document> 
 
             Map<String, String[]> matrix = new HashMap<>(keySet.size());
 
-            // For each primary key value, put a 0-filled sensor value array in the Map
+            // For each primary key value, put a "0"-filled sensor value array in the matrix
 
             Iterator<String> iter = keySet.iterator();
             while (iter.hasNext()) {
@@ -161,16 +163,17 @@ public class BuildSensorBranch implements PipelineOperation<Document, Document> 
 
             for (int scanIndex = 0; scanIndex < scanNodes.size(); scanIndex++) {
 
-                // Store data values from the scan into the sensor arrays in the Map
+                // Store data values from the scan into the arrays in the matrix ...
+
+                Nodes sensorValueNodes = scanNodes.get(scanIndex).query(
+                        "scan-values[@field='" + sensorName + "']/value");
+                logger.trace("sensor '{}' value count: {}", sensorName, sensorValueNodes.size());
+                
+                // ... organized by key
 
                 Nodes keyValueNodes = scanNodes.get(scanIndex).query(
                         "scan-values[@field='" + primaryKeyName + "']/value");
-                Nodes sensorValueNodes = scanNodes.get(scanIndex).query(
-                        "scan-values[@field='" + sensorName + "']/value");
-
                 logger.trace("primary key count: {}", keyValueNodes.size());
-                logger.trace("sensor '{}' value count: {}", sensorName,
-                        sensorValueNodes.size());
 
                 assert (keyValueNodes.size() == sensorValueNodes.size()) : "key count and value count must be equal.";
 
@@ -185,10 +188,11 @@ public class BuildSensorBranch implements PipelineOperation<Document, Document> 
 
             // 4. Model the new data structures in an XML tree branch.
 
-            // write the sensor arrays from the map to the sensor branch
+            // create and attach a twig for this sensor
 
             sensorElement = new Element("sensor");
             sensorElement.addAttribute(new Attribute("name", sensorName));
+            sensorElement.addAttribute(new Attribute("by", primaryKeyName));
 
             for (String key : matrix.keySet()) {
                 valueContainer = new Element("sensor-values");
