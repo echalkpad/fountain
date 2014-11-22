@@ -32,6 +32,18 @@
 			</step>
 			<step type="WriteCSVFromColumnarXML">
 				<file>post/spreadsheet-file-1416275870</file>
+				<nodes label="time" xpath="sensor-sequence/sensor[@name='timetag']/sensor-values/value"/>
+				<nodes label="Ch1" xpath="sensor-sequence/parameter[@name='power']/sensor-values[@key='1']/value"/>
+				<nodes label="Ch2" xpath="/session/sensor-sequence/parameter[@name='power']/sensor-values[@key='2']/value"/>
+				<nodes label="Ch3" xpath="/session/sensor-sequence/parameter[@name='power']/sensor-values[@key='3']/value"/>
+				<nodes label="Ch4" xpath="/session/sensor-sequence/parameter[@name='power']/sensor-values[@key='4']/value"/>
+				<nodes label="Ch5" xpath="/session/sensor-sequence/parameter[@name='power']/sensor-values[@key='5']/value"/>
+				<nodes label="Ch6" xpath="/session/sensor-sequence/parameter[@name='power']/sensor-values[@key='6']/value"/>
+				<nodes label="Ch7" xpath="/session/sensor-sequence/parameter[@name='power']/sensor-values[@key='7']/value"/>
+				<nodes label="Ch8" xpath="/session/sensor-sequence/parameter[@name='power']/sensor-values[@key='8']/value"/>
+				<nodes label="Ch9" xpath="/session/sensor-sequence/parameter[@name='power']/sensor-values[@key='9']/value"/>
+				<nodes label="Ch10" xpath="/session/sensor-sequence/parameter[@name='power']/sensor-values[@key='10']/value"/>
+				<nodes label="Ch11" xpath="/session/sensor-sequence/parameter[@name='power']/sensor-values[@key='11']/value"/>
 			</step>
 		</component>
 	</application>
