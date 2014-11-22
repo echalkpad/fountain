@@ -1,5 +1,8 @@
 package ws.finson.wifix.app;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import nu.xom.Element;
 import nu.xom.Elements;
 
@@ -22,6 +25,11 @@ public abstract class AbstractParameterFunction implements ParameterFunction {
     private String name;
     private String keyFieldName;
     private String expression;
+    private String xArgument;
+    private String xFunction;
+    
+    private final Pattern singleValuePattern = Pattern.compile("^(\\w+)$");
+    private final Pattern functionCallPattern = Pattern.compile("^(\\w+)\\(\\s*(\\w+)\\s*\\)$");
 
     public AbstractParameterFunction(Element definition) throws PipelineSourceException {
         
@@ -36,6 +44,19 @@ public abstract class AbstractParameterFunction implements ParameterFunction {
             expression = detailElements.get(0).getValue();
         } else {
             throw new PipelineSourceException("Parameter definition Elements must have zero or one 'expression' child Elements.");
+        }
+        
+        Matcher svm = singleValuePattern.matcher(expression);
+        Matcher fcm = functionCallPattern.matcher(expression);
+        
+        if (svm.matches()) {
+            xFunction = "select";
+            xArgument = svm.group(1);
+        } else if (fcm.matches()) {
+            xFunction = fcm.group(1);
+            xArgument = fcm.group(2);
+        } else {
+            throw new PipelineSourceException("Invalid expression: '"+expression+"''");
         }
         
         detailElements = definition.getChildElements("by");
@@ -58,5 +79,13 @@ public abstract class AbstractParameterFunction implements ParameterFunction {
 
     public String getName() {
         return name;
+    }
+
+    public String getXArgument() {
+        return xArgument;
+    }
+
+    public String getXFunction() {
+        return xFunction;
     }
 }

@@ -31,7 +31,7 @@ import ws.tuxi.lib.pipeline.PipelineOperationException;
  * values, unlike sensors which are considered to be measurement only (although this might get
  * fudged a little bit during data acquisition). Another way to think about the difference is that
  * sensor sequences are captured at run-time, and parameter sequences are generated during post
- * processing. * This BuildSensorBranch reads a DAP scan sequence branch and redistributes the data
+ * processing. This BuildSensorBranch reads a DAP scan sequence branch and redistributes the data
  * into a sensor sequence branch. Capture scan data is structured scan by scan, whereas sensor data
  * is structured sensor by sensor.
  * 
@@ -91,16 +91,16 @@ public class BuildParameters implements PipelineOperation<Document, Document> {
         Nodes scanNodes = scanSequenceElement.query("scan");
         logger.debug("scan count: {}", scanNodes.size());
 
-        // Repeat the following steps for each defined parameter
+        // Repeat the following steps in order for each requested parameter
 
         for (ParameterFunction param : parameterDefinitions) {
 
             // Prepare for single vs multi-value parameter
 
-            Set<String> keySet;
+            Set<String> groupKeys;
             if (param.getKeyFieldName() == null) {
-                keySet = new HashSet<>(1);
-                keySet.add("");
+                groupKeys = new HashSet<>(1);
+                groupKeys.add("");
             } else {
 
                 // collect all the primary key value nodes in the scan data
@@ -112,71 +112,113 @@ public class BuildParameters implements PipelineOperation<Document, Document> {
 
                 // and eliminate the duplicates
 
-                keySet = new HashSet<>(result.size());
+                groupKeys = new HashSet<>();
                 for (int idx = 0; idx < result.size(); idx++) {
                     String id = result.get(idx).getValue();
-                    keySet.add(id);
+                    groupKeys.add(id);
                 }
             }
-            logger.debug("Unique primary key values: {}", keySet.size());
+            logger.debug("Unique primary key values: {}", groupKeys.size());
 
-            // Prepare the (scan_count) x (key_count) Map matrix
+            // Prepare the (key_count) x (scan_count) Map matrix
 
-            Map<String, String[]> matrix = new HashMap<>(keySet.size());
+            Map<String, String[]> matrix = new HashMap<>(groupKeys.size());
 
-            // For each primary key value, put a "0"-filled value array in the matrix
+            // For each key value, put a "0"-filled value array in the matrix
 
-            Iterator<String> iter = keySet.iterator();
-            while (iter.hasNext()) {
+            for (String aKey : groupKeys) {
                 String[] vals = new String[scanNodes.size()];
                 Arrays.fill(vals, "0");
-                matrix.put(iter.next(), vals);
+                matrix.put(aKey, vals);
             }
 
-            // 3. Re-organize the values from the scan element groups into the sensor arrays in the
-            // map
+            // 3. Re-organize the values from each scan into groups, compute, then store a single
+            // value per
+            // group into the matrix
 
             for (int scanIndex = 0; scanIndex < scanNodes.size(); scanIndex++) {
 
                 // Get the data values from the scan
 
                 Nodes sensorValueNodes = scanNodes.get(scanIndex).query(
-                        "scan-values[@field='" + param.getName() + "']/value");
+                        "scan-values[@field='" + param.getXArgument() + "']/value");
                 logger.trace("sensor '{}' value count: {}", param.getName(),
                         sensorValueNodes.size());
 
                 // and group them as requested
 
-                String parameterValueString;
-                if (param.getKeyFieldName() == null) {
-                    StringBuilder sb = new StringBuilder();
-                    for (int multiValueIndex = 0; multiValueIndex < sensorValueNodes.size(); multiValueIndex++) {
-                        Element e = (Element) sensorValueNodes.get(multiValueIndex);
-                        if (multiValueIndex != 0) {
-                            sb.append("$");
-                        }
-                        sb.append(e.getValue());
+                Map<String, List<String>> grouper = new HashMap<>(groupKeys.size());
+                if (param.getKeyFieldName() == null) { // put all values in the scan in one group
+                    List<String> valueList = new ArrayList<>(sensorValueNodes.size());
+                    for (int idx = 0; idx < sensorValueNodes.size(); idx++) {
+                        valueList.add(sensorValueNodes.get(idx).getValue());
                     }
-                    parameterValueString = sb.toString();
-                    String[] valueArray = matrix.get("");
-                    valueArray[scanIndex] = parameterValueString;
-                } else {
+                    grouper.put("", valueList);
+                } else { // put values into several groups by their associated key value
                     Nodes keyValueNodes = scanNodes.get(scanIndex).query(
                             "scan-values[@field='" + param.getKeyFieldName() + "']/value");
                     logger.trace("primary key count: {}", keyValueNodes.size());
 
-                    assert (keyValueNodes.size() == sensorValueNodes.size()) : "key count and value count must be equal.";
+                    assert (keyValueNodes.size() == sensorValueNodes.size()) : "Each data value element must have an associated key value element.";
 
-                    for (int multiValueIndex = 0; multiValueIndex < sensorValueNodes.size(); multiValueIndex++) {
-                        logger.trace("{} {} {}", multiValueIndex, keyValueNodes
-                                .get(multiValueIndex).getValue(),
-                                sensorValueNodes.get(multiValueIndex).getValue());
-                        String[] valueArray = matrix.get(keyValueNodes.get(multiValueIndex)
-                                .getValue());
-                        valueArray[scanIndex] += sensorValueNodes.get(multiValueIndex).getValue();
+                    for (int idx = 0; idx < sensorValueNodes.size(); idx++) {
+                        logger.trace("{} {} {}", idx, keyValueNodes.get(idx).getValue(),
+                                sensorValueNodes.get(idx).getValue());
+                        List<String> valueList = grouper.get(keyValueNodes.get(idx).getValue());
+                        if (valueList == null) {
+                            valueList = new ArrayList<>();
+                            grouper.put(keyValueNodes.get(idx).getValue(), valueList);
+                        }
+                        valueList.add(sensorValueNodes.get(idx).getValue());
                     }
+
+                }
+
+                // Calculate the single value that represents each group then
+                // store it in the matrix that holds the function result for each group for
+                // each scan for this parameter
+
+                for (String grp : grouper.keySet()) {
+                    List<String> groupValueList = grouper.get(grp);
+
+                    // ------------
+                    // apply the requested function to generate a single value for this group for
+                    // this scan
+                    
+                    String theResultValue;                     
+                    String f =  param.getXFunction().toUpperCase();
+                   if (f.equals("COUNT")) {
+                       theResultValue = Integer.toString(groupValueList.size()); 
+                   } else if (f.equals("MAX")) {
+                       int mark = Integer.MIN_VALUE;
+                       for (String v : groupValueList) {
+                           int current = Integer.parseInt(v);
+                           mark = Math.max(mark,current);
+                       }
+                       theResultValue = Integer.toString(mark);
+                   } else if (f.equals("MIN")) {
+                       int mark = Integer.MAX_VALUE;
+                       for (String v : groupValueList) {
+                           int current = Integer.parseInt(v);
+                           mark = Math.min(mark,current);
+                       }
+                       theResultValue = Integer.toString(mark);
+                   } else if (f.equals("SUM")) {
+                       int total = 0;
+                       for (String v : groupValueList) {
+                           total += Integer.parseInt(v);
+                       }
+                       theResultValue = Integer.toString(total);
+                   } else {
+                       theResultValue = param.getXFunction() + "??";
+                   }
+                   // ------------
+
+                    String[] valueArray = matrix.get(grp);
+                    valueArray[scanIndex] = theResultValue;
                 }
             }
+
             // create and attach a twig for this parameter
 
             Element parameterElement = new Element("parameter");

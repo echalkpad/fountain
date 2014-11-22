@@ -26,4 +26,6 @@ public interface ParameterFunction {
     public String getExpression();
     public String getName();
 
+    public String getXArgument();
+    public String getXFunction();
 }
