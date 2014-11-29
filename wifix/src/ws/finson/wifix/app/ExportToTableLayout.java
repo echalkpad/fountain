@@ -16,6 +16,7 @@ import nu.xom.Elements;
 import nu.xom.Node;
 import nu.xom.Nodes;
 
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,13 +59,13 @@ public class ExportToTableLayout implements PipelineOperation<Document, Document
             Element sectionElement = sectionElements.get(idx);
             logger.debug("Begin section element <{}>", sectionElement.getLocalName());
             if ("sink".equals(sectionElement.getLocalName())) {
-                String format = sectionElement.getAttributeValue("format");
-                if (format == null) {
-                    format = "csv";
-                }
                 String path = sectionElement.getAttributeValue("path");
                 if (path == null) {
                     throw new ConfigurationException("Sink elements must have a path attribute.");
+                }                
+                String format = sectionElement.getAttributeValue("format");
+                if (format == null) {
+                    format = "csv";
                 }
                 switch (format) {
                 case "csv":
@@ -72,7 +73,7 @@ public class ExportToTableLayout implements PipelineOperation<Document, Document
                     try {
                         textWriter = new PrintWriter(
                                 Files.newBufferedWriter(
-                                        FileSystems.getDefault().getPath(".", path + ".csv"),
+                                        FileSystems.getDefault().getPath(".", path),
                                         Charset.defaultCharset()));
                     } catch (IOException e) {
                         throw new ConfigurationException(e);
@@ -83,7 +84,7 @@ public class ExportToTableLayout implements PipelineOperation<Document, Document
                     BufferedOutputStream binStreamer;
                     try {
                         binStreamer = new BufferedOutputStream(new FileOutputStream(FileSystems
-                                .getDefault().getPath(".", path + ".bin").toFile()));
+                                .getDefault().getPath(".", path).toFile()));
                     } catch (IOException e) {
                         throw new ConfigurationException(e);
                     }

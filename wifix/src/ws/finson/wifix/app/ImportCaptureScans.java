@@ -17,6 +17,7 @@ import nu.xom.Document;
 import nu.xom.Element;
 import nu.xom.Elements;
 
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -141,10 +142,15 @@ public class ImportCaptureScans implements PipelineSource<Document> {
         
         // Store some additional context information for downstream processors
         
+        Element contextBranch = new Element("context");
+
         Element sourceElement = new Element("source");
         sourceElement.appendChild(sourceName);
-        Element contextBranch = new Element("context");
         contextBranch.appendChild(sourceElement);
+
+        Element sourceBaseName = new Element("basename");
+        sourceBaseName.appendChild(FilenameUtils.getBaseName(sourceName));
+        contextBranch.appendChild(sourceBaseName);
 
         Element root = new Element("session");
         root.appendChild(contextBranch);
