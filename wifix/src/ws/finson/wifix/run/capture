@@ -8,12 +8,24 @@ date >> data-file.txt
 date +%s >> data-file.txt
 echo "---" >> data-file.txt
 echo "+++ WiFi" >> data-file.txt
-airport -s >> data-file.txt
+echo "$(${scan_command})" >> data-file.txt
 echo "---" >> data-file.txt
 echo "---" >> data-file.txt
 }
 
 rm -f data-file.txt
+
+sys_name=$(uname)
+if [ ${sys_name} == "Darwin" ]
+then
+	scan_command='airport -s'
+elif [ ${sys_name} == "Linux" ]
+then
+	scan_command="sudo iwlist scan"
+else
+	scan_command='echo "OS type not recognized: ${sys_name}"'
+fi
+echo ${scan_command}
 
 if [ -z "$1" ]                           # Is parameter #1 zero length?
 then
