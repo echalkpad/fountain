@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -25,15 +24,13 @@ import ws.tuxi.lib.pipeline.PipelineOperation;
 import ws.tuxi.lib.pipeline.PipelineOperationException;
 
 /**
- * This BuildParameters class reads a DAP sensor sequence branch and follows instructions to select
+ * This BuildParameters class reads a sensor sequence branch and follows instructions to select
  * and process the sensor data to produce a parameter sequence branch. Parameter sequences are
  * structurally similar to sensor sequences, except that parameters may be measured or calculated
  * values, unlike sensors which are considered to be measurement only (although this might get
  * fudged a little bit during data acquisition). Another way to think about the difference is that
  * sensor sequences are captured at run-time, and parameter sequences are generated during post
- * processing. This BuildSensorBranch reads a DAP scan sequence branch and redistributes the data
- * into a sensor sequence branch. Capture scan data is structured scan by scan, whereas sensor data
- * is structured sensor by sensor.
+ * processing.
  * 
  * @author Doug Johnson, Nov 18, 2014
  * 

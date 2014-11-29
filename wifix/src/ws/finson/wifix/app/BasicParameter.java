@@ -1,14 +1,7 @@
 package ws.finson.wifix.app;
 
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import nu.xom.Attribute;
 import nu.xom.Element;
-import nu.xom.Elements;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

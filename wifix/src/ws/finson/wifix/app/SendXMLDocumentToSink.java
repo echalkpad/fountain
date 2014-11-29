@@ -2,7 +2,6 @@ package ws.finson.wifix.app;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 
