@@ -1,6 +1,8 @@
 #!/bin/bash
 # capture 1 or more data scans
 
+# This function actually performs the data scanning.
+
 scan() {
 echo "+++ Scan" >> data-file.txt
 echo "+++ Date" >> data-file.txt
@@ -12,6 +14,8 @@ echo "$(${scan_command})" >> data-file.txt
 echo "---" >> data-file.txt
 echo "---" >> data-file.txt
 }
+
+#  The main program initializes then loops as requested
 
 rm -f data-file.txt
 

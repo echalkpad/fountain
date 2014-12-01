@@ -23,10 +23,10 @@ public class WiFiRecord extends AbstractRecord {
             .compile("^\\s*(\\w+)\\s+(\\w+)\\s+(\\w+)\\s+(\\w+)\\s+(\\w+)\\s+(\\w+)\\s+(\\w+).*$");
 
     private final Pattern valueLinePattern = Pattern
-            .compile("^(.{32})\\s*(\\S+)\\s+(\\S+)\\s+([^\\s,]+)(?:,\\S+)?\\s+(\\S+)\\s+(\\S+)\\s+(\\S+).*$");
+            .compile("^(.*?)([a-fA-F\\d]{2}(?::[a-fA-F\\d]{2}){5})\\s+(\\S+)\\s+([^\\s,]+)\\s+(?:,\\S+)?\\s+(\\S+)\\s+(\\S+)\\s+(\\S+).*$");
 
     private final Pattern blankLinePattern = Pattern.compile("^\\s*$");
-
+    private final Pattern ibssLinePattern = Pattern.compile("^.*?IBSS network found.*$");
     /**
      * @throws PipelineSourceException
      * 
@@ -67,11 +67,15 @@ public class WiFiRecord extends AbstractRecord {
         do {
             line = getNextLineOfCurrentRecord(src);
             logger.trace(line);
+            if (blankLinePattern.matcher(line).matches()) {
+                continue;
+            }
             if (isEndOfRecordIndicator(line)) {
                 break;
             }
-            if (blankLinePattern.matcher(line).matches()) {
-                continue;
+            if (ibssLinePattern.matcher(line).matches()) {
+                skipRemainderOfCurrentRecord(src);
+                break;
             }
             m = valueLinePattern.matcher(line);
             if (!m.matches()) {
