@@ -4,10 +4,11 @@
 		<component type="ws.tuxi.lib.pipeline.ACPipelineEngine"
 			classpath="ws.tuxi.lib.pipeline;ws.finson.wifix.app">
 			<source type="ImportCaptureScans">
-				<file id="in">raw/data-file-1417034903.txt</file>
+				<dataset>RJP-1-1417040781</dataset>
+				<file id="in">raw/RJP-1-1417040781-raw.txt</file>
 			</source>
 			<step type="SendXMLToSink">
-				<file>post/capture-file-1417034903.xml</file>
+				<file>post/RJP-1-1417040781-capture.xml</file>
 			</step>
 			<step type="BuildSensorBranch">
 				<key>BSSID</key>
@@ -16,7 +17,7 @@
 				<sensor>SSID</sensor>
 			</step>
 			<step type="SendXMLDocumentToSink">
-				<file>post/sensor-file-1417034903.xml</file>
+				<file>post/RJP-1-1417040781-sensor.xml</file>
 			</step>
 			<step type="BuildParameters">
 				<parameter name="power">
@@ -28,11 +29,11 @@
 				</parameter>
 			</step>
 			<step type="SendXMLDocumentToSink">
-				<file>post/parameter-file-1417034903.xml</file>
+				<file>post/RJP-1-1417040781-parameter.xml</file>
 			</step>
 			<step type="ExportToTableLayout">
-				<sink format="bin" path="post/table-RSSI-1416275870.bin" />
-				<sink format="csv" path="post/table-RSSI-1416275870.csv" />
+				<sink format="bin" path="post/RJP-1-1417040781-RSSI-table.bin" />
+				<sink format="csv" path="post/RJP-1-1417040781-RSSI-table.csv" />
 				<nodes label="Ch1" xpath="sensor-sequence/parameter[@name='power']/sensor-values[@key='1']/value"/>
 				<nodes label="Ch2" xpath="sensor-sequence/parameter[@name='power']/sensor-values[@key='2']/value"/>
 				<nodes label="Ch3" xpath="sensor-sequence/parameter[@name='power']/sensor-values[@key='3']/value"/>
@@ -44,6 +45,11 @@
 				<nodes label="Ch9" xpath="sensor-sequence/parameter[@name='power']/sensor-values[@key='9']/value"/>
 				<nodes label="Ch10" xpath="sensor-sequence/parameter[@name='power']/sensor-values[@key='10']/value"/>
 				<nodes label="Ch11" xpath="sensor-sequence/parameter[@name='power']/sensor-values[@key='11']/value"/>
+			</step>
+			<step type="ExportToTableLayout">
+				<sink format="bin" path="post/RJP-1-1417040781-chan-count-table.bin" />
+				<sink format="csv" path="post/RJP-1-1417040781-chan-count-table.csv" />
+				<nodes label="Count" xpath="sensor-sequence/parameter[@name='channels']/sensor-values/value"/>
 			</step>
 		</component>
 	</application>
