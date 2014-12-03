@@ -16,7 +16,6 @@ import nu.xom.Elements;
 import nu.xom.Node;
 import nu.xom.Nodes;
 
-import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
