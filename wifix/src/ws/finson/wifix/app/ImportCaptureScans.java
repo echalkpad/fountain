@@ -2,10 +2,13 @@ package ws.finson.wifix.app;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.LineNumberReader;
 import java.lang.reflect.Constructor;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +40,7 @@ public class ImportCaptureScans implements PipelineSource<Document> {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private String sourceName = null;
-    private BufferedReader sourceReader = null;
+    private LineNumberReader sourceReader = null;
 
     private final List<DAP_Scan> scans = new ArrayList<>();
 
@@ -60,9 +63,13 @@ public class ImportCaptureScans implements PipelineSource<Document> {
                             sectionElement.getLocalName());
                 } else {
                     sourceName = sectionElement.getValue();
-                    sourceReader = Files.newBufferedReader(
+
+                    sourceReader = new LineNumberReader(new InputStreamReader(Files.newInputStream(
                             FileSystems.getDefault().getPath(".", sourceName),
-                            Charset.defaultCharset());
+                            StandardOpenOption.READ), StandardCharsets.UTF_8));
+                    // sourceReader = Files.newBufferedReader(
+                    // FileSystems.getDefault().getPath(".", sourceName),
+                    // Charset.defaultCharset());
                 }
             } else {
                 logger.warn("Skipping <{}> element. Element not recognized.",
@@ -90,11 +97,11 @@ public class ImportCaptureScans implements PipelineSource<Document> {
                     String className = "ws.finson.wifix.app." + "Basic" + m.group(1);
                     logger.debug("Scan start: {}", className);
                     Class<DAP_Scan> c = (Class<DAP_Scan>) Class.forName(className);
-                    Constructor<DAP_Scan> maker = c.getConstructor(BufferedReader.class);
+                    Constructor<DAP_Scan> maker = c.getConstructor(LineNumberReader.class);
                     scans.add(maker.newInstance(sourceReader));
                 } else {
                     throw new PipelineSourceException(
-                            "Unrecognized input line.  Expecting start of scan '+++ Scan': "+line);
+                            "Unrecognized input line.  Expecting start of scan '+++ Scan': " + line);
                 }
             }
         } catch (IOException | IllegalArgumentException | ReflectiveOperationException
@@ -109,26 +116,26 @@ public class ImportCaptureScans implements PipelineSource<Document> {
         int ordinal = 0;
         for (DAP_Scan currentScan : scans) {
             Element aScanElement = new Element("scan");
-            aScanElement.addAttribute(new Attribute("ordinal",Integer.toString(ordinal++)));
+            aScanElement.addAttribute(new Attribute("ordinal", Integer.toString(ordinal++)));
 
             // record the time of this scan
 
             Element scanValuesElement = new Element("scan-values");
-            scanValuesElement.addAttribute(new Attribute("field","timetag"));
+            scanValuesElement.addAttribute(new Attribute("field", "timetag"));
             Element valueElement = new Element("value");
             valueElement.appendChild(currentScan.getValue("timetag"));
             scanValuesElement.appendChild(valueElement);
             aScanElement.appendChild(scanValuesElement);
-            
+
             // record the acquired data
 
-            Map<String, List<String>> table = currentScan
-                    .getValues(new String[] {"SSID", "BSSID", "RSSI","CHANNEL", "CC" });
+            Map<String, List<String>> table = currentScan.getValues(new String[] { "SSID", "BSSID",
+                    "RSSI", "CHANNEL", "CC" });
             if (table != null) {
-                logger.trace("Data table fields: {}",table.keySet().toString());
+                logger.trace("Data table fields: {}", table.keySet().toString());
                 for (String key : table.keySet()) {
                     scanValuesElement = new Element("scan-values");
-                    scanValuesElement.addAttribute(new Attribute("field",key));
+                    scanValuesElement.addAttribute(new Attribute("field", key));
                     for (String value : table.get(key)) {
                         valueElement = new Element("value");
                         valueElement.appendChild(value);
@@ -139,9 +146,9 @@ public class ImportCaptureScans implements PipelineSource<Document> {
             }
             scanBranch.appendChild(aScanElement);
         }
-        
+
         // Store some additional context information for downstream processors
-        
+
         Element contextBranch = new Element("context");
 
         Element sourceElement = new Element("source");
