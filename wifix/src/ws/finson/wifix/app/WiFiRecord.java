@@ -1,6 +1,6 @@
 package ws.finson.wifix.app;
 
-import java.io.BufferedReader;
+import java.io.LineNumberReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,7 +23,7 @@ public class WiFiRecord extends AbstractRecord {
             .compile("^\\s*(\\w+)\\s+(\\w+)\\s+(\\w+)\\s+(\\w+)\\s+(\\w+)\\s+(\\w+)\\s+(\\w+).*$");
 
     private final Pattern valueLinePattern = Pattern
-            .compile("^(.*?)([a-fA-F\\d]{2}(?::[a-fA-F\\d]{2}){5})\\s+(\\S+)\\s+([^\\s,]+)\\s+(?:,\\S+)?\\s+(\\S+)\\s+(\\S+)\\s+(\\S+).*$");
+            .compile("^(.*?)([a-fA-F\\d]{2}(?::[a-fA-F\\d]{2}){5})\\s+(\\S+)\\s+([^\\s,]+)(?:,\\S+)?\\s+(\\S+)\\s+(\\S+)\\s+(\\S+).*$");
 
     private final Pattern blankLinePattern = Pattern.compile("^\\s*$");
     private final Pattern ibssLinePattern = Pattern.compile("^.*?IBSS network found.*$");
@@ -31,7 +31,7 @@ public class WiFiRecord extends AbstractRecord {
      * @throws PipelineSourceException
      * 
      */
-    public WiFiRecord(BufferedReader src) throws PipelineSourceException {
+    public WiFiRecord(LineNumberReader src) throws PipelineSourceException {
 
         // Read WiFi info from raw data file
 
@@ -49,7 +49,7 @@ public class WiFiRecord extends AbstractRecord {
                 skipRemainderOfCurrentRecord(src);
                 return;
             } else {
-                logger.warn("Unexpected first line format: " + line);
+                logger.warn("("+Integer.toString(src.getLineNumber()) +") Unexpected first line format: " + line);
                 logger.warn("This whole record will be skipped.");
                 skipRemainderOfCurrentRecord(src);
                 return;
@@ -79,7 +79,7 @@ public class WiFiRecord extends AbstractRecord {
             }
             m = valueLinePattern.matcher(line);
             if (!m.matches()) {
-                logger.warn("Unexpected WiFi value line format: " + line);
+                logger.warn("("+Integer.toString(src.getLineNumber()) +") Unexpected WiFi value line format: " + line);
                 logger.warn("The rest of this record will be skipped.");
                 skipRemainderOfCurrentRecord(src);
                 return;
@@ -91,7 +91,7 @@ public class WiFiRecord extends AbstractRecord {
             recordValues.add(row);
         } while (true);
         
-        logger.debug("{} values for each field in this record.", recordValues.size() - 1);
+        logger.trace("{} values for each field in this record.", recordValues.size() - 1);
         
         return;
     }

@@ -1,7 +1,7 @@
 package ws.finson.wifix.app;
 
-import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.LineNumberReader;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,7 +35,7 @@ public class BasicScan implements DAP_Scan {
      * @throws PipelineSourceException
      * 
      */
-    public BasicScan(BufferedReader src) throws PipelineSourceException {
+    public BasicScan(LineNumberReader src) throws PipelineSourceException {
 
         // Read and interpret records from the raw file until we find the end-of-scan marker
 
@@ -49,9 +49,9 @@ public class BasicScan implements DAP_Scan {
                 if (m.matches()) {
                     suffix = (m.group(2) == null) ? "" : "_" + m.group(2);
                     String className = "ws.finson.wifix.app." + m.group(1) + "Record" + suffix;
-                    logger.debug("Record start: {}", className);
+                    logger.trace("Record start: {}", className);
                     Class<DAP_Record> c = (Class<DAP_Record>) Class.forName(className);
-                    Constructor<DAP_Record> maker = c.getConstructor(BufferedReader.class);
+                    Constructor<DAP_Record> maker = c.getConstructor(LineNumberReader.class);
                     records.add(maker.newInstance(src));
                 } else if (endScanPattern.matcher(line).matches()) {
                     break;

@@ -1,7 +1,7 @@
 package ws.finson.wifix.app;
 
-import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.LineNumberReader;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +23,7 @@ public class DateRecord extends AbstractRecord {
      * @throws PipelineSourceException
      * 
      */
-    public DateRecord(BufferedReader src) throws PipelineSourceException {
+    public DateRecord(LineNumberReader src) throws PipelineSourceException {
 
         // Read date and time from raw data file
 
