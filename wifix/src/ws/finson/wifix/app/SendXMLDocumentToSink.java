@@ -46,14 +46,19 @@ public class SendXMLDocumentToSink implements PipelineOperation<Document, Docume
         Elements sectionElements = cE.getChildElements();
         for (int idx = 0; idx < sectionElements.size(); idx++) {
             Element sectionElement = sectionElements.get(idx);
-            logger.debug("Begin section element <{}>", sectionElement.getLocalName());
-            if ("file".equals(sectionElement.getLocalName())) {
+            logger.trace("Begin section element <{}>", sectionElement.getLocalName());
+            if ("dir".equals(sectionElement.getLocalName())) {
+            } else if ("prefix".equals(sectionElement.getLocalName())) {
+            } else if ("session-name".equals(sectionElement.getLocalName())) {
+            } else if ("suffix".equals(sectionElement.getLocalName())) {
+            } else if ("extension".equals(sectionElement.getLocalName())) {
+            } else if ("file".equals(sectionElement.getLocalName())) {
                 if (sinkName != null) {
                     logger.warn("Ignoring extra <{}> definition, only one is allowed.",
                             sectionElement.getLocalName());
                 } else {
                     sinkName = sectionElement.getValue();
-                    OutputStream sinkStream = Files.newOutputStream(FileSystems.getDefault()
+                    sinkStream = Files.newOutputStream(FileSystems.getDefault()
                             .getPath(".", sinkName));
                     formattedWriter = new Serializer(sinkStream);
                 }

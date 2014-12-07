@@ -17,6 +17,8 @@
 				<sensor>SSID</sensor>
 			</step>
 			<step type="SendXMLDocumentToSink">
+				<dir>post</dir>
+				
 				<file>post/RJP-1-1417040781-sensor.xml</file>
 			</step>
 			<step type="BuildParameters">
