@@ -1,6 +1,5 @@
 package ws.finson.wifix.app;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
@@ -30,8 +29,12 @@ import ws.tuxi.lib.pipeline.PipelineSource;
 import ws.tuxi.lib.pipeline.PipelineSourceException;
 
 /**
- * This ImportCaptureScans class reads a data acquisition program (DAP) data capture text file and
+ * This ImportCaptureScans class reads a raw data capture text file and
  * creates an XML document containing the same information.
+ * 
+ * The format of the incoming file is determined by the way the data was 
+ * acquired, and so this particular class is not very flexible with regard
+ * to input changes.
  * 
  * @author Doug Johnson, Nov 2014
  * 
@@ -67,9 +70,6 @@ public class ImportCaptureScans implements PipelineSource<Document> {
                     sourceReader = new LineNumberReader(new InputStreamReader(Files.newInputStream(
                             FileSystems.getDefault().getPath(".", sourceName),
                             StandardOpenOption.READ), StandardCharsets.UTF_8));
-                    // sourceReader = Files.newBufferedReader(
-                    // FileSystems.getDefault().getPath(".", sourceName),
-                    // Charset.defaultCharset());
                 }
             } else {
                 logger.warn("Skipping <{}> element. Element not recognized.",
