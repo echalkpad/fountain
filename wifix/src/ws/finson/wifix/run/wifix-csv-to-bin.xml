@@ -9,6 +9,21 @@
 			<step type="SendXMLDocumentToSink">
 				<file>post/sine-wave-reference.xml</file>
 			</step>
+			<step type="ExportToTableLayout">
+				<sink format="bin" path="post/sine-wave-reference.bin" />
+				<sink format="csv" path="post/sine-wave-reference-remake.csv" />
+				<nodes label="Ch1" xpath="sensor-sequence/parameter[1]/sensor-values/value"/>
+				<nodes label="Ch2" xpath="sensor-sequence/parameter[2]/sensor-values/value"/>
+				<nodes label="Ch3" xpath="sensor-sequence/parameter[3]/sensor-values/value"/>
+				<nodes label="Ch4" xpath="sensor-sequence/parameter[4]/sensor-values/value"/>
+				<nodes label="Ch5" xpath="sensor-sequence/parameter[5]/sensor-values/value"/>
+				<nodes label="Ch6" xpath="sensor-sequence/parameter[6]/sensor-values/value"/>
+				<nodes label="Ch7" xpath="sensor-sequence/parameter[7]/sensor-values/value"/>
+				<nodes label="Ch8" xpath="sensor-sequence/parameter[8]/sensor-values/value"/>
+				<nodes label="Ch9" xpath="sensor-sequence/parameter[9]/sensor-values/value"/>
+				<nodes label="Ch10" xpath="sensor-sequence/parameter[10]/sensor-values/value"/>
+				<nodes label="Ch11" xpath="sensor-sequence/parameter[11]/sensor-values/value"/>
+			</step>
 		</component>
 	</application>
 </config>

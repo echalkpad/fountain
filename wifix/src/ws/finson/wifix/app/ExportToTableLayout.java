@@ -128,17 +128,6 @@ public class ExportToTableLayout implements PipelineOperation<Document, Document
         }
         int colCount = nodesList.size();
 
-        // // Create the file to write it to
-        //
-        // PrintWriter sinkWriter;
-        // try {
-        // sinkWriter = new PrintWriter(Files.newBufferedWriter(
-        // FileSystems.getDefault().getPath(".", sinkName + ".csv"),
-        // Charset.defaultCharset()));
-        // } catch (IOException e) {
-        // throw new PipelineOperationException(e);
-        // }
-
         // Write the CSV file header row
 
         StringBuilder buf = new StringBuilder();
@@ -179,7 +168,7 @@ public class ExportToTableLayout implements PipelineOperation<Document, Document
 
         // Write the binary file rows
 
-        byte dataValue;
+        int dataValue;
 
         for (int rowIndex = 0; rowIndex < rowCount; rowIndex++) {
             byte[] byteBuffer = new byte[colCount];
@@ -188,11 +177,11 @@ public class ExportToTableLayout implements PipelineOperation<Document, Document
                 Nodes col = nodesList.get(colIndex);
                 if (rowIndex < col.size()) {
                     Node val = col.get(rowIndex);
-                    dataValue = Byte.parseByte(val.getValue());
+                    dataValue = Integer.parseInt(val.getValue());
                 } else {
                     dataValue = 0;
                 }
-                byteBuffer[offset++] = dataValue;
+                byteBuffer[offset++] = (byte)(dataValue & 0xFF);
             }
             for (BufferedOutputStream sinkStreamer : binOut) {
                 try {
@@ -218,70 +207,3 @@ public class ExportToTableLayout implements PipelineOperation<Document, Document
         return in;
     }
 }
-
-// Element sensorSequenceElement = in.getRootElement().getFirstChildElement("sensor-sequence");
-//
-// // Get the timetag-values nodes for this sensor sequence
-//
-// Node timetagValuesNode = sensorSequenceElement.query(
-// "sensor[@name='timetag']/sensor-values").get(0);
-// int rowCount = timetagValuesNode.getChildCount();
-//
-// // Get the sensor and parameter nodes in the sensor-sequence
-//
-// Nodes sensorBranches = sensorSequenceElement.query("sensor | parameter");
-// logger.debug("Sensor and parameter count: {}", sensorBranches.size());
-//
-// // Create a separate CSV file for each sensor or parameter
-//
-// for (int branchIndex = 0; branchIndex < sensorBranches.size(); branchIndex++) {
-//
-// String branchName = ((Element) sensorBranches.get(branchIndex))
-// .getAttributeValue("name");
-//
-// if ("timetag".equals(branchName)) {
-// continue;
-// }
-//
-// logger.debug("Create CSV file for {}", branchName);
-//
-// PrintWriter sinkWriter;
-// try {
-// sinkWriter = new PrintWriter(Files.newBufferedWriter(FileSystems.getDefault()
-// .getPath(".", sinkName + "-" + branchName + ".csv"), Charset
-// .defaultCharset()));
-// } catch (IOException e) {
-// throw new PipelineOperationException(e);
-// }
-//
-// Nodes sensorValuesNodes = sensorBranches.get(branchIndex).query("sensor-values");
-//
-// // Write the CSV file header row
-//
-// StringBuilder buf = new StringBuilder("timetag");
-// for (int idx = 0; idx < sensorValuesNodes.size(); idx++) {
-// Element col = (Element) sensorValuesNodes.get(idx);
-// Attribute labelAttribute = col.getAttribute("key");
-// if (labelAttribute == null) {
-// buf.append(", " + Integer.toString(idx));
-// } else {
-// buf.append(", " + labelAttribute.getValue());
-// }
-// }
-// sinkWriter.println(buf.toString());
-// logger.trace(buf.toString());
-//
-// // Write the CSV file value rows
-//
-// for (int rowIndex = 0; rowIndex < rowCount; rowIndex++) {
-// buf = new StringBuilder(timetagValuesNode.getChild(rowIndex).getValue());
-// for (int colIndex = 0; colIndex < sensorValuesNodes.size(); colIndex++) {
-// Element col = (Element) sensorValuesNodes.get(colIndex);
-// Element val = (Element) col.getChild(rowIndex);
-// buf.append(", " + val.getValue());
-// }
-// sinkWriter.println(buf.toString());
-// }
-//
-// sinkWriter.close();
-// }
