@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config id="ReadRawWiFi" title="Process Raw Wifi Data">
+	<application>
+		<component type="ws.tuxi.lib.pipeline.ACPipelineEngine"
+			classpath="ws.tuxi.lib.pipeline;ws.finson.wifix.app">
+			<source type="ImportFromTableLayout">
+				<file id="in">raw/sine-wave-reference.csv</file>
+			</source>
+			<step type="SendXMLDocumentToSink">
+				<file>post/sine-wave-reference.xml</file>
+			</step>
+		</component>
+	</application>
+</config>
