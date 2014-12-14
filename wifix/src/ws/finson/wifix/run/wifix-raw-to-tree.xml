@@ -1,58 +1,74 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config id="ReadRawWiFi" title="Process Raw Wifi Data">
-	<application>
-		<component type="ws.tuxi.lib.pipeline.ACPipelineEngine"
-			classpath="ws.tuxi.lib.pipeline;ws.finson.wifix.app">
-			<source type="ImportCaptureScans">
-				<dataset>RJP-1-1417040781</dataset>
-				<file id="in">raw/RJP-1-1417040781-raw.txt</file>
-			</source>
-			<step type="SendXMLToSink">
-				<file>post/RJP-1-1417040781-capture.xml</file>
-			</step>
-			<step type="BuildSensorBranch">
-				<key>BSSID</key>
-				<sensor>RSSI</sensor>
-				<sensor>CHANNEL</sensor>
-				<sensor>SSID</sensor>
-			</step>
-			<step type="SendXMLDocumentToSink">
-				<dir>post</dir>
-				
-				<file>post/RJP-1-1417040781-sensor.xml</file>
-			</step>
-			<step type="BuildParameters">
-				<parameter name="power">
-					<expression>Max(RSSI)</expression>
-					<by>CHANNEL</by>
-				</parameter>
-				<parameter name="channels">
-					<expression>count(CHANNEL)</expression>
-				</parameter>
-			</step>
-			<step type="SendXMLDocumentToSink">
-				<file>post/RJP-1-1417040781-parameter.xml</file>
-			</step>
-			<step type="ExportToTableLayout">
-				<sink format="bin" path="post/RJP-1-1417040781-RSSI-table.bin" />
-				<sink format="csv" path="post/RJP-1-1417040781-RSSI-table.csv" />
-				<nodes label="Ch1" xpath="sensor-sequence/parameter[@name='power']/sensor-values[@key='1']/value"/>
-				<nodes label="Ch2" xpath="sensor-sequence/parameter[@name='power']/sensor-values[@key='2']/value"/>
-				<nodes label="Ch3" xpath="sensor-sequence/parameter[@name='power']/sensor-values[@key='3']/value"/>
-				<nodes label="Ch4" xpath="sensor-sequence/parameter[@name='power']/sensor-values[@key='4']/value"/>
-				<nodes label="Ch5" xpath="sensor-sequence/parameter[@name='power']/sensor-values[@key='5']/value"/>
-				<nodes label="Ch6" xpath="sensor-sequence/parameter[@name='power']/sensor-values[@key='6']/value"/>
-				<nodes label="Ch7" xpath="sensor-sequence/parameter[@name='power']/sensor-values[@key='7']/value"/>
-				<nodes label="Ch8" xpath="sensor-sequence/parameter[@name='power']/sensor-values[@key='8']/value"/>
-				<nodes label="Ch9" xpath="sensor-sequence/parameter[@name='power']/sensor-values[@key='9']/value"/>
-				<nodes label="Ch10" xpath="sensor-sequence/parameter[@name='power']/sensor-values[@key='10']/value"/>
-				<nodes label="Ch11" xpath="sensor-sequence/parameter[@name='power']/sensor-values[@key='11']/value"/>
-			</step>
-			<step type="ExportToTableLayout">
-				<sink format="bin" path="post/RJP-1-1417040781-chan-count-table.bin" />
-				<sink format="csv" path="post/RJP-1-1417040781-chan-count-table.csv" />
-				<nodes label="Count" xpath="sensor-sequence/parameter[@name='channels']/sensor-values/value"/>
-			</step>
-		</component>
-	</application>
+    <application>
+        <component type="ws.tuxi.lib.pipeline.ACPipelineEngine" classpath="ws.tuxi.lib.pipeline;ws.finson.wifix.app">
+            <source type="CreateXMLDocument">
+                <session>
+                    <context>
+                        <src-dir>raw</src-dir>
+                        <dst-dir>post</dst-dir>
+                    </context>
+                </session>
+            </source>
+            <step type="ImportCaptureScans">
+                <file id="in">RJP-1-1417040781-raw.txt</file>
+            </step>
+            <step type="SendXMLDocumentToSink">
+                <suffix>-capture</suffix>
+            </step>
+            <step type="BuildSensorBranch">
+                <key>BSSID</key>
+                <sensor>RSSI</sensor>
+                <sensor>CHANNEL</sensor>
+                <sensor>SSID</sensor>
+            </step>
+            <step type="SendXMLDocumentToSink">
+                <suffix>-sensor</suffix>
+            </step>
+            <step type="BuildParameters">
+                <parameter name="power">
+                    <expression>Max(RSSI)</expression>
+                    <by>CHANNEL</by>
+                </parameter>
+                <parameter name="channels">
+                    <expression>count(CHANNEL)</expression>
+                </parameter>
+            </step>
+            <step type="SendXMLDocumentToSink">
+                <sink suffix="-parameter" />
+                <suffix>-parameter</suffix>
+            </step>
+            <step type="ExportToTableLayout">
+                <sink format="bin" path="post/RJP-1-1417040781-RSSI-table.bin" />
+                <sink format="csv" path="post/RJP-1-1417040781-RSSI-table.csv" />
+                <nodes label="Ch1"
+                    xpath="sensor-sequence/parameter[@name='power']/sensor-values[@key='1']/value" />
+                <nodes label="Ch2"
+                    xpath="sensor-sequence/parameter[@name='power']/sensor-values[@key='2']/value" />
+                <nodes label="Ch3"
+                    xpath="sensor-sequence/parameter[@name='power']/sensor-values[@key='3']/value" />
+                <nodes label="Ch4"
+                    xpath="sensor-sequence/parameter[@name='power']/sensor-values[@key='4']/value" />
+                <nodes label="Ch5"
+                    xpath="sensor-sequence/parameter[@name='power']/sensor-values[@key='5']/value" />
+                <nodes label="Ch6"
+                    xpath="sensor-sequence/parameter[@name='power']/sensor-values[@key='6']/value" />
+                <nodes label="Ch7"
+                    xpath="sensor-sequence/parameter[@name='power']/sensor-values[@key='7']/value" />
+                <nodes label="Ch8"
+                    xpath="sensor-sequence/parameter[@name='power']/sensor-values[@key='8']/value" />
+                <nodes label="Ch9"
+                    xpath="sensor-sequence/parameter[@name='power']/sensor-values[@key='9']/value" />
+                <nodes label="Ch10"
+                    xpath="sensor-sequence/parameter[@name='power']/sensor-values[@key='10']/value" />
+                <nodes label="Ch11"
+                    xpath="sensor-sequence/parameter[@name='power']/sensor-values[@key='11']/value" />
+            </step>
+            <step type="ExportToTableLayout">
+                <sink format="bin" path="post/RJP-1-1417040781-chan-count-table.bin" />
+                <sink format="csv" path="post/RJP-1-1417040781-chan-count-table.csv" />
+                <nodes label="Count" xpath="sensor-sequence/parameter[@name='channels']/sensor-values/value" />
+            </step>
+        </component>
+    </application>
 </config>

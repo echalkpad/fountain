@@ -7,6 +7,7 @@ import java.lang.reflect.Constructor;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +19,7 @@ import nu.xom.Attribute;
 import nu.xom.Document;
 import nu.xom.Element;
 import nu.xom.Elements;
+import nu.xom.Nodes;
 
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
@@ -25,21 +27,20 @@ import org.slf4j.LoggerFactory;
 
 import ws.tuxi.lib.cfg.ApplicationComponent;
 import ws.tuxi.lib.cfg.ConfigurationException;
-import ws.tuxi.lib.pipeline.PipelineSource;
-import ws.tuxi.lib.pipeline.PipelineSourceException;
+import ws.tuxi.lib.pipeline.PipelineOperation;
+import ws.tuxi.lib.pipeline.PipelineOperationException;
 
 /**
- * This ImportCaptureScans class reads a raw data capture text file and
- * creates an XML document containing the same information.
+ * This ImportCaptureScans class reads a raw data capture text file and creates an XML document
+ * containing the same information.
  * 
- * The format of the incoming file is determined by the way the data was 
- * acquired, and so this particular class is not very flexible with regard
- * to input changes.
+ * The format of the incoming file is determined by the way the data was acquired, and so this
+ * particular class is not very flexible with regard to input changes.
  * 
  * @author Doug Johnson, Nov 2014
  * 
  */
-public class ImportCaptureScans implements PipelineSource<Document> {
+public class ImportCaptureScans implements PipelineOperation<Document, Document> {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private String sourceName = null;
@@ -66,10 +67,6 @@ public class ImportCaptureScans implements PipelineSource<Document> {
                             sectionElement.getLocalName());
                 } else {
                     sourceName = sectionElement.getValue();
-
-                    sourceReader = new LineNumberReader(new InputStreamReader(Files.newInputStream(
-                            FileSystems.getDefault().getPath(".", sourceName),
-                            StandardOpenOption.READ), StandardCharsets.UTF_8));
                 }
             } else {
                 logger.warn("Skipping <{}> element. Element not recognized.",
@@ -82,10 +79,26 @@ public class ImportCaptureScans implements PipelineSource<Document> {
     }
 
     /**
-     * @see ws.tuxi.lib.pipeline.PipelineSource#readPipelineSource()
+     * @see ws.tuxi.lib.pipeline.PipelineOperation#doStep(java.lang.Object)
      */
     @Override
-    public Document readPipelineSource() throws PipelineSourceException {
+    public Document doStep(Document tree) throws PipelineOperationException {
+        String srcDir;
+        Path srcPath;
+        try {
+            Nodes dirNodes = tree.getRootElement().query("context/src-dir[1]");
+            if (dirNodes.size() == 1) {
+                srcDir = ((Element) dirNodes.get(0)).getValue();
+            } else {
+                srcDir = "";
+            }
+            srcPath = FileSystems.getDefault().getPath(".", srcDir, sourceName);
+            logger.info("Opening file '{}' for reading.", srcPath.toString());
+            sourceReader = new LineNumberReader(new InputStreamReader(Files.newInputStream(srcPath,
+                    StandardOpenOption.READ), StandardCharsets.UTF_8));
+        } catch (IOException e) {
+            throw new PipelineOperationException(e);
+        }
 
         // read the data file, line by line and build a POJO tree
 
@@ -100,17 +113,17 @@ public class ImportCaptureScans implements PipelineSource<Document> {
                     Constructor<DAP_Scan> maker = c.getConstructor(LineNumberReader.class);
                     scans.add(maker.newInstance(sourceReader));
                 } else {
-                    throw new PipelineSourceException(
+                    throw new PipelineOperationException(
                             "Unrecognized input line.  Expecting start of scan '+++ Scan': " + line);
                 }
             }
         } catch (IOException | IllegalArgumentException | ReflectiveOperationException
                 | SecurityException e) {
-            throw new PipelineSourceException(e);
+            throw new PipelineOperationException(e);
         }
         logger.info("Scan count: {}", scans.size());
 
-        // Walk the POJO tree and build an XML tree
+        // Walk the POJO tree and build a new scan-sequence branch
 
         Element scanBranch = new Element("scan-sequence");
         int ordinal = 0;
@@ -146,26 +159,24 @@ public class ImportCaptureScans implements PipelineSource<Document> {
             }
             scanBranch.appendChild(aScanElement);
         }
+        tree.getRootElement().appendChild(scanBranch);
 
         // Store some additional context information for downstream processors
 
-        Element contextBranch = new Element("context");
+        Element contextBranch = tree.getRootElement().getFirstChildElement("context");
+        if (contextBranch == null) {
+            logger.warn("Input XML Document has no top-level <context> branch.");
+        } else {
+            Element sourceElement = new Element("source");
+            sourceElement.appendChild(sourceName);
+            contextBranch.appendChild(sourceElement);
 
-        Element sourceElement = new Element("source");
-        sourceElement.appendChild(sourceName);
-        contextBranch.appendChild(sourceElement);
-
-        Element sourceBaseName = new Element("basename");
-        sourceBaseName.appendChild(FilenameUtils.getBaseName(sourceName));
-        contextBranch.appendChild(sourceBaseName);
-
-        Element root = new Element("session");
-        root.appendChild(contextBranch);
-        root.appendChild(scanBranch);
-
-        Document captureTree = new Document(root);
-
-        return captureTree;
-
+            String datasetName = FilenameUtils.getBaseName(sourceName);
+            datasetName = datasetName.replaceFirst("-raw$", "");
+            Element sourceDatasetName = new Element("dataset");
+            sourceDatasetName.appendChild(datasetName);
+            contextBranch.appendChild(sourceDatasetName);
+        }
+        return tree;
     }
 }
