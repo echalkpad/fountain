@@ -5,7 +5,6 @@ import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.lang.reflect.Constructor;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -19,7 +18,6 @@ import nu.xom.Attribute;
 import nu.xom.Document;
 import nu.xom.Element;
 import nu.xom.Elements;
-import nu.xom.Nodes;
 
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
@@ -43,8 +41,9 @@ import ws.tuxi.lib.pipeline.PipelineOperationException;
 public class ImportCaptureScans implements PipelineOperation<Document, Document> {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private String sourceName = null;
     private LineNumberReader sourceReader = null;
+    private ConfiguredPathname sourcePathname = null;
+    private Path srcPath = null;
 
     private final List<DAP_Scan> scans = new ArrayList<>();
 
@@ -62,19 +61,14 @@ public class ImportCaptureScans implements PipelineOperation<Document, Document>
             Element sectionElement = sectionElements.get(idx);
             logger.debug("Begin section element <{}>", sectionElement.getLocalName());
             if ("file".equals(sectionElement.getLocalName())) {
-                if (sourceName != null) {
-                    logger.warn("Ignoring extra <{}> definition, only one is allowed.",
-                            sectionElement.getLocalName());
-                } else {
-                    sourceName = sectionElement.getValue();
-                }
+               sourcePathname = new ConfiguredPathname(sectionElement);
             } else {
                 logger.warn("Skipping <{}> element. Element not recognized.",
                         sectionElement.getLocalName());
             }
         }
-        if (sourceName == null) {
-            throw new ConfigurationException("Name of the source file must be specified.");
+        if (sourcePathname == null) {
+            throw new ConfigurationException("A source file must be specified.");
         }
     }
 
@@ -83,16 +77,9 @@ public class ImportCaptureScans implements PipelineOperation<Document, Document>
      */
     @Override
     public Document doStep(Document tree) throws PipelineOperationException {
-        String srcDir;
-        Path srcPath;
         try {
-            Nodes dirNodes = tree.getRootElement().query("context/src-dir[1]");
-            if (dirNodes.size() == 1) {
-                srcDir = ((Element) dirNodes.get(0)).getValue();
-            } else {
-                srcDir = "";
-            }
-            srcPath = FileSystems.getDefault().getPath(".", srcDir, sourceName);
+            Element globalContextElement = new Element(tree.getRootElement().getFirstChildElement("context"));
+            srcPath = sourcePathname.getSourcePath(globalContextElement);
             logger.info("Opening file '{}' for reading.", srcPath.toString());
             sourceReader = new LineNumberReader(new InputStreamReader(Files.newInputStream(srcPath,
                     StandardOpenOption.READ), StandardCharsets.UTF_8));
@@ -168,10 +155,10 @@ public class ImportCaptureScans implements PipelineOperation<Document, Document>
             logger.warn("Input XML Document has no top-level <context> branch.");
         } else {
             Element sourceElement = new Element("source");
-            sourceElement.appendChild(sourceName);
+            sourceElement.appendChild(srcPath.getFileName().toString());
             contextBranch.appendChild(sourceElement);
 
-            String datasetName = FilenameUtils.getBaseName(sourceName);
+            String datasetName = FilenameUtils.getBaseName(srcPath.getFileName().toString());
             datasetName = datasetName.replaceFirst("-raw$", "");
             Element sourceDatasetName = new Element("dataset");
             sourceDatasetName.appendChild(datasetName);

@@ -11,10 +11,10 @@
                 </session>
             </source>
             <step type="ImportCaptureScans">
-                <file id="in">RJP-1-1417040781-raw.txt</file>
+                <file id="in" pathname="raw/RJP-1-1417040781-raw.txt" />
             </step>
             <step type="SendXMLDocumentToSink">
-                <suffix>-capture</suffix>
+                <file suffix="-capture" />
             </step>
             <step type="BuildSensorBranch">
                 <key>BSSID</key>
@@ -23,7 +23,7 @@
                 <sensor>SSID</sensor>
             </step>
             <step type="SendXMLDocumentToSink">
-                <suffix>-sensor</suffix>
+                <file suffix="-sensor" />
             </step>
             <step type="BuildParameters">
                 <parameter name="power">
@@ -35,12 +35,11 @@
                 </parameter>
             </step>
             <step type="SendXMLDocumentToSink">
-                <sink suffix="-parameter" />
-                <suffix>-parameter</suffix>
+                <file suffix="-parameter" />
             </step>
             <step type="ExportToTableLayout">
-                <sink format="bin" path="post/RJP-1-1417040781-RSSI-table.bin" />
-                <sink format="csv" path="post/RJP-1-1417040781-RSSI-table.csv" />
+                <file suffix="-RSSI-table" extension="bin" />
+                <file suffix="-RSSI-table" extension="csv" />
                 <nodes label="Ch1"
                     xpath="sensor-sequence/parameter[@name='power']/sensor-values[@key='1']/value" />
                 <nodes label="Ch2"
@@ -65,8 +64,8 @@
                     xpath="sensor-sequence/parameter[@name='power']/sensor-values[@key='11']/value" />
             </step>
             <step type="ExportToTableLayout">
-                <sink format="bin" path="post/RJP-1-1417040781-chan-count-table.bin" />
-                <sink format="csv" path="post/RJP-1-1417040781-chan-count-table.csv" />
+                <file suffix="-chan-count-table" extension="bin" />
+                <file suffix="-chan-count-table" extension="csv" />
                 <nodes label="Count" xpath="sensor-sequence/parameter[@name='channels']/sensor-values/value" />
             </step>
         </component>

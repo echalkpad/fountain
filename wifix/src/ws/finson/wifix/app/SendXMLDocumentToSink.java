@@ -2,15 +2,16 @@ package ws.finson.wifix.app;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import nu.xom.Builder;
 import nu.xom.Document;
 import nu.xom.Element;
 import nu.xom.Elements;
-import nu.xom.Nodes;
+import nu.xom.ParsingException;
 import nu.xom.Serializer;
+import nu.xom.ValidityException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,15 +31,11 @@ import ws.tuxi.lib.pipeline.PipelineOperationException;
 public class SendXMLDocumentToSink implements PipelineOperation<Document, Document> {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private String namePrefix = "";
-    private String nameSuffix = "";
-    private String dstDir = "";
-
-    private String sinkName = null;
+    private ConfiguredPathname sinkPathname = null;
     private Path sinkPath = null;
     private OutputStream sinkStream = null;
     private Serializer formattedWriter = null;
-
+    private Document defaultContextDocument = null;
     /**
      * @param ac
      * @param cE
@@ -47,6 +44,11 @@ public class SendXMLDocumentToSink implements PipelineOperation<Document, Docume
      */
     public SendXMLDocumentToSink(ApplicationComponent ac, Element cE)
             throws ConfigurationException, IOException {
+        try {
+            defaultContextDocument = new Builder().build("<context><extension>xml</extension></context>",null);
+        } catch (ParsingException e) {
+            throw new ConfigurationException(e);
+        }
 
         // Process each of the configuration sections
 
@@ -54,19 +56,8 @@ public class SendXMLDocumentToSink implements PipelineOperation<Document, Docume
         for (int idx = 0; idx < sectionElements.size(); idx++) {
             Element sectionElement = sectionElements.get(idx);
             logger.trace("Begin section element <{}>", sectionElement.getLocalName());
-            if ("prefix".equals(sectionElement.getLocalName())) {
-                namePrefix = sectionElement.getValue();
-            } else if ("suffix".equals(sectionElement.getLocalName())) {
-                nameSuffix = sectionElement.getValue();
-            } else if ("dst-dir".equals(sectionElement.getLocalName())) {
-                dstDir = sectionElement.getValue();
-            } else if ("file".equals(sectionElement.getLocalName())) {
-                if (sinkName != null) {
-                    logger.warn("Ignoring extra <{}> definition, only one is allowed.",
-                            sectionElement.getLocalName());
-                } else {
-                    sinkName = sectionElement.getValue();
-                }
+            if ("file".equals(sectionElement.getLocalName())) {
+                sinkPathname = new ConfiguredPathname(sectionElement);
             } else {
                 logger.warn("Skipping <{}> element. Element not recognized.",
                         sectionElement.getLocalName());
@@ -80,29 +71,10 @@ public class SendXMLDocumentToSink implements PipelineOperation<Document, Docume
      */
     @Override
     public Document doStep(Document tree) throws PipelineOperationException {
-
-        // Do we have or can we build a file name to write to?
-
-        if (sinkName != null) {
-            sinkPath = FileSystems.getDefault().getPath(".", sinkName);
-        } else {
-
-            Nodes someNodes = tree.getRootElement().query("context[1]/dataset[1]");
-            if (someNodes.size() != 1) {
-                throw new PipelineOperationException(
-                        "Either an implicit dataset name must be available or the explicit name of the sink file must be specified.");
-            }
-            sinkName = namePrefix + someNodes.get(0).getValue() + nameSuffix + ".xml";
-
-            if (dstDir.isEmpty()) {
-                someNodes = tree.getRootElement().query("context[1]/dst-dir[1]");
-                if (someNodes.size() == 1) {
-                    dstDir = someNodes.get(0).getValue();
-                }
-            }
-            sinkPath = FileSystems.getDefault().getPath(".", dstDir, sinkName);
-        }
-
+        
+        Element globalContextElement = new Element(tree.getRootElement().getFirstChildElement("context"));
+        Element localContextElement = defaultContextDocument.getRootElement();
+        sinkPath = sinkPathname.getSinkPath(globalContextElement,localContextElement);
         try {
             sinkStream = Files.newOutputStream(sinkPath);
             formattedWriter = new Serializer(sinkStream);
