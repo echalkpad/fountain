@@ -26,7 +26,7 @@ public class WiFiRecord extends AbstractRecord {
             .compile("^(.*?)([a-fA-F\\d]{2}(?::[a-fA-F\\d]{2}){5})\\s+(\\S+)\\s+([^\\s,]+)(?:,\\S+)?\\s+(\\S+)\\s+(\\S+)\\s+(\\S+).*$");
 
     private final Pattern blankLinePattern = Pattern.compile("^\\s*$");
-    private final Pattern ibssLinePattern = Pattern.compile("^.*?IBSS network found.*$");
+    private final Pattern ibssLinePattern = Pattern.compile("^.*?IBSS networks? found.*$");
     /**
      * @throws PipelineSourceException
      * 
