@@ -40,6 +40,7 @@ public class ConfiguredPathname {
     private String nameExtension = "";
 
     private String suppliedPathName = null;
+    private String suppliedFileName = null;
 
     /**
      * 
@@ -57,6 +58,8 @@ public class ConfiguredPathname {
                 // ignore
             } else if ("pathname".equals(attributeName)) {
                 suppliedPathName = anAttribute.getValue();
+            } else if ("filename".equals(attributeName)) {
+                suppliedFileName = anAttribute.getValue();
             } else if ("dst-dir".equals(attributeName)) {
                 dstDir = anAttribute.getValue();
             } else if ("src-dir".equals(attributeName)) {
@@ -107,19 +110,7 @@ public class ConfiguredPathname {
             Element anElement;
             Element[] defaults = new Element[] { localContext, globalContext };
 
-            // What to use as root of the name?
-
-            String base = commonName;
-            for (Element cx : defaults) {
-                if (base.isEmpty() && (cx != null)) {
-                    anElement = cx.getFirstChildElement("dataset");
-                    if (anElement != null) {
-                        base = anElement.getValue();
-                    }
-                }
-            }
-
-            // What to use as the default directory portion of the path?
+            // What to use as the directory portion of the path?
 
             String contextElementName = "";
             String directory = "";
@@ -142,23 +133,40 @@ public class ConfiguredPathname {
                 }
             }
 
-            // What to use as the filename extension?
+            if (suppliedFileName != null) {
+                resultPath = FileSystems.getDefault().getPath(".", directory, suppliedFileName);
+            } else {
 
-            String ext = nameExtension;
-            for (Element cx : defaults) {
-                if (ext.isEmpty() && (cx != null)) {
-                    anElement = cx.getFirstChildElement("extension");
-                    if (anElement != null) {
-                        ext = anElement.getValue();
+                // What to use as base of the name?
+
+                String base = commonName;
+                for (Element cx : defaults) {
+                    if (base.isEmpty() && (cx != null)) {
+                        anElement = cx.getFirstChildElement("dataset");
+                        if (anElement != null) {
+                            base = anElement.getValue();
+                        }
                     }
                 }
-            }
-            if (!ext.startsWith(".")) {
-                ext = "." + ext;
-            }
 
-            resultPath = FileSystems.getDefault().getPath(".", directory,
-                    namePrefix + base + nameSuffix + ext);
+                // What to use as the extension?
+
+                String ext = nameExtension;
+                for (Element cx : defaults) {
+                    if (ext.isEmpty() && (cx != null)) {
+                        anElement = cx.getFirstChildElement("extension");
+                        if (anElement != null) {
+                            ext = anElement.getValue();
+                        }
+                    }
+                }
+                if (!ext.startsWith(".")) {
+                    ext = "." + ext;
+                }
+
+                resultPath = FileSystems.getDefault().getPath(".", directory,
+                        namePrefix + base + nameSuffix + ext);
+            }
         }
         return resultPath;
     }
