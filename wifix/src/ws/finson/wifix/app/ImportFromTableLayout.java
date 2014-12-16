@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.regex.Pattern;
 
@@ -20,8 +20,8 @@ import org.slf4j.LoggerFactory;
 
 import ws.tuxi.lib.cfg.ApplicationComponent;
 import ws.tuxi.lib.cfg.ConfigurationException;
-import ws.tuxi.lib.pipeline.PipelineSource;
-import ws.tuxi.lib.pipeline.PipelineSourceException;
+import ws.tuxi.lib.pipeline.PipelineOperation;
+import ws.tuxi.lib.pipeline.PipelineOperationException;
 
 /**
  * This ImportFromTableLayout class reads a csv formatted text file and creates an XML document
@@ -29,16 +29,17 @@ import ws.tuxi.lib.pipeline.PipelineSourceException;
  * 
  * The format of the incoming file is standard CSV. The first row is label strings, the second and
  * all following rows are data values. Each data row contains the same number of entries as the
- * label row. Missing values are indicated by two successive delimiters. 
- * The expected delimiter is a comma.  Leading and trailing spaces are trimmed from labels and values.
+ * label row. Missing values are indicated by two successive delimiters. The expected delimiter is a
+ * comma. Leading and trailing spaces are trimmed from labels and values.
  * 
  * @author Doug Johnson, Dec 2014
  * 
  */
-public class ImportFromTableLayout implements PipelineSource<Document> {
+public class ImportFromTableLayout implements PipelineOperation<Document, Document> {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private String sourceName = null;
+    private ConfiguredPathname sourcePathName = null;
+    private Path srcPath = null;
     private LineNumberReader sourceReader = null;
 
     private final Pattern csvLabelPattern = Pattern.compile("\\\",\\\"");
@@ -54,45 +55,32 @@ public class ImportFromTableLayout implements PipelineSource<Document> {
             Element sectionElement = sectionElements.get(idx);
             logger.debug("Begin section element <{}>", sectionElement.getLocalName());
             if ("file".equals(sectionElement.getLocalName())) {
-                if (sourceName != null) {
-                    logger.warn("Ignoring extra <{}> definition, only one is allowed.",
-                            sectionElement.getLocalName());
-                } else {
-                    sourceName = sectionElement.getValue();
-
-                    sourceReader = new LineNumberReader(new InputStreamReader(Files.newInputStream(
-                            FileSystems.getDefault().getPath(".", sourceName),
-                            StandardOpenOption.READ), StandardCharsets.UTF_8));
-                }
+                sourcePathName = new ConfiguredPathname(sectionElement);
             } else {
                 logger.warn("Skipping <{}> element. Element not recognized.",
                         sectionElement.getLocalName());
             }
         }
-        if (sourceName == null) {
-            throw new ConfigurationException("Name of the source file must be specified.");
+        if (sourcePathName == null) {
+            throw new ConfigurationException("A source file must be specified.");
         }
     }
 
     /**
-     * @see ws.tuxi.lib.pipeline.PipelineSource#readPipelineSource()
+     * @see ws.tuxi.lib.pipeline.PipelineOperation#doStep(java.lang.Object)
      */
     @Override
-    public Document readPipelineSource() throws PipelineSourceException {
-
-        // Create the skeleton XML document
-
-        Element root = new Element("session");
-        Element contextBranch = new Element("context");
-        root.appendChild(contextBranch);
-
-        Element sourceElement = new Element("source");
-        sourceElement.appendChild(sourceName);
-        contextBranch.appendChild(sourceElement);
-
-        Element sourceBaseName = new Element("basename");
-        sourceBaseName.appendChild(FilenameUtils.getBaseName(sourceName));
-        contextBranch.appendChild(sourceBaseName);
+    public Document doStep(Document tree) throws PipelineOperationException {
+        try {
+            Element globalContextElement = new Element(tree.getRootElement().getFirstChildElement(
+                    "context"));
+            srcPath = sourcePathName.getSourcePath(globalContextElement);
+            logger.info("Opening file '{}' for reading.", srcPath.toString());
+            sourceReader = new LineNumberReader(new InputStreamReader(Files.newInputStream(srcPath,
+                    StandardOpenOption.READ), StandardCharsets.UTF_8));
+        } catch (IOException e) {
+            throw new PipelineOperationException(e);
+        }
 
         // The first line of a CSV file defines the column labels and must not be blank.
         // Delimiters are not combined.
@@ -101,25 +89,24 @@ public class ImportFromTableLayout implements PipelineSource<Document> {
         try {
             line = sourceReader.readLine();
         } catch (IOException e) {
-            throw new PipelineSourceException(e);
+            throw new PipelineOperationException(e);
         }
         if (line == null || line.isEmpty()) {
-            return new Document(root);
+            return tree;
         }
 
         String[] label = csvLabelPattern.split(line, -1);
         if (label.length == 0) {
-            return new Document(root);
+            return tree;
         }
         logger.debug("Column label count: {}", label.length);
 
         Element parameterBranchElement = new Element("sensor-sequence");
-        root.appendChild(parameterBranchElement);
 
         Element[] col = new Element[label.length];
 
         for (int idx = 0; idx < label.length; idx++) {
-            label[idx] = label[idx].replaceAll("\\\"","");
+            label[idx] = label[idx].replaceAll("\\\"", "");
             logger.trace("Label {}: {}", idx, label[idx]);
             Element parameterElement = new Element("parameter");
             parameterElement.addAttribute(new Attribute("name", label[idx].trim()));
@@ -136,7 +123,7 @@ public class ImportFromTableLayout implements PipelineSource<Document> {
             while ((line = sourceReader.readLine()) != null) {
                 String[] val = csvValuePattern.split(line, -1);
                 if (val.length != label.length) {
-                    throw new PipelineSourceException("Line " + sourceReader.getLineNumber()
+                    throw new PipelineOperationException("Line " + sourceReader.getLineNumber()
                             + ".  Number of data values (" + val.length
                             + ") doesn't match number of labels (" + label.length + ").");
                 }
@@ -147,12 +134,28 @@ public class ImportFromTableLayout implements PipelineSource<Document> {
                 }
                 recordCount++;
             }
-            logger.debug("Record count: {}",recordCount);
+            logger.debug("Record count: {}", recordCount);
         } catch (IOException e) {
-            throw new PipelineSourceException(e);
+            throw new PipelineOperationException(e);
         }
+        tree.getRootElement().appendChild(parameterBranchElement);
 
-        return new Document(root);
+        // Store some additional context information for downstream processors
 
+        Element contextBranch = tree.getRootElement().getFirstChildElement("context");
+        if (contextBranch == null) {
+            logger.warn("Input XML Document has no top-level <context> branch.");
+        } else {
+            Element sourceElement = new Element("source");
+            sourceElement.appendChild(srcPath.getFileName().toString());
+            contextBranch.appendChild(sourceElement);
+
+            String datasetName = FilenameUtils.getBaseName(srcPath.getFileName().toString());
+            datasetName = datasetName.replaceFirst("-raw$", "");
+            Element sourceDatasetName = new Element("dataset");
+            sourceDatasetName.appendChild(datasetName);
+            contextBranch.appendChild(sourceDatasetName);
+        }
+        return tree;
     }
 }

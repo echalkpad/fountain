@@ -1,16 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<config id="ReadRawWiFi" title="Process Raw Wifi Data">
+<config id="RecopyToBin" title="Process CSV to Binary">
     <application>
         <component type="ws.tuxi.lib.pipeline.ACPipelineEngine" classpath="ws.tuxi.lib.pipeline;ws.finson.wifix.app">
-            <source type="ImportFromTableLayout">
-                <file id="in">raw/sine-wave-reference.csv</file>
+            <source type="CreateXMLDocument">
+                <session>
+                    <context>
+                        <src-dir>raw</src-dir>
+                        <dst-dir>post</dst-dir>
+                    </context>
+                </session>
             </source>
+            <step type="ImportFromTableLayout">
+                <file id="in" filename="sine-wave-reference.csv" />
+            </step>
             <step type="SendXMLDocumentToSink">
-                <file>post/sine-wave-reference.xml</file>
+                <file />
             </step>
             <step type="ExportToTableLayout">
-                <sink format="bin" path="post/sine-wave-reference.bin" />
-                <sink format="csv" path="post/sine-wave-reference-remake.csv" />
+                <file extension="bin" />
+                <file extension="csv" suffix="-mirror" />
                 <nodes label="Ch1" xpath="sensor-sequence/parameter[1]/sensor-values/value" />
                 <nodes label="Ch2" xpath="sensor-sequence/parameter[2]/sensor-values/value" />
                 <nodes label="Ch3" xpath="sensor-sequence/parameter[3]/sensor-values/value" />

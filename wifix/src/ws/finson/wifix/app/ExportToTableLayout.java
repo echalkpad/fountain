@@ -27,7 +27,7 @@ import ws.tuxi.lib.pipeline.PipelineOperationException;
 
 /**
  * This ExportToTableLayout class writes one or more nodesets to a table in a file. Each column
- * comprises one nodeset. The file can be in text (CSV) or binary (bin).
+ * comprises one nodeset. The output file can be in text (CSV) or binary (bin).
  * 
  * @author Doug Johnson, Nov 14, 2014
  * 
@@ -86,7 +86,8 @@ public class ExportToTableLayout implements PipelineOperation<Document, Document
 
         Element globalContextElement = in.getRootElement().getFirstChildElement("context");
         for (ConfiguredPathname cpn : sinkPathnames) {
-            String format = FilenameUtils.getExtension(cpn.getSinkPath(globalContextElement).toString());
+            String format = FilenameUtils.getExtension(cpn.getSinkPath(globalContextElement)
+                    .toString());
             switch (format) {
             case "csv":
                 PrintWriter textWriter;
@@ -113,95 +114,95 @@ public class ExportToTableLayout implements PipelineOperation<Document, Document
             }
         }
 
-            // Get the data to print
+        // Get the data to print
 
-            List<Nodes> nodesList = new ArrayList<>(label.size());
-            int rowCount = 0;
-            for (int idx = 0; idx < label.size(); idx++) {
-                Nodes col = in.getRootElement().query(xpath.get(idx));
-                nodesList.add(col);
-                rowCount = Math.max(rowCount, col.size());
-                logger.debug("{} column has {} rows.", label.get(idx), col.size());
+        List<Nodes> nodesList = new ArrayList<>(label.size());
+        int rowCount = 0;
+        for (int idx = 0; idx < label.size(); idx++) {
+            Nodes col = in.getRootElement().query(xpath.get(idx));
+            nodesList.add(col);
+            rowCount = Math.max(rowCount, col.size());
+            logger.debug("{} column has {} rows.", label.get(idx), col.size());
+        }
+        int colCount = nodesList.size();
+
+        // Write the CSV file header row
+
+        StringBuilder buf = new StringBuilder();
+        for (int idx = 0; idx < label.size(); idx++) {
+            if (idx != 0) {
+                buf.append(",");
             }
-            int colCount = nodesList.size();
+            if (label.get(idx) == null || label.get(idx).isEmpty()) {
+                buf.append("Field" + Integer.toString(idx));
+            } else {
+                buf.append(label.get(idx));
+            }
+        }
+        for (PrintWriter sinkWriter : csvOut) {
+            sinkWriter.println(buf.toString());
+        }
+        logger.trace(buf.toString());
 
-            // Write the CSV file header row
+        // Write the CSV file value rows
 
-            StringBuilder buf = new StringBuilder();
-            for (int idx = 0; idx < label.size(); idx++) {
-                if (idx != 0) {
+        for (int rowIndex = 0; rowIndex < rowCount; rowIndex++) {
+            buf = new StringBuilder();
+            for (int colIndex = 0; colIndex < nodesList.size(); colIndex++) {
+                if (colIndex != 0) {
                     buf.append(",");
                 }
-                if (label.get(idx) == null || label.get(idx).isEmpty()) {
-                    buf.append("Field" + Integer.toString(idx));
-                } else {
-                    buf.append(label.get(idx));
+                Nodes col = nodesList.get(colIndex);
+                if (rowIndex < col.size()) {
+                    Node val = col.get(rowIndex);
+                    buf.append(val.getValue());
                 }
             }
             for (PrintWriter sinkWriter : csvOut) {
                 sinkWriter.println(buf.toString());
             }
             logger.trace(buf.toString());
+        }
 
-            // Write the CSV file value rows
+        // Write the binary file rows
 
-            for (int rowIndex = 0; rowIndex < rowCount; rowIndex++) {
-                buf = new StringBuilder();
-                for (int colIndex = 0; colIndex < nodesList.size(); colIndex++) {
-                    if (colIndex != 0) {
-                        buf.append(",");
-                    }
-                    Nodes col = nodesList.get(colIndex);
-                    if (rowIndex < col.size()) {
-                        Node val = col.get(rowIndex);
-                        buf.append(val.getValue());
-                    }
+        int dataValue;
+
+        for (int rowIndex = 0; rowIndex < rowCount; rowIndex++) {
+            byte[] byteBuffer = new byte[colCount];
+            int offset = 0;
+            for (int colIndex = 0; colIndex < colCount; colIndex++) {
+                Nodes col = nodesList.get(colIndex);
+                if (rowIndex < col.size()) {
+                    Node val = col.get(rowIndex);
+                    dataValue = Integer.parseInt(val.getValue());
+                } else {
+                    dataValue = 0;
                 }
-                for (PrintWriter sinkWriter : csvOut) {
-                    sinkWriter.println(buf.toString());
-                }
-                logger.trace(buf.toString());
+                byteBuffer[offset++] = (byte) (dataValue & 0xFF);
             }
-
-            // Write the binary file rows
-
-            int dataValue;
-
-            for (int rowIndex = 0; rowIndex < rowCount; rowIndex++) {
-                byte[] byteBuffer = new byte[colCount];
-                int offset = 0;
-                for (int colIndex = 0; colIndex < colCount; colIndex++) {
-                    Nodes col = nodesList.get(colIndex);
-                    if (rowIndex < col.size()) {
-                        Node val = col.get(rowIndex);
-                        dataValue = Integer.parseInt(val.getValue());
-                    } else {
-                        dataValue = 0;
-                    }
-                    byteBuffer[offset++] = (byte) (dataValue & 0xFF);
-                }
-                for (BufferedOutputStream sinkStreamer : binOut) {
-                    try {
-                        sinkStreamer.write(byteBuffer);
-                        logger.trace("Wrote {} bytes to row {} of binary file.", byteBuffer.length,
-                                rowIndex);
-                    } catch (IOException e) {
-                        throw new PipelineOperationException(e);
-                    }
-                }
-            }
-
-            for (PrintWriter sinkWriter : csvOut) {
-                sinkWriter.close();
-            }
-
             for (BufferedOutputStream sinkStreamer : binOut) {
                 try {
-                    sinkStreamer.close();
+                    sinkStreamer.write(byteBuffer);
+                    logger.trace("Wrote {} bytes to row {} of binary file.", byteBuffer.length,
+                            rowIndex);
                 } catch (IOException e) {
                     throw new PipelineOperationException(e);
                 }
             }
-            return in;
         }
+
+        for (PrintWriter sinkWriter : csvOut) {
+            sinkWriter.close();
+        }
+
+        for (BufferedOutputStream sinkStreamer : binOut) {
+            try {
+                sinkStreamer.close();
+            } catch (IOException e) {
+                throw new PipelineOperationException(e);
+            }
+        }
+        return in;
     }
+}
