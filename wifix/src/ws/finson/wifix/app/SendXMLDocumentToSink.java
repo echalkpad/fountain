@@ -72,7 +72,8 @@ public class SendXMLDocumentToSink implements PipelineOperation<Document, Docume
     @Override
     public Document doStep(Document tree) throws PipelineOperationException {
         
-        Element globalContextElement = new Element(tree.getRootElement().getFirstChildElement("context"));
+        Element twig = tree.getRootElement().getFirstChildElement("context");
+        Element globalContextElement = (twig == null) ? null : new Element(twig);
         Element localContextElement = defaultContextDocument.getRootElement();
         sinkPath = sinkPathname.getSinkPath(globalContextElement,localContextElement);
         try {

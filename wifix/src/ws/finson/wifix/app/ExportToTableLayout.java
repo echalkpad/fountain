@@ -5,8 +5,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.Charset;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -86,14 +86,14 @@ public class ExportToTableLayout implements PipelineOperation<Document, Document
 
         Element globalContextElement = in.getRootElement().getFirstChildElement("context");
         for (ConfiguredPathname cpn : sinkPathnames) {
-            String format = FilenameUtils.getExtension(cpn.getSinkPath(globalContextElement)
-                    .toString());
+            Path theSinkPath = cpn.getSinkPath(globalContextElement);
+            String format = FilenameUtils.getExtension(theSinkPath.toString());
             switch (format) {
             case "csv":
                 PrintWriter textWriter;
                 try {
-                    textWriter = new PrintWriter(Files.newBufferedWriter(
-                            cpn.getSinkPath(globalContextElement), Charset.defaultCharset()));
+                    textWriter = new PrintWriter(Files.newBufferedWriter(theSinkPath,
+                            Charset.defaultCharset()));
                 } catch (IOException e) {
                     throw new PipelineOperationException(e);
                 }
@@ -113,6 +113,7 @@ public class ExportToTableLayout implements PipelineOperation<Document, Document
                 throw new PipelineOperationException("Unrecognized table format: " + format);
             }
         }
+        logger.debug("CSV outputs: {}, bin outputs: {}", csvOut.size(), binOut.size());
 
         // Get the data to print
 
@@ -128,66 +129,70 @@ public class ExportToTableLayout implements PipelineOperation<Document, Document
 
         // Write the CSV file header row
 
-        StringBuilder buf = new StringBuilder();
-        for (int idx = 0; idx < label.size(); idx++) {
-            if (idx != 0) {
-                buf.append(",");
-            }
-            if (label.get(idx) == null || label.get(idx).isEmpty()) {
-                buf.append("Field" + Integer.toString(idx));
-            } else {
-                buf.append(label.get(idx));
-            }
-        }
-        for (PrintWriter sinkWriter : csvOut) {
-            sinkWriter.println(buf.toString());
-        }
-        logger.trace(buf.toString());
-
-        // Write the CSV file value rows
-
-        for (int rowIndex = 0; rowIndex < rowCount; rowIndex++) {
-            buf = new StringBuilder();
-            for (int colIndex = 0; colIndex < nodesList.size(); colIndex++) {
-                if (colIndex != 0) {
+        if (csvOut.size() > 0) {
+            StringBuilder buf = new StringBuilder();
+            for (int idx = 0; idx < label.size(); idx++) {
+                if (idx != 0) {
                     buf.append(",");
                 }
-                Nodes col = nodesList.get(colIndex);
-                if (rowIndex < col.size()) {
-                    Node val = col.get(rowIndex);
-                    buf.append(val.getValue());
+                if (label.get(idx) == null || label.get(idx).isEmpty()) {
+                    buf.append("Field" + Integer.toString(idx));
+                } else {
+                    buf.append(label.get(idx));
                 }
             }
             for (PrintWriter sinkWriter : csvOut) {
                 sinkWriter.println(buf.toString());
             }
             logger.trace(buf.toString());
+
+            // Write the CSV file value rows
+
+            for (int rowIndex = 0; rowIndex < rowCount; rowIndex++) {
+                buf = new StringBuilder();
+                for (int colIndex = 0; colIndex < nodesList.size(); colIndex++) {
+                    if (colIndex != 0) {
+                        buf.append(",");
+                    }
+                    Nodes col = nodesList.get(colIndex);
+                    if (rowIndex < col.size()) {
+                        Node val = col.get(rowIndex);
+                        buf.append(val.getValue());
+                    }
+                }
+                for (PrintWriter sinkWriter : csvOut) {
+                    sinkWriter.println(buf.toString());
+                }
+                logger.trace(buf.toString());
+            }
         }
 
         // Write the binary file rows
 
-        int dataValue;
+        if (binOut.size() > 0) {
+            int dataValue;
 
-        for (int rowIndex = 0; rowIndex < rowCount; rowIndex++) {
-            byte[] byteBuffer = new byte[colCount];
-            int offset = 0;
-            for (int colIndex = 0; colIndex < colCount; colIndex++) {
-                Nodes col = nodesList.get(colIndex);
-                if (rowIndex < col.size()) {
-                    Node val = col.get(rowIndex);
-                    dataValue = Integer.parseInt(val.getValue());
-                } else {
-                    dataValue = 0;
+            for (int rowIndex = 0; rowIndex < rowCount; rowIndex++) {
+                byte[] byteBuffer = new byte[colCount];
+                int offset = 0;
+                for (int colIndex = 0; colIndex < colCount; colIndex++) {
+                    Nodes col = nodesList.get(colIndex);
+                    if (rowIndex < col.size()) {
+                        Node val = col.get(rowIndex);
+                        dataValue = Integer.parseInt(val.getValue());
+                    } else {
+                        dataValue = 0;
+                    }
+                    byteBuffer[offset++] = (byte) (dataValue & 0xFF);
                 }
-                byteBuffer[offset++] = (byte) (dataValue & 0xFF);
-            }
-            for (BufferedOutputStream sinkStreamer : binOut) {
-                try {
-                    sinkStreamer.write(byteBuffer);
-                    logger.trace("Wrote {} bytes to row {} of binary file.", byteBuffer.length,
-                            rowIndex);
-                } catch (IOException e) {
-                    throw new PipelineOperationException(e);
+                for (BufferedOutputStream sinkStreamer : binOut) {
+                    try {
+                        sinkStreamer.write(byteBuffer);
+                        logger.trace("Wrote {} bytes to row {} of binary file.", byteBuffer.length,
+                                rowIndex);
+                    } catch (IOException e) {
+                        throw new PipelineOperationException(e);
+                    }
                 }
             }
         }

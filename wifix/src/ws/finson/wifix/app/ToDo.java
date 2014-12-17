@@ -9,7 +9,12 @@ package ws.finson.wifix.app;
  */
 public class ToDo {
 
-    // TODO Add action={source, step, skip} to pipeline step element
-    // TODO store multiple scan branches in one tree
-    // TODO - tuxi - add formatting options to SendXMLToSink
+    // TODO - tuxi - Add attribute active={true,false} to pipeline source & step elements
+    // TODO - tuxi - Add formatting options to SendXMLToSink
+    // TODO - tuxi - use HTML to better present Switches.setSwitch() javadoc
+    // TODO - tuxi - document each configuration element, attributes and child elements
+    // TODO - tuxi - merge ConfiguredPath into tuxi from wifix
+    // TODO - wifix - store multiple scan branches in one tree
+    // TODO - wifix - add format option to SendXMLDocumentToSink and merge into tuxi
+    // TODO - wifix - document each configuration element, attributes and child elements
 }

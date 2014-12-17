@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config id="TidesToBin" title="Process xml tidal data to tabular format">
+    <application>
+        <component type="ws.tuxi.lib.pipeline.ACPipelineEngine" classpath="ws.tuxi.lib.pipeline;ws.finson.wifix.app">
+            <source type="CreateXMLDocument">
+                <session>
+                    <context>
+                        <src-dir>raw</src-dir>
+                        <dst-dir>post</dst-dir>
+                    </context>
+                </session>
+            </source>
+            <step type="ImportXMLDocumentFromSource">
+                <file pathname="raw/sea-9447130.xml" />
+                <file pathname="raw/tac-9446484.xml" />
+                <file pathname="raw/pa-9444090.xml" />
+                <file pathname="raw/nea-9443090.xml" />
+            </step>
+            <step type="ApplyXSLT">
+                <stylesheet>/ws/finson/wifix/app/tidal-normalization.xsl</stylesheet>
+            </step>
+            <step type="SendXMLDocumentToSink">
+                <file pathname="post/xsl-result.xml" />
+            </step>
+            <step type="ExportToTableLayout">
+                <file pathname="post/tides.csv" />
+                <nodes label="Sea" xpath="/session/datainfo[1]/data/item/pred" />
+                <nodes label="Tac" xpath="/session/datainfo[2]/data/item/pred" />
+                <nodes label="PA" xpath="/session/datainfo[3]/data/item/pred" />
+                <nodes label="Neah" xpath="/session/datainfo[4]/data/item/pred" />
+            </step>
+        </component>
+    </application>
+</config>

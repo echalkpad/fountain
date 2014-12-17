@@ -66,7 +66,7 @@ public class ConfiguredPathname {
                 srcDir = anAttribute.getValue();
             } else if ("prefix".equals(attributeName)) {
                 namePrefix = anAttribute.getValue();
-            } else if ("dataset".equals(attributeName)) {
+            } else if ("base".equals(attributeName)) {
                 commonName = anAttribute.getValue();
             } else if ("suffix".equals(attributeName)) {
                 nameSuffix = anAttribute.getValue();
@@ -142,7 +142,7 @@ public class ConfiguredPathname {
                 String base = commonName;
                 for (Element cx : defaults) {
                     if (base.isEmpty() && (cx != null)) {
-                        anElement = cx.getFirstChildElement("dataset");
+                        anElement = cx.getFirstChildElement("base");
                         if (anElement != null) {
                             base = anElement.getValue();
                         }
@@ -164,8 +164,13 @@ public class ConfiguredPathname {
                     ext = "." + ext;
                 }
 
+                String theFileName = namePrefix + base + nameSuffix + ext;
                 resultPath = FileSystems.getDefault().getPath(".", directory,
-                        namePrefix + base + nameSuffix + ext);
+                        theFileName);
+                
+                if (theFileName.trim().equals(ext.trim())) {
+                    logger.warn("Configured file name is most likely not what was intended: '{}'.",theFileName);
+                }
             }
         }
         return resultPath;
