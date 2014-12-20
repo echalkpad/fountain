@@ -101,7 +101,7 @@ public class ImportFromTableLayout implements PipelineOperation<Document, Docume
         }
         logger.debug("Column label count: {}", label.length);
 
-        Element parameterBranchElement = new Element("sensor-sequence");
+        Element parameterBranchElement = new Element("parameter-sequence");
 
         Element[] col = new Element[label.length];
 
@@ -111,7 +111,7 @@ public class ImportFromTableLayout implements PipelineOperation<Document, Docume
             Element parameterElement = new Element("parameter");
             parameterElement.addAttribute(new Attribute("name", label[idx].trim()));
             parameterBranchElement.appendChild(parameterElement);
-            Element valuesElement = new Element("sensor-values");
+            Element valuesElement = new Element("parameter-values");
             parameterElement.appendChild(valuesElement);
             col[idx] = valuesElement;
         }
