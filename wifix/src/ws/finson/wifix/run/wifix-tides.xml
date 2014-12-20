@@ -15,6 +15,8 @@
                 <file pathname="raw/tac-9446484.xml" />
                 <file pathname="raw/pa-9444090.xml" />
                 <file pathname="raw/nea-9443090.xml" />
+                <file pathname="raw/lapush-9442396.xml" />
+                <file pathname="raw/evt-9447659.xml" />
             </step>
             <step type="ApplyXSLT">
                 <stylesheet>/ws/finson/wifix/app/tidal-normalization.xsl</stylesheet>
@@ -22,12 +24,25 @@
             <step type="SendXMLDocumentToSink">
                 <file pathname="post/xsl-result.xml" />
             </step>
+            <step type="ImportFromTableLayout">
+                <file pathname="raw/lunar-trim-comma.csv" />
+            </step>
+           <step type="SendXMLDocumentToSink">
+                <file pathname="post/lunar-result.xml" />
+            </step>
             <step type="ExportToTableLayout">
                 <file pathname="post/tides.csv" />
-                <nodes label="Sea" xpath="/session/datainfo[1]/data/item/pred" />
-                <nodes label="Tac" xpath="/session/datainfo[2]/data/item/pred" />
-                <nodes label="PA" xpath="/session/datainfo[3]/data/item/pred" />
-                <nodes label="Neah" xpath="/session/datainfo[4]/data/item/pred" />
+                <nodes label="Sea" xpath="/session/parameter-sequence[1]/parameter[1]/parameter-values/value" />
+                <nodes label="Tac" xpath="/session/parameter-sequence[1]/parameter[2]/parameter-values/value" />
+                <nodes label="PA" xpath="/session/parameter-sequence[1]/parameter[3]/parameter-values/value" />
+                <nodes label="Neah" xpath="/session/parameter-sequence[1]/parameter[4]/parameter-values/value" />
+                <nodes label="LaPush" xpath="/session/parameter-sequence[1]/parameter[5]/parameter-values/value" />
+                <nodes label="Evt" xpath="/session/parameter-sequence[1]/parameter[6]/parameter-values/value" />
+                <nodes label="APmag" xpath="/session/parameter-sequence[2]/parameter[4]/parameter-values/value" />
+                <nodes label="sbrt" xpath="/session/parameter-sequence[2]/parameter[5]/parameter-values/value" />
+                <nodes label="percent" xpath="/session/parameter-sequence[2]/parameter[6]/parameter-values/value" />
+                <nodes label="range" xpath="/session/parameter-sequence[2]/parameter[7]/parameter-values/value" />
+                <nodes label="rangedot" xpath="/session/parameter-sequence[2]/parameter[8]/parameter-values/value" />
             </step>
         </component>
     </application>
