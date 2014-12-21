@@ -35,8 +35,7 @@ import ws.tuxi.lib.pipeline.PipelineOperationException;
 public class ExportToTableLayout implements PipelineOperation<Document, Document> {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private List<String> label = new ArrayList<>();
-    private List<String> xpath = new ArrayList<>();
+    private List<ConfiguredNodeSet> selectors = new ArrayList<>();
 
     private List<ConfiguredPathname> sinkPathnames = new ArrayList<>();
     private List<BufferedOutputStream> binOut = new ArrayList<>();
@@ -62,14 +61,7 @@ public class ExportToTableLayout implements PipelineOperation<Document, Document
             if ("file".equals(sectionElement.getLocalName())) {
                 sinkPathnames.add(new ConfiguredPathname(sectionElement));
             } else if ("nodes".equals(sectionElement.getLocalName())) {
-                String a = sectionElement.getAttributeValue("label");
-                String x = sectionElement.getAttributeValue("xpath");
-                if (a == null || x == null) {
-                    throw new ConfigurationException(
-                            "A nodes element must have both a label and an xpath attribute.");
-                }
-                label.add(a);
-                xpath.add(x);
+                selectors.add(new ConfiguredNodeSet(sectionElement));
             } else {
                 logger.warn("Skipping <{}> element. Element not recognized.",
                         sectionElement.getLocalName());
@@ -117,13 +109,13 @@ public class ExportToTableLayout implements PipelineOperation<Document, Document
 
         // Get the data to print
 
-        List<Nodes> nodesList = new ArrayList<>(label.size());
+        List<Nodes> nodesList = new ArrayList<>(selectors.size());
         int rowCount = 0;
-        for (int idx = 0; idx < label.size(); idx++) {
-            Nodes col = in.getRootElement().query(xpath.get(idx));
+        for (int idx = 0; idx < selectors.size(); idx++) {
+            Nodes col = selectors.get(idx).getNodeSet(in);
             nodesList.add(col);
             rowCount = Math.max(rowCount, col.size());
-            logger.debug("{} column has {} rows.", label.get(idx), col.size());
+            logger.debug("{} column has {} rows.", selectors.get(idx).getLabel(in), col.size());
         }
         int colCount = nodesList.size();
 
@@ -131,16 +123,20 @@ public class ExportToTableLayout implements PipelineOperation<Document, Document
 
         if (csvOut.size() > 0) {
             StringBuilder buf = new StringBuilder();
-            for (int idx = 0; idx < label.size(); idx++) {
-                if (idx != 0) {
-                    buf.append(",");
+            for (int idx = 0; idx < selectors.size(); idx++) {
+                if (idx == 0) {
+                    buf.append("\"");
+                } else {
+                    buf.append("\",\"");
                 }
-                if (label.get(idx) == null || label.get(idx).isEmpty()) {
+                String aLabel =  selectors.get(idx).getLabel(in);
+                if (aLabel == null) {
                     buf.append("Field" + Integer.toString(idx));
                 } else {
-                    buf.append(label.get(idx));
+                    buf.append(aLabel);
                 }
             }
+            buf.append("\"");
             for (PrintWriter sinkWriter : csvOut) {
                 sinkWriter.println(buf.toString());
             }

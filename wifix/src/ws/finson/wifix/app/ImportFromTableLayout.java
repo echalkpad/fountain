@@ -152,7 +152,7 @@ public class ImportFromTableLayout implements PipelineOperation<Document, Docume
 
             String datasetName = FilenameUtils.getBaseName(srcPath.getFileName().toString());
             datasetName = datasetName.replaceFirst("-raw$", "");
-            Element sourceDatasetName = new Element("dataset");
+            Element sourceDatasetName = new Element("base");
             sourceDatasetName.appendChild(datasetName);
             contextBranch.appendChild(sourceDatasetName);
         }

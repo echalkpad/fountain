@@ -32,17 +32,17 @@
             </step>
             <step type="ExportToTableLayout">
                 <file pathname="post/tides.csv" />
-                <nodes label="Sea" xpath="/session/parameter-sequence[1]/parameter[1]/parameter-values/value" />
-                <nodes label="Tac" xpath="/session/parameter-sequence[1]/parameter[2]/parameter-values/value" />
-                <nodes label="PA" xpath="/session/parameter-sequence[1]/parameter[3]/parameter-values/value" />
-                <nodes label="Neah" xpath="/session/parameter-sequence[1]/parameter[4]/parameter-values/value" />
-                <nodes label="LaPush" xpath="/session/parameter-sequence[1]/parameter[5]/parameter-values/value" />
-                <nodes label="Evt" xpath="/session/parameter-sequence[1]/parameter[6]/parameter-values/value" />
-                <nodes label="APmag" xpath="/session/parameter-sequence[2]/parameter[4]/parameter-values/value" />
-                <nodes label="sbrt" xpath="/session/parameter-sequence[2]/parameter[5]/parameter-values/value" />
-                <nodes label="percent" xpath="/session/parameter-sequence[2]/parameter[6]/parameter-values/value" />
-                <nodes label="range" xpath="/session/parameter-sequence[2]/parameter[7]/parameter-values/value" />
-                <nodes label="rangedot" xpath="/session/parameter-sequence[2]/parameter[8]/parameter-values/value" />
+                <nodes label-path="/session/parameter-sequence[1]/parameter[1]/@name" value-path="/session/parameter-sequence[1]/parameter[1]/parameter-values/value" />
+                <nodes label="Tac" value-path="/session/parameter-sequence[1]/parameter[2]/parameter-values/value" />
+                <nodes label="PA" value-path="/session/parameter-sequence[1]/parameter[3]/parameter-values/value" />
+                <nodes label="Neah" value-path="/session/parameter-sequence[1]/parameter[4]/parameter-values/value" />
+                <nodes label="LaPush" value-path="/session/parameter-sequence[1]/parameter[5]/parameter-values/value" />
+                <nodes label="Evt" value-path="/session/parameter-sequence[1]/parameter[6]/parameter-values/value" />
+                <nodes label="APmag" value-path="/session/parameter-sequence[2]/parameter[4]/parameter-values/value" />
+                <nodes label="sbrt" value-path="/session/parameter-sequence[2]/parameter[5]/parameter-values/value" />
+                <nodes label="percent" value-path="/session/parameter-sequence[2]/parameter[6]/parameter-values/value" />
+                <nodes label="range" value-path="/session/parameter-sequence[2]/parameter[7]/parameter-values/value" />
+                <nodes label="rangedot" value-path="/session/parameter-sequence[2]/parameter[8]/parameter-values/value" />
             </step>
         </component>
     </application>
