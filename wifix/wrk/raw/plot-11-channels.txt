@@ -3,7 +3,7 @@ filename = "sine-wave-reference.csv"
 runtime = strftime("%Y-%m-%d %H:%M:%S",time(0))
 unset multiplot
 set terminal pdf size 7.5,10
-set output "plot-test.pdf"
+set output "../post/plot-test.pdf"
 set datafile separator ","
 set key autotitle columnhead
 do for [idx = 0:5] {
