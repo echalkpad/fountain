@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <application>
+        <component type="ws.tuxi.lib.pipeline.ACPipelineEngine" classpath="ws.tuxi.lib.pipeline;ws.finson.wifix.app">
+            <source type="LoadXMLDocumentFromSource">
+                <file pathname="post/table-layout.xml" />
+            </source>
+            <step type="SaveXSLTransformToSink">
+                <file dst-dir="post/" base="xsl-transform-test" extension="csv" />
+                <stylesheet resource-path="/ws/finson/wifix/app/table-to-csv.xsl" />
+            </step>    
+        </component>
+    </application>
+</config>
