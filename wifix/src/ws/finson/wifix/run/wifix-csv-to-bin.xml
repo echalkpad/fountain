@@ -10,13 +10,13 @@
                     </context>
                 </session>
             </source>
-            <step type="ImportFromTableLayout">
+            <step type="ImportFromCSV">
                 <file id="in" filename="sine-wave-reference.csv" />
             </step>
-            <step type="SendXMLDocumentToSink">
+            <step type="SaveXMLDocumentToSink">
                 <file />
             </step>
-            <step type="ExportToTableLayout">
+            <step type="ExportToCSV">
                 <file extension="bin" />
                 <file extension="csv" suffix="-mirror" />
                 <nodes label-path="parameter-sequence/parameter[1]/@name" value-path="parameter-sequence/parameter[1]/parameter-values/value" />

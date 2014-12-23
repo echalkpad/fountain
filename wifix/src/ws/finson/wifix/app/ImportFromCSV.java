@@ -24,7 +24,7 @@ import ws.tuxi.lib.pipeline.PipelineOperation;
 import ws.tuxi.lib.pipeline.PipelineOperationException;
 
 /**
- * This ImportFromTableLayout class reads a csv formatted text file and creates an XML document
+ * This ImportFromCSV class reads a csv formatted text file and creates an XML document
  * containing the same information.
  * 
  * The format of the incoming file is standard CSV. The first row is label strings, the second and
@@ -35,7 +35,7 @@ import ws.tuxi.lib.pipeline.PipelineOperationException;
  * @author Doug Johnson, Dec 2014
  * 
  */
-public class ImportFromTableLayout implements PipelineOperation<Document, Document> {
+public class ImportFromCSV implements PipelineOperation<Document, Document> {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private ConfiguredPathname sourcePathName = null;
@@ -45,7 +45,7 @@ public class ImportFromTableLayout implements PipelineOperation<Document, Docume
     private final Pattern csvLabelPattern = Pattern.compile("\\\",\\\"");
     private final Pattern csvValuePattern = Pattern.compile(",");
 
-    public ImportFromTableLayout(ApplicationComponent ac, Element cE)
+    public ImportFromCSV(ApplicationComponent ac, Element cE)
             throws ConfigurationException, IOException {
 
         // Process each of the configuration sections

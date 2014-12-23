@@ -10,7 +10,7 @@
                     </context>
                 </session>
             </source>
-            <step type="ImportXMLDocumentFromSource">
+            <step type="AppendXMLDocumentFromSource">
                 <file pathname="raw/sea-9447130.xml" />
                 <file pathname="raw/tac-9446484.xml" />
                 <file pathname="raw/pa-9444090.xml" />
@@ -21,28 +21,28 @@
             <step type="ApplyXSLT">
                 <stylesheet>/ws/finson/wifix/app/tidal-normalization.xsl</stylesheet>
             </step>
-            <step type="SendXMLDocumentToSink">
+            <step type="SaveXMLDocumentToSink">
                 <file pathname="post/xsl-result.xml" />
             </step>
-            <step type="ImportFromTableLayout">
+            <step type="ImportFromCSV">
                 <file pathname="raw/lunar-trim-comma.csv" />
             </step>
-           <step type="SendXMLDocumentToSink">
+           <step type="SaveXMLDocumentToSink">
                 <file pathname="post/lunar-result.xml" />
             </step>
-            <step type="ExportToTableLayout">
+            <step type="ExportToCSV">
                 <file pathname="post/tides.csv" />
                 <nodes label-path="/session/parameter-sequence[1]/parameter[1]/@name" value-path="/session/parameter-sequence[1]/parameter[1]/parameter-values/value" />
-                <nodes label="Tac" value-path="/session/parameter-sequence[1]/parameter[2]/parameter-values/value" />
-                <nodes label="PA" value-path="/session/parameter-sequence[1]/parameter[3]/parameter-values/value" />
-                <nodes label="Neah" value-path="/session/parameter-sequence[1]/parameter[4]/parameter-values/value" />
-                <nodes label="LaPush" value-path="/session/parameter-sequence[1]/parameter[5]/parameter-values/value" />
-                <nodes label="Evt" value-path="/session/parameter-sequence[1]/parameter[6]/parameter-values/value" />
-                <nodes label="APmag" value-path="/session/parameter-sequence[2]/parameter[4]/parameter-values/value" />
-                <nodes label="sbrt" value-path="/session/parameter-sequence[2]/parameter[5]/parameter-values/value" />
-                <nodes label="percent" value-path="/session/parameter-sequence[2]/parameter[6]/parameter-values/value" />
-                <nodes label="range" value-path="/session/parameter-sequence[2]/parameter[7]/parameter-values/value" />
-                <nodes label="rangedot" value-path="/session/parameter-sequence[2]/parameter[8]/parameter-values/value" />
+                <nodes label-path="/session/parameter-sequence[1]/parameter[2]/@name" value-path="/session/parameter-sequence[1]/parameter[2]/parameter-values/value" />
+                <nodes label-path="/session/parameter-sequence[1]/parameter[3]/@name" value-path="/session/parameter-sequence[1]/parameter[3]/parameter-values/value" />
+                <nodes label-path="/session/parameter-sequence[1]/parameter[4]/@name" value-path="/session/parameter-sequence[1]/parameter[4]/parameter-values/value" />
+                <nodes label-path="/session/parameter-sequence[1]/parameter[5]/@name" value-path="/session/parameter-sequence[1]/parameter[5]/parameter-values/value" />
+                <nodes label-path="/session/parameter-sequence[1]/parameter[6]/@name" value-path="/session/parameter-sequence[1]/parameter[6]/parameter-values/value" />
+                <nodes label-path="/session/parameter-sequence[2]/parameter[4]/@name" value-path="/session/parameter-sequence[2]/parameter[4]/parameter-values/value" />
+                <nodes label-path="/session/parameter-sequence[2]/parameter[5]/@name" value-path="/session/parameter-sequence[2]/parameter[5]/parameter-values/value" />
+                <nodes label-path="/session/parameter-sequence[2]/parameter[6]/@name" value-path="/session/parameter-sequence[2]/parameter[6]/parameter-values/value" />
+                <nodes label-path="/session/parameter-sequence[2]/parameter[7]/@name" value-path="/session/parameter-sequence[2]/parameter[7]/parameter-values/value" />
+                <nodes label-path="/session/parameter-sequence[2]/parameter[8]/@name" value-path="/session/parameter-sequence[2]/parameter[8]/parameter-values/value" />
             </step>
         </component>
     </application>

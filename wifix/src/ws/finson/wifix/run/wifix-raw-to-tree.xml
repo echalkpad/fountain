@@ -13,7 +13,7 @@
             <step type="ImportCaptureScans">
                 <file id="in" pathname="raw/RJP-1-1417040781-raw.txt" />
             </step>
-            <step type="SendXMLDocumentToSink">
+            <step type="SaveXMLDocumentToSink">
                 <file suffix="-capture" />
             </step>
             <step type="BuildSensorBranch">
@@ -22,7 +22,7 @@
                 <sensor>CHANNEL</sensor>
                 <sensor>SSID</sensor>
             </step>
-            <step type="SendXMLDocumentToSink">
+            <step type="SaveXMLDocumentToSink">
                 <file suffix="-sensor" />
             </step>
             <step type="BuildParameters">
@@ -34,39 +34,39 @@
                     <expression>count(CHANNEL)</expression>
                 </parameter>
             </step>
-            <step type="SendXMLDocumentToSink">
+            <step type="SaveXMLDocumentToSink">
                 <file suffix="-parameter" />
             </step>
             <step type="ExportToTableLayout">
                 <file suffix="-RSSI-table" extension="bin" />
                 <file suffix="-RSSI-table" extension="csv" />
                 <nodes label="Ch1"
-                    xpath="sensor-sequence/parameter[@name='power']/sensor-values[@key='1']/value" />
+                    value-path="sensor-sequence/parameter[@name='power']/sensor-values[@key='1']/value" />
                 <nodes label="Ch2"
-                    xpath="sensor-sequence/parameter[@name='power']/sensor-values[@key='2']/value" />
+                    value-path="sensor-sequence/parameter[@name='power']/sensor-values[@key='2']/value" />
                 <nodes label="Ch3"
-                    xpath="sensor-sequence/parameter[@name='power']/sensor-values[@key='3']/value" />
+                    value-path="sensor-sequence/parameter[@name='power']/sensor-values[@key='3']/value" />
                 <nodes label="Ch4"
-                    xpath="sensor-sequence/parameter[@name='power']/sensor-values[@key='4']/value" />
+                    value-path="sensor-sequence/parameter[@name='power']/sensor-values[@key='4']/value" />
                 <nodes label="Ch5"
-                    xpath="sensor-sequence/parameter[@name='power']/sensor-values[@key='5']/value" />
+                    value-path="sensor-sequence/parameter[@name='power']/sensor-values[@key='5']/value" />
                 <nodes label="Ch6"
-                    xpath="sensor-sequence/parameter[@name='power']/sensor-values[@key='6']/value" />
+                    value-path="sensor-sequence/parameter[@name='power']/sensor-values[@key='6']/value" />
                 <nodes label="Ch7"
-                    xpath="sensor-sequence/parameter[@name='power']/sensor-values[@key='7']/value" />
+                    value-path="sensor-sequence/parameter[@name='power']/sensor-values[@key='7']/value" />
                 <nodes label="Ch8"
-                    xpath="sensor-sequence/parameter[@name='power']/sensor-values[@key='8']/value" />
+                    value-path="sensor-sequence/parameter[@name='power']/sensor-values[@key='8']/value" />
                 <nodes label="Ch9"
-                    xpath="sensor-sequence/parameter[@name='power']/sensor-values[@key='9']/value" />
+                    value-path="sensor-sequence/parameter[@name='power']/sensor-values[@key='9']/value" />
                 <nodes label="Ch10"
-                    xpath="sensor-sequence/parameter[@name='power']/sensor-values[@key='10']/value" />
+                    value-path="sensor-sequence/parameter[@name='power']/sensor-values[@key='10']/value" />
                 <nodes label="Ch11"
-                    xpath="sensor-sequence/parameter[@name='power']/sensor-values[@key='11']/value" />
+                    value-path="sensor-sequence/parameter[@name='power']/sensor-values[@key='11']/value" />
             </step>
-            <step type="ExportToTableLayout">
+            <step type="ExportToCSV">
                 <file suffix="-chan-count-table" extension="bin" />
                 <file suffix="-chan-count-table" extension="csv" />
-                <nodes label="Count" xpath="sensor-sequence/parameter[@name='channels']/sensor-values/value" />
+                <nodes label="Count" value-path="sensor-sequence/parameter[@name='channels']/sensor-values/value" />
             </step>
         </component>
     </application>

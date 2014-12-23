@@ -26,13 +26,13 @@ import ws.tuxi.lib.pipeline.PipelineOperation;
 import ws.tuxi.lib.pipeline.PipelineOperationException;
 
 /**
- * This ExportToTableLayout class writes one or more nodesets to a table in a file. Each column
+ * This ExportToCSV class writes one or more nodesets to a table in a file. Each column
  * comprises one nodeset. The output file can be in text (CSV) or binary (bin).
  * 
  * @author Doug Johnson, Nov 14, 2014
  * 
  */
-public class ExportToTableLayout implements PipelineOperation<Document, Document> {
+public class ExportToCSV implements PipelineOperation<Document, Document> {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private List<ConfiguredNodeSet> selectors = new ArrayList<>();
@@ -49,7 +49,7 @@ public class ExportToTableLayout implements PipelineOperation<Document, Document
      * @throws IOException
      * @throws ConfigurationException
      */
-    public ExportToTableLayout(ApplicationComponent ac, Element cE) throws IOException,
+    public ExportToCSV(ApplicationComponent ac, Element cE) throws IOException,
             ConfigurationException {
 
         // Process each of the configuration sections
