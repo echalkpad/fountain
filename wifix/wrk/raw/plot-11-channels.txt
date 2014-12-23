@@ -1,5 +1,5 @@
 reset
-filename = "sine-wave-reference.csv"
+filename = "tides.csv"
 runtime = strftime("%Y-%m-%d %H:%M:%S",time(0))
 unset multiplot
 set terminal pdf size 7.5,10
@@ -11,7 +11,7 @@ do for [idx = 0:5] {
 	do for [pos = 0:1] {
 		channel = 1 + (idx*2) + pos
 		if (channel < 12) {
-			set title sprintf("Channel %i",channel)
+			set title sprintf("Channel %i",channel-1)
 			plot filename using 0:channel with lines
 		}
 	}
