@@ -14,7 +14,8 @@ public class ToDo {
     // TODO - tuxi - use HTML to better present Switches.setSwitch() javadoc
     // TODO - tuxi - document each configuration element, attributes and child elements
     // TODO - tuxi - merge ConfiguredPath into tuxi from wifix
+    // TODO - wifix - merge AppendXMLFromSource into LoadXMLFromSource
     // TODO - wifix - store multiple scan branches in one tree
-    // TODO - wifix - add format option to SendXMLDocumentToSink and merge into tuxi
+    // TODO - wifix - add format option to SaveXMLDocumentToSink and merge into tuxi
     // TODO - wifix - document each configuration element, attributes and child elements
 }
