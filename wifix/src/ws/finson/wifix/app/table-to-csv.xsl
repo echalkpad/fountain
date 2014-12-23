@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
     <xsl:output method="text" />
-    <!-- write selected data from a table layout to a sink -->
+    <!-- transform selected data from an XML table layout to a text-nodes-only csv format -->
     
     <xsl:variable name="rowCount"><xsl:value-of select="count(//column[1]/value)" /></xsl:variable>
 
-    <xsl:template match="/table">
+    <xsl:template match="//table">
         <xsl:apply-templates select="column" />
         <xsl:for-each select="column[1]/value">
           <xsl:apply-templates select="." mode="row-index">
