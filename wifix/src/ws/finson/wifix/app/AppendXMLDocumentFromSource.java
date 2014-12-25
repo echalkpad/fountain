@@ -12,7 +12,6 @@ import nu.xom.Builder;
 import nu.xom.Document;
 import nu.xom.Element;
 import nu.xom.Elements;
-import nu.xom.Node;
 import nu.xom.ParsingException;
 
 import org.slf4j.Logger;
