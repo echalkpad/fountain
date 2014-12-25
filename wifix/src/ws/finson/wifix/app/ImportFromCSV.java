@@ -35,6 +35,7 @@ import ws.tuxi.lib.pipeline.PipelineOperationException;
  * @author Doug Johnson, Dec 2014
  * 
  */
+@Deprecated()
 public class ImportFromCSV implements PipelineOperation<Document, Document> {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
