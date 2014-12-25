@@ -98,6 +98,7 @@ public class SaveXSLTransformToSink implements PipelineOperation<Document, Docum
             InputStream resource = this.getClass().getResourceAsStream(stylesheetResource);
             stylesheet = builder.build(resource);
             XSLTransform transform = new XSLTransform(stylesheet);
+            logger.debug("XSLTransform: {}",transform.toString());
             String today = DateFormat.getDateInstance().format(new Date());
             transform.setParameter("today", today);
             transformResult = transform.transform(tree);

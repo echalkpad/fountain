@@ -19,30 +19,21 @@
                 <file pathname="raw/evt-9447659.xml" />
             </step>
             <step type="ApplyXSLT">
-                <stylesheet>/ws/finson/wifix/app/tidal-normalization.xsl</stylesheet>
+                <stylesheet>/ws/finson/wifix/app/tidal-format-normalization.xsl</stylesheet>
             </step>
+            <step type="NormalizeTableValues" />
             <step type="SaveXMLDocumentToSink">
-                <file pathname="post/xsl-result.xml" />
+                <file pathname="post/normalized-tidal-result.xml" />
             </step>
-            <step type="ImportFromCSV">
-                <file pathname="raw/lunar-trim-comma.csv" />
-            </step>
-           <step type="SaveXMLDocumentToSink">
-                <file pathname="post/lunar-result.xml" />
-            </step>
-            <step type="ExportToCSV">
-                <file pathname="post/tides.csv" />
-                <nodes label-path="/session/parameter-sequence[1]/parameter[1]/@name" value-path="/session/parameter-sequence[1]/parameter[1]/parameter-values/value" />
-                <nodes label-path="/session/parameter-sequence[1]/parameter[2]/@name" value-path="/session/parameter-sequence[1]/parameter[2]/parameter-values/value" />
-                <nodes label-path="/session/parameter-sequence[1]/parameter[3]/@name" value-path="/session/parameter-sequence[1]/parameter[3]/parameter-values/value" />
-                <nodes label-path="/session/parameter-sequence[1]/parameter[4]/@name" value-path="/session/parameter-sequence[1]/parameter[4]/parameter-values/value" />
-                <nodes label-path="/session/parameter-sequence[1]/parameter[5]/@name" value-path="/session/parameter-sequence[1]/parameter[5]/parameter-values/value" />
-                <nodes label-path="/session/parameter-sequence[1]/parameter[6]/@name" value-path="/session/parameter-sequence[1]/parameter[6]/parameter-values/value" />
-                <nodes label-path="/session/parameter-sequence[2]/parameter[4]/@name" value-path="/session/parameter-sequence[2]/parameter[4]/parameter-values/value" />
-                <nodes label-path="/session/parameter-sequence[2]/parameter[5]/@name" value-path="/session/parameter-sequence[2]/parameter[5]/parameter-values/value" />
-                <nodes label-path="/session/parameter-sequence[2]/parameter[6]/@name" value-path="/session/parameter-sequence[2]/parameter[6]/parameter-values/value" />
-                <nodes label-path="/session/parameter-sequence[2]/parameter[7]/@name" value-path="/session/parameter-sequence[2]/parameter[7]/parameter-values/value" />
-                <nodes label-path="/session/parameter-sequence[2]/parameter[8]/@name" value-path="/session/parameter-sequence[2]/parameter[8]/parameter-values/value" />
+            <step type="ExportTableToCSV">
+                <file pathname="post/tides-6c-mirror.csv" />
+                <file pathname="post/tides-6c-mirror.bin" />
+                <nodes label-path="table[1]/col[1]/@name" value-path="table[1]/col[1]/value" />
+                <nodes label-path="table[1]/col[2]/@name" value-path="table[1]/col[2]/value" />
+                <nodes label-path="table[1]/col[3]/@name" value-path="table[1]/col[3]/value" />
+                <nodes label-path="table[1]/col[4]/@name" value-path="table[1]/col[4]/value" />
+                <nodes label-path="table[1]/col[5]/@name" value-path="table[1]/col[5]/value" />
+                <nodes label-path="table[1]/col[6]/@name" value-path="table[1]/col[6]/value" />
             </step>
         </component>
     </application>

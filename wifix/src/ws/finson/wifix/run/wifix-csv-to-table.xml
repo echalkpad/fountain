@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config >
+    <application>
+        <component type="ws.tuxi.lib.pipeline.ACPipelineEngine" classpath="ws.tuxi.lib.pipeline;ws.finson.wifix.app">
+            <source type="CreateXMLDocument">
+                <session>
+                    <context>
+                        <src-dir>raw</src-dir>
+                        <dst-dir>post</dst-dir>
+                    </context>
+                </session>
+            </source>
+            <step type="ImportCSVToTable">
+                <file id="in" filename="sine-wave-reference.csv" />
+            </step>
+            <step type="SaveXMLDocumentToSink">
+                <file />
+            </step>
+        </component>
+    </application>
+</config>

@@ -10,26 +10,26 @@
                     </context>
                 </session>
             </source>
-            <step type="ImportFromCSV">
+            <step type="ImportCSVToTable">
                 <file id="in" filename="sine-wave-reference.csv" />
             </step>
             <step type="SaveXMLDocumentToSink">
                 <file />
             </step>
-            <step type="ExportToCSV">
-                <file extension="bin" />
+            <step type="ExportTableToCSV">
+                <file extension="bin" suffix="-mirror"/>
                 <file extension="csv" suffix="-mirror" />
-                <nodes label-path="parameter-sequence/parameter[1]/@name" value-path="parameter-sequence/parameter[1]/parameter-values/value" />
-                <nodes label-path="parameter-sequence/parameter[2]/@name" value-path="parameter-sequence/parameter[2]/parameter-values/value" />
-                <nodes label-path="parameter-sequence/parameter[3]/@name" value-path="parameter-sequence/parameter[3]/parameter-values/value" />
-                <nodes label-path="parameter-sequence/parameter[4]/@name" value-path="parameter-sequence/parameter[4]/parameter-values/value" />
-                <nodes label-path="parameter-sequence/parameter[5]/@name" value-path="parameter-sequence/parameter[5]/parameter-values/value" />
-                <nodes label-path="parameter-sequence/parameter[6]/@name" value-path="parameter-sequence/parameter[6]/parameter-values/value" />
-                <nodes label-path="parameter-sequence/parameter[7]/@name" value-path="parameter-sequence/parameter[7]/parameter-values/value" />
-                <nodes label-path="parameter-sequence/parameter[8]/@name" value-path="parameter-sequence/parameter[8]/parameter-values/value" />
-                <nodes label-path="parameter-sequence/parameter[9]/@name" value-path="parameter-sequence/parameter[9]/parameter-values/value" />
-                <nodes label-path="parameter-sequence/parameter[10]/@name" value-path="parameter-sequence/parameter[10]/parameter-values/value" />
-                <nodes label-path="parameter-sequence/parameter[11]/@name" value-path="parameter-sequence/parameter[11]/parameter-values/value" />
+                <nodes label-path="table/col[1]/@name" value-path="table/col[1]/value" />
+                <nodes label-path="table/col[2]/@name" value-path="table/col[2]/value" />
+                <nodes label-path="table/col[3]/@name" value-path="table/col[3]/value" />
+                <nodes label-path="table/col[4]/@name" value-path="table/col[4]/value" />
+                <nodes label-path="table/col[5]/@name" value-path="table/col[5]/value" />
+                <nodes label-path="table/col[6]/@name" value-path="table/col[6]/value" />
+                <nodes label-path="table/col[7]/@name" value-path="table/col[7]/value" />
+                <nodes label-path="table/col[8]/@name" value-path="table/col[8]/value" />
+                <nodes label-path="table/col[9]/@name" value-path="table/col[9]/value" />
+                <nodes label-path="table/col[10]/@name" value-path="table/col[10]/value" />
+                <nodes label-path="table/col[11]/@name" value-path="table/col[11]/value" />
             </step>
         </component>
     </application>

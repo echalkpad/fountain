@@ -6,9 +6,9 @@
     <xsl:template match="/session">
         <session>
             <xsl:apply-templates select="context"/>
-            <parameter-sequence>
+            <table>
                 <xsl:apply-templates select="datainfo"/>
-            </parameter-sequence>
+            </table>
         </session>
     </xsl:template>
     
@@ -17,11 +17,9 @@
     </xsl:template>
     
     <xsl:template match="datainfo">
-        <parameter name="{stationname}" >
-            <parameter-values>
-                <xsl:apply-templates select="data/item"/>               
-            </parameter-values>
-        </parameter>
+        <col name="{stationname}" >
+                 <xsl:apply-templates select="data/item"/>               
+        </col>
     </xsl:template>
     
     <xsl:template match="item">
