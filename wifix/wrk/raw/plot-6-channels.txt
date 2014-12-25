@@ -9,7 +9,7 @@ set key autotitle columnhead
 do for [idx = 0:1] {
 	set multiplot layout 3,1 title filename . " - " . runtime
 	do for [pos = 0:2] {
-		channel = 1 + (idx*2) + pos
+		channel = 1 + (idx*3) + pos
 		if (channel < 12) {
 			set title sprintf("Channel %i",channel-1)
 			plot filename using 0:channel with lines
