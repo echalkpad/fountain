@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config id="RecopyToBin" title="Process CSV to Binary">
+    <application>
+        <component type="ws.tuxi.lib.pipeline.ACPipelineEngine" classpath="ws.tuxi.lib.pipeline;ws.finson.wifix.app">
+            <source type="CreateXMLDocument">
+                <session>
+                    <context>
+                        <src-dir>raw</src-dir>
+                        <dst-dir>post</dst-dir>
+                    </context>
+                </session>
+            </source>
+            <step type="ImportCSVToTable">
+                <file id="in" filename="solar-sequence-1-8c-raw.csv" />
+            </step>
+            <step type="ExportTableToCSV">
+                <file extension="csv" suffix="-extract" />
+                <nodes label-path="table/col[@name='dJNU']/@name" value-path="table/col[@name='dJNU']/value" />
+                <nodes label-path="table/col[@name='dSEA']/@name" value-path="table/col[@name='dSEA']/value" />
+                <nodes label-path="table/col[@name='dYKM']/@name" value-path="table/col[@name='dYKM']/value" />
+                <nodes label-path="table/col[@name='dOLM']/@name" value-path="table/col[@name='dOLM']/value" />
+                <nodes label-path="table/col[@name='dPDX']/@name" value-path="table/col[@name='dPDX']/value" />
+                <nodes label-path="table/col[@name='dSFO']/@name" value-path="table/col[@name='dSFO']/value" />
+                <nodes label-path="table/col[@name='dLAX']/@name" value-path="table/col[@name='dLAX']/value" />
+                <nodes label-path="table/col[@name='dPHX']/@name" value-path="table/col[@name='dPHX']/value" />
+            </step>
+        </component>
+    </application>
+</config>

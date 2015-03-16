@@ -4,7 +4,6 @@ import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -48,7 +47,12 @@ public class ExportTableToCSV implements PipelineOperation<Document, Document> {
      * @param ac
      *            the containing ApplicationComponent
      * @param cE
-     *            the Element from the config file that defines this object
+     *            the Element from the config file that defines this object.
+     *            <table summary="Valid child elements">
+     *            <tr><th>Element</th><th>Description</th></tr>
+     *            <tr><td>file</td><td>{@link ConfiguredPathname ConfiguredPathname}</td></tr>
+     *            <tr><td>nodes</td><td>{@link ConfiguredNodeSet ConfiguredNodeSet}</td></tr>
+     *            </table>
      * @throws IOException
      * @throws ConfigurationException
      */
@@ -87,6 +91,7 @@ public class ExportTableToCSV implements PipelineOperation<Document, Document> {
             case "csv":
                 BufferedWriter printer;
                 try {
+                    logger.info("Opening file '{}' for CSV export.",theSinkPath.toString());
                     printer = Files.newBufferedWriter(theSinkPath, Charset.defaultCharset());
                 } catch (IOException e) {
                     throw new PipelineOperationException(e);
@@ -94,8 +99,10 @@ public class ExportTableToCSV implements PipelineOperation<Document, Document> {
                 csvOut.add(printer);
                 break;
             case "bin":
+            case "raw":
                 BufferedOutputStream binStreamer;
                 try {
+                    logger.info("Opening file '{}' for binary export.",theSinkPath.toString());
                     binStreamer = new BufferedOutputStream(new FileOutputStream(cpn.getSinkPath(
                             globalContextElement).toFile()));
                 } catch (IOException e) {
@@ -107,7 +114,6 @@ public class ExportTableToCSV implements PipelineOperation<Document, Document> {
                 throw new PipelineOperationException("Unrecognized table format: " + format);
             }
         }
-        logger.debug("CSV outputs: {}, bin outputs: {}", csvOut.size(), binOut.size());
 
         // Get the data to print
 

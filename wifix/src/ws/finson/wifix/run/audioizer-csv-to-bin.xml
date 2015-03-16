@@ -5,18 +5,14 @@
             <source type="CreateXMLDocument">
                 <session>
                     <context>
-                        <src-dir>raw</src-dir>
+                        <src-dir>post</src-dir>
                         <dst-dir>post</dst-dir>
                     </context>
                 </session>
             </source>
             <step type="ImportCSVToTable">
-                <file id="in" filename="Tmax-8c-raw.csv" />
+                <file id="in" filename="solar-sequence-1-8c-extract.csv" />
             </step>
-            <step type="SaveXMLDocumentToSink">
-                <file />
-            </step>
-            <step type="NormalizeTableValues" />
             <step type="ExportTableToCSV">
                 <file extension="bin" suffix="-mirror"/>
                 <file extension="csv" suffix="-mirror" />

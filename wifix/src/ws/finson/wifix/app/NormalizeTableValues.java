@@ -1,13 +1,6 @@
 package ws.finson.wifix.app;
 
-import java.io.BufferedOutputStream;
-import java.io.BufferedWriter;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,9 +10,6 @@ import nu.xom.Elements;
 import nu.xom.Node;
 import nu.xom.Nodes;
 
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVPrinter;
-import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,6 +35,9 @@ public class NormalizeTableValues implements PipelineOperation<Document, Documen
      *            the containing ApplicationComponent
      * @param cE
      *            the Element from the config file that defines this object
+     * @ws.tuxi.element nodes - a {@link ConfiguredNodeSet} that selects some or all of the nodes to
+     * be normalized
+     * 
      * @throws IOException
      * @throws ConfigurationException
      */
@@ -89,7 +82,7 @@ public class NormalizeTableValues implements PipelineOperation<Document, Documen
                     maxValue = Math.max(currentValue, maxValue);
                 }
             }
-            
+
             double slope = (255.0 - 0) / (maxValue - minValue);
 
             for (int colIndex = 0; colIndex < columns.size(); colIndex++) {
@@ -100,7 +93,7 @@ public class NormalizeTableValues implements PipelineOperation<Document, Documen
                     double currentValue = Double.parseDouble(valueElement.getValue());
                     double newValue = (currentValue - minValue) * slope;
                     valueElement.removeChildren();
-                    String newStringValue = Integer.toString((int)newValue);
+                    String newStringValue = Integer.toString((int) newValue);
                     valueElement.appendChild(newStringValue);
                 }
             }
