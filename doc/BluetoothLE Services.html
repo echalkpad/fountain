@@ -1,0 +1,1237 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!-- saved from url=(0069)https://developer.bluetooth.org/gatt/services/Pages/ServicesHome.aspx -->
+<html dir="ltr" lang="en-US"><head id="ctl00_Head1"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta name="GENERATOR" content="Microsoft SharePoint"><meta http-equiv="X-UA-Compatible" content="IE=10"><meta http-equiv="Expires" content="0"><link id="ctl00_lnkBootstrapCssBtv15" rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css"><meta name="msapplication-TileImage" content="/_layouts/15/images/SharePointMetroAppTile.png"><meta name="msapplication-TileColor" content="#0072C6"><title>
+	
+	Services
+	| Bluetooth Development Portal
+
+</title>
+<meta name="description" content="
+Services
+">
+<link rel="shortcut icon" href="https://developer.bluetooth.org/Style%20Library/Bluetooth%20Styles/BluetoothFavIcon.ico" type="image/vnd.microsoft.icon" id="favicon"><link rel="stylesheet" type="text/css" href="./BluetoothLE Services_files/corev15.css">
+<link rel="stylesheet" type="text/css" href="./BluetoothLE Services_files/style.css">
+<link rel="stylesheet" type="text/css" href="./BluetoothLE Services_files/style.css">
+<script type="text/javascript" async="" src="./BluetoothLE Services_files/analytics.js"></script><script async="" src="./BluetoothLE Services_files/gtm.js"></script><script type="text/javascript" src="./BluetoothLE Services_files/init.js"></script>
+<script type="text/javascript" src="./BluetoothLE Services_files/initstrings.js"></script>
+<script type="text/javascript" src="./BluetoothLE Services_files/clienttemplates.js"></script>
+<script src="./BluetoothLE Services_files/jquery-1.9.1.min.js"></script>
+<script src="./BluetoothLE Services_files/jquery.cookie.js"></script>
+<script type="text/javascript" src="./BluetoothLE Services_files/ScriptResource.axd"></script>
+<script type="text/javascript" src="./BluetoothLE Services_files/blank.js"></script>
+<script type="text/javascript" src="./BluetoothLE Services_files/ScriptResource(1).axd"></script>
+<script type="text/javascript">RegisterSod("strings.js", "\u002f_layouts\u002f15\u002f1033\u002fstrings.js?rev=cSu1pcWiRc999fyCNzJplg\u00253D\u00253D");</script>
+<script type="text/javascript">RegisterSod("sp.init.js", "\u002f_layouts\u002f15\u002fsp.init.js?rev=QI1yUCfCoUkadL93jNZLOg\u00253D\u00253D");</script>
+<script type="text/javascript">RegisterSod("sp.res.resx", "\u002f_layouts\u002f15\u002fScriptResx.ashx?culture=en\u00252Dus\u0026name=SP\u00252ERes\u0026rev=yNk\u00252FhRzgBn40LJVP\u00252BqfgdQ\u00253D\u00253D");</script>
+<script type="text/javascript">RegisterSod("sp.ui.dialog.js", "\u002f_layouts\u002f15\u002fsp.ui.dialog.js?rev=0xf6wCIW4E1pN83I9nSIJQ\u00253D\u00253D");RegisterSodDep("sp.ui.dialog.js", "sp.init.js");RegisterSodDep("sp.ui.dialog.js", "sp.res.resx");</script>
+<script type="text/javascript">RegisterSod("core.js", "\u002f_layouts\u002f15\u002fcore.js?rev=\u00252FmcwmyWAFSbQRHlXU4BIBg\u00253D\u00253D");RegisterSodDep("core.js", "strings.js");</script>
+<script type="text/javascript">RegisterSod("menu.js", "\u002f_layouts\u002f15\u002fmenu.js?rev=pcr83s11QGFA2kLt5rDQ1g\u00253D\u00253D");</script>
+<script type="text/javascript">RegisterSod("mQuery.js", "\u002f_layouts\u002f15\u002fmquery.js?rev=VYAJYBo5H8I3gVSL3MzD6A\u00253D\u00253D");</script>
+<script type="text/javascript">RegisterSod("callout.js", "\u002f_layouts\u002f15\u002fcallout.js?rev=ryx2n4ePkYj1\u00252FALmcsXZfA\u00253D\u00253D");RegisterSodDep("callout.js", "strings.js");RegisterSodDep("callout.js", "mQuery.js");RegisterSodDep("callout.js", "core.js");</script>
+<script type="text/javascript">RegisterSod("sharing.js", "\u002f_layouts\u002f15\u002fsharing.js?rev=EojJW\u00252FD7vytDfjPyrFWfzw\u00253D\u00253D");RegisterSodDep("sharing.js", "strings.js");RegisterSodDep("sharing.js", "mQuery.js");RegisterSodDep("sharing.js", "core.js");</script>
+<script type="text/javascript">RegisterSod("suitelinks.js", "\u002f_layouts\u002f15\u002fsuitelinks.js?rev=LW8KECQqnuLhetUeLd3iSg\u00253D\u00253D");RegisterSodDep("suitelinks.js", "strings.js");RegisterSodDep("suitelinks.js", "core.js");</script>
+<script type="text/javascript">RegisterSod("clientrenderer.js", "\u002f_layouts\u002f15\u002fclientrenderer.js?rev=PWwV4FATEiOxN90BeB5Hzw\u00253D\u00253D");</script>
+<script type="text/javascript">RegisterSod("srch.resources.resx", "\u002f_layouts\u002f15\u002fScriptResx.ashx?culture=en\u00252Dus\u0026name=Srch\u00252EResources\u0026rev=RtqWXJ0qK1Fldjs7sAaqWg\u00253D\u00253D");</script>
+<script type="text/javascript">RegisterSod("search.clientcontrols.js", "\u002f_layouts\u002f15\u002fsearch.clientcontrols.js?rev=BcwTOzpHOfw2l7rQXvw3HQ\u00253D\u00253D");RegisterSodDep("search.clientcontrols.js", "sp.init.js");RegisterSodDep("search.clientcontrols.js", "clientrenderer.js");RegisterSodDep("search.clientcontrols.js", "srch.resources.resx");</script>
+<script type="text/javascript">RegisterSod("sp.runtime.js", "\u002f_layouts\u002f15\u002fsp.runtime.js?rev=5f2WkYJoaxlIRdwUeg4WEg\u00253D\u00253D");RegisterSodDep("sp.runtime.js", "sp.res.resx");</script>
+<script type="text/javascript">RegisterSod("sp.search.js", "\u002f_layouts\u002f15\u002fsp.search.js?rev=uZlrSmuyYGO8yQWFVg\u00252BIdw\u00253D\u00253D");RegisterSodDep("sp.search.js", "sp.init.js");RegisterSodDep("sp.search.js", "sp.runtime.js");</script>
+<script type="text/javascript">RegisterSod("ajaxtoolkit.js", "\u002f_layouts\u002f15\u002fajaxtoolkit.js?rev=4rOiCbaFgJMmqw9Ojtpa6g\u00253D\u00253D");RegisterSodDep("ajaxtoolkit.js", "search.clientcontrols.js");</script>
+<script type="text/javascript">RegisterSod("sp.js", "\u002f_layouts\u002f15\u002fsp.js?rev=PaF2ZrI2GlTO1B5ru0gYug\u00253D\u00253D");RegisterSodDep("sp.js", "sp.runtime.js");RegisterSodDep("sp.js", "sp.ui.dialog.js");RegisterSodDep("sp.js", "sp.res.resx");</script>
+<script type="text/javascript">RegisterSod("userprofile", "\u002f_layouts\u002f15\u002fsp.userprofiles.js?rev=kPGCgxP\u00252FqdEbr4M93KukCQ\u00253D\u00253D");RegisterSodDep("userprofile", "sp.runtime.js");</script>
+<script type="text/javascript">RegisterSod("followingcommon.js", "\u002f_layouts\u002f15\u002ffollowingcommon.js?rev=sObFmln\u00252BGVrczIpXNeFRrg\u00253D\u00253D");RegisterSodDep("followingcommon.js", "strings.js");RegisterSodDep("followingcommon.js", "sp.js");RegisterSodDep("followingcommon.js", "userprofile");RegisterSodDep("followingcommon.js", "core.js");RegisterSodDep("followingcommon.js", "mQuery.js");</script>
+<script type="text/javascript">RegisterSod("profilebrowserscriptres.resx", "\u002f_layouts\u002f15\u002fScriptResx.ashx?culture=en\u00252Dus\u0026name=ProfileBrowserScriptRes\u0026rev=PEn82Mp1iMY2FYDo2ApuAQ\u00253D\u00253D");</script>
+<script type="text/javascript">RegisterSod("sp.ui.mysitecommon.js", "\u002f_layouts\u002f15\u002fsp.ui.mysitecommon.js?rev=s6Px7gbNrPRbxavXWpXKwg\u00253D\u00253D");RegisterSodDep("sp.ui.mysitecommon.js", "sp.init.js");RegisterSodDep("sp.ui.mysitecommon.js", "sp.runtime.js");RegisterSodDep("sp.ui.mysitecommon.js", "userprofile");RegisterSodDep("sp.ui.mysitecommon.js", "profilebrowserscriptres.resx");</script>
+<script type="text/javascript">RegisterSod("browserScript", "\u002f_layouts\u002f15\u002fie55up.js?rev=8DOJHU0FO2DVVMI7ZiMUOQ\u00253D\u00253D");RegisterSodDep("browserScript", "strings.js");</script>
+<script type="text/javascript">RegisterSod("inplview", "\u002f_layouts\u002f15\u002finplview.js?rev=g73R4ugZvcmHbIXvnOwYcw\u00253D\u00253D");RegisterSodDep("inplview", "strings.js");RegisterSodDep("inplview", "core.js");RegisterSodDep("inplview", "sp.js");</script>
+<script type="text/javascript">RegisterSod("datepicker.js", "\u002f_layouts\u002f15\u002fdatepicker.js?rev=r1fn95g\u00252FHgaje9S\u00252FqZnKYg\u00253D\u00253D");RegisterSodDep("datepicker.js", "strings.js");</script>
+<script type="text/javascript">RegisterSod("jsapiextensibilitymanager.js", "\u002f_layouts\u002f15\u002fjsapiextensibilitymanager.js?rev=kJO6e\u00252BWjWH8ODvZ75GIBng\u00253D\u00253D");</script>
+<script type="text/javascript">RegisterSod("ganttsharedapi.generated.js", "\u002f_layouts\u002f15\u002fganttsharedapi.generated.js?rev=\u00252FDVHhOS0nE1bluCuXvt4Gg\u00253D\u00253D");</script>
+<script type="text/javascript">RegisterSod("ganttapishim.generated.js", "\u002f_layouts\u002f15\u002fganttapishim.generated.js?rev=j7j\u00252Bks22xL0poFm3RS1xPw\u00253D\u00253D");</script>
+<script type="text/javascript">RegisterSod("dragdrop.js", "\u002f_layouts\u002f15\u002fdragdrop.js?rev=rvaZEcJ\u00252F\u00252BHcW7vn3OONdGw\u00253D\u00253D");RegisterSodDep("dragdrop.js", "strings.js");</script>
+<script type="text/javascript">RegisterSod("sp.core.js", "\u002f_layouts\u002f15\u002fsp.core.js?rev=movVYpCO4QLi\u00252BfD07czxdg\u00253D\u00253D");RegisterSodDep("sp.core.js", "strings.js");RegisterSodDep("sp.core.js", "sp.init.js");RegisterSodDep("sp.core.js", "core.js");</script>
+<script type="text/javascript">RegisterSod("cui.js", "\u002f_layouts\u002f15\u002fcui.js?rev=hkelvuz\u00252BDyOYNl9FmpxUvA\u00253D\u00253D");</script>
+<script type="text/javascript">RegisterSod("ribbon", "\u002f_layouts\u002f15\u002fsp.ribbon.js?rev=CN3FNehIxTZA7qPj4NRXPQ\u00253D\u00253D");RegisterSodDep("ribbon", "strings.js");RegisterSodDep("ribbon", "core.js");RegisterSodDep("ribbon", "sp.core.js");RegisterSodDep("ribbon", "sp.js");RegisterSodDep("ribbon", "cui.js");RegisterSodDep("ribbon", "sp.res.resx");RegisterSodDep("ribbon", "sp.runtime.js");RegisterSodDep("ribbon", "inplview");</script>
+<script type="text/javascript">RegisterSod("WPAdderClass", "\u002f_layouts\u002f15\u002fwpadder.js?rev=ApLnd\u00252BqIPjLXRfr1t\u00252BCxyQ\u00253D\u00253D");</script>
+<script type="text/javascript">RegisterSod("quicklaunch.js", "\u002f_layouts\u002f15\u002fquicklaunch.js?rev=SV6sY1PxQIso9KC9IL8e2Q\u00253D\u00253D");RegisterSodDep("quicklaunch.js", "strings.js");RegisterSodDep("quicklaunch.js", "dragdrop.js");</script>
+
+    <script type="text/javascript" src="./BluetoothLE Services_files/bootstrap.min.js"></script>
+	<link type="text/xml" rel="alternate" href="https://developer.bluetooth.org/gatt/services/_vti_bin/spsdisco.aspx">
+		
+		<link rel="canonical" href="./BluetoothLE Services_files/BluetoothLE Services.html">
+		
+        
+	<meta name="google-site-verification" content="vcniUuhjongCqSSeANeWzSjHoqjzWksIWtEx9YZSkZo">
+    <!-- Code to hilight the propper left navication item by matching the link with the current page. -->
+
+	<script type="text/javascript">
+	    function hiliteCurrentMenuItem() {
+	        var myURL = new String(window.location);
+	        var myFile = myURL.slice(myURL.lastIndexOf('Pages/') + 5, myURL.lastIndexOf('aspx') + 4).toLowerCase()
+	        var menuLinks = document.getElementsByName("leftNav");
+
+	        for (i = 0; i < menuLinks.length; i++) {
+	            var theAnchorURL = new String(menuLinks[i].href.toLowerCase());
+
+	            if (theAnchorURL.lastIndexOf(myFile) >= 0) {
+	                menuLinks[i].className = "menuSelected";
+	                break;
+	            }
+	        }
+	    }
+	</script>
+<style type="text/css">
+	.s4-skipribbonshortcut { display:none; }
+
+</style><script type="text/javascript" src="./BluetoothLE Services_files/strings.js"></script><script type="text/javascript" src="./BluetoothLE Services_files/sp.init.js"></script><script type="text/javascript" src="./BluetoothLE Services_files/dragdrop.js"></script><script type="text/javascript" src="./BluetoothLE Services_files/core.js"></script><script type="text/javascript" src="./BluetoothLE Services_files/sp.core.js"></script><script type="text/javascript" src="./BluetoothLE Services_files/mquery.js"></script><script type="text/javascript" src="./BluetoothLE Services_files/sharing.js"></script><script type="text/javascript" src="./BluetoothLE Services_files/saved_resource"></script><script type="text/javascript" src="./BluetoothLE Services_files/saved_resource(1)"></script><script type="text/javascript" src="./BluetoothLE Services_files/saved_resource(2)"></script><script type="text/javascript" src="./BluetoothLE Services_files/get"></script><script type="text/javascript" src="./BluetoothLE Services_files/saved_resource(3)"></script><script type="text/javascript" src="./BluetoothLE Services_files/saved_resource(4)"></script><script type="text/javascript" src="./BluetoothLE Services_files/saved_resource(5)"></script><script type="text/javascript" src="./BluetoothLE Services_files/int-js"></script><script type="text/javascript" src="./BluetoothLE Services_files/saved_resource(6)"></script><script type="text/javascript" src="./BluetoothLE Services_files/apu.php"></script><script type="text/javascript" src="./BluetoothLE Services_files/saved_resource(7)"></script></head>
+<body onload="javascript:hiliteCurrentMenuItem();" class=" ms-backgroundImage">
+  
+    <!-- Google Tag Manager -->
+    <noscript>&lt;iframe src="/ns.html?id=GTM-W5WCG9" height="0" width="0" style="display:none;visibility:hidden"&gt;&lt;/iframe&gt;</noscript>
+    <script type="text/javascript">
+	    (function(w, d, s, l, i)
+	    {
+		    w[l] = w[l] || []; w[l].push({
+		        'gtm.start': new Date().getTime(),
+		        event: 'gtm.js'
+		    });
+		    var f = d.getElementsByTagName(s)[0],
+			    j = d.createElement(s),
+			    dl = l != 'dataLayer' ? '&l=' + l : '';
+		    j.async = true;
+		    j.src = '//www.googletagmanager.com/gtm.js?id=' + i + dl;
+		    f.parentNode.insertBefore(j, f);
+	    })(window, document, 'script', 'dataLayer', 'GTM-W5WCG9');
+    </script>
+    <!-- End Google Tag Manager -->    
+    
+  <div id="imgPrefetch" style="display:none">
+<img src="./BluetoothLE Services_files/spcommon.png">
+<img src="./BluetoothLE Services_files/BluetoothFavIcon.ico">
+</div>
+
+  <noscript>&lt;div class='noindex'&gt;You may be trying to access this site from a secured browser on the server. Please enable scripts and reload this page.&lt;/div&gt;</noscript>
+  
+  <form method="post" action="./BluetoothLE Services_files/BluetoothLE Services.html" onsubmit="javascript:return WebForm_OnSubmit();" id="aspnetForm">
+<div class="aspNetHidden">
+<input type="hidden" name="_wpcmWpid" id="_wpcmWpid" value="">
+<input type="hidden" name="wpcmVal" id="wpcmVal" value="">
+<input type="hidden" name="MSOWebPartPage_PostbackSource" id="MSOWebPartPage_PostbackSource" value="">
+<input type="hidden" name="MSOTlPn_SelectedWpId" id="MSOTlPn_SelectedWpId" value="">
+<input type="hidden" name="MSOTlPn_View" id="MSOTlPn_View" value="0">
+<input type="hidden" name="MSOTlPn_ShowSettings" id="MSOTlPn_ShowSettings" value="False">
+<input type="hidden" name="MSOGallery_SelectedLibrary" id="MSOGallery_SelectedLibrary" value="">
+<input type="hidden" name="MSOGallery_FilterString" id="MSOGallery_FilterString" value="">
+<input type="hidden" name="MSOTlPn_Button" id="MSOTlPn_Button" value="none">
+<input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="">
+<input type="hidden" name="__EVENTARGUMENT" id="__EVENTARGUMENT" value="">
+<input type="hidden" name="__REQUESTDIGEST" id="__REQUESTDIGEST" value="0x7387E6EEE564FDD6C1F1E0353F4A1751BD5F124FF924E101FDC88CCD7904E0566776A6D816D02F4E975FBB6E0AB907DE496B1B44EFF88148C1BCF19388127641,29 Mar 2015 17:46:49 -0000">
+<input type="hidden" name="MSOSPWebPartManager_DisplayModeName" id="MSOSPWebPartManager_DisplayModeName" value="Browse">
+<input type="hidden" name="MSOSPWebPartManager_ExitingDesignMode" id="MSOSPWebPartManager_ExitingDesignMode" value="false">
+<input type="hidden" name="MSOWebPartPage_Shared" id="MSOWebPartPage_Shared" value="">
+<input type="hidden" name="MSOLayout_LayoutChanges" id="MSOLayout_LayoutChanges" value="">
+<input type="hidden" name="MSOLayout_InDesignMode" id="MSOLayout_InDesignMode" value="">
+<input type="hidden" name="_wpSelected" id="_wpSelected" value="">
+<input type="hidden" name="_wzSelected" id="_wzSelected" value="">
+<input type="hidden" name="MSOSPWebPartManager_OldDisplayModeName" id="MSOSPWebPartManager_OldDisplayModeName" value="Browse">
+<input type="hidden" name="MSOSPWebPartManager_StartWebPartEditingName" id="MSOSPWebPartManager_StartWebPartEditingName" value="false">
+<input type="hidden" name="MSOSPWebPartManager_EndWebPartEditing" id="MSOSPWebPartManager_EndWebPartEditing" value="false">
+<input type="hidden" name="_maintainWorkspaceScrollPosition" id="_maintainWorkspaceScrollPosition" value="0">
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="/wEPDwUBMA9kFgJmD2QWAgIBD2QWBAIBD2QWBAIHD2QWAmYPZBYEAgEPFgIeE1ByZXZpb3VzQ29udHJvbE1vZGULKYgBTWljcm9zb2Z0LlNoYXJlUG9pbnQuV2ViQ29udHJvbHMuU1BDb250cm9sTW9kZSwgTWljcm9zb2Z0LlNoYXJlUG9pbnQsIFZlcnNpb249MTUuMC4wLjAsIEN1bHR1cmU9bmV1dHJhbCwgUHVibGljS2V5VG9rZW49NzFlOWJjZTExMWU5NDI5YwFkAgMPFgIfAAsrBAFkAggPZBYCAgMPFgIfAAsrBAFkAgkPZBYGAgIPZBYCAgEPZBYCBSZnXzc4NTdiYzg0Xzk1NWNfNDc2Zl85MzAzXzc1ZGIyYmFlN2FjORAPFgYeC1BhcmFtVmFsdWVzMq4IAAEAAAD/////AQAAAAAAAAAMAgAAAFhNaWNyb3NvZnQuU2hhcmVQb2ludCwgVmVyc2lvbj0xNS4wLjAuMCwgQ3VsdHVyZT1uZXV0cmFsLCBQdWJsaWNLZXlUb2tlbj03MWU5YmNlMTExZTk0MjljBQEAAAA9TWljcm9zb2Z0LlNoYXJlUG9pbnQuV2ViUGFydFBhZ2VzLlBhcmFtZXRlck5hbWVWYWx1ZUhhc2h0YWJsZQEAAAAFX2NvbGwDHFN5c3RlbS5Db2xsZWN0aW9ucy5IYXNodGFibGUCAAAACQMAAAAEAwAAABxTeXN0ZW0uQ29sbGVjdGlvbnMuSGFzaHRhYmxlBwAAAApMb2FkRmFjdG9yB1ZlcnNpb24IQ29tcGFyZXIQSGFzaENvZGVQcm92aWRlcghIYXNoU2l6ZQRLZXlzBlZhbHVlcwAAAwMABQULCBxTeXN0ZW0uQ29sbGVjdGlvbnMuSUNvbXBhcmVyJFN5c3RlbS5Db2xsZWN0aW9ucy5JSGFzaENvZGVQcm92aWRlcgjsUTg/DAAAAAoKEQAAAAkEAAAACQUAAAAQBAAAAAoAAAAGBgAAAA9Ob0Fubm91bmNlbWVudHMGBwAAAApGaWx0ZXJMaW5rBggAAAANaWRQcmVzRW5hYmxlZAYJAAAACW9wZW5fbWVudQYKAAAAClNlbGVjdGVkSUQGCwAAABBkdnRfcHJldnBhZ2VkYXRhBgwAAAARZHZ0X3N0YXJ0cG9zaXRpb24GDQAAABVPcGVuTWVudUtleUFjY2Vzc2libGUGDgAAABNzZWxlY3RfZGVzZWxlY3RfYWxsBg8AAAAUTm9Bbm5vdW5jZW1lbnRzSG93VG8QBQAAAAoAAAAGEAAAAExUaGVyZSBhcmUgbm8gaXRlbXMgdG8gc2hvdyBpbiB0aGlzIHZpZXcgb2YgdGhlICJEb2N1bWVudHMiIGRvY3VtZW50IGxpYnJhcnkuBhEAAAABPwYSAAAAIFByZXNlbmNlIGVuYWJsZWQgZm9yIHRoaXMgY29sdW1uBhMAAAAJT3BlbiBNZW51BhQAAAACLTEGFQAAAHFQYWdlZD1UUlVFJlBhZ2VkUHJldj1UUlVFJnBfU3BlY2lmaWNhdGlvbkxldmVsPUFkb3B0ZWQmcF9TcGVjaWZpY2F0aW9uTmFtZT1BbGVydCUyME5vdGlmaWNhdGlvbiUyMFNlcnZpY2UmcF9JRD03MAYWAAAAAAYXAAAALlVzZSBTSElGVCtFTlRFUiB0byBvcGVuIHRoZSBtZW51IChuZXcgd2luZG93KS4GGAAAABxTZWxlY3Qgb3IgZGVzZWxlY3QgYWxsIGl0ZW1zBhkAAAArVG8gYWRkIGEgbmV3IGl0ZW0sIGNsaWNrICJOZXciIG9yICJVcGxvYWQiLgseEEZpbHRlck9wZXJhdGlvbnMyjQUAAQAAAP////8BAAAAAAAAAAQBAAAAkwJTeXN0ZW0uQ29sbGVjdGlvbnMuR2VuZXJpYy5EaWN0aW9uYXJ5YDJbW1N5c3RlbS5TdHJpbmcsIG1zY29ybGliLCBWZXJzaW9uPTQuMC4wLjAsIEN1bHR1cmU9bmV1dHJhbCwgUHVibGljS2V5VG9rZW49Yjc3YTVjNTYxOTM0ZTA4OV0sW01pY3Jvc29mdC5TaGFyZVBvaW50LldlYlBhcnRQYWdlcy5GaWx0ZXJPcGVyYXRpb24sIE1pY3Jvc29mdC5TaGFyZVBvaW50LCBWZXJzaW9uPTE1LjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPTcxZTliY2UxMTFlOTQyOWNdXQMAAAAHVmVyc2lvbghDb21wYXJlcghIYXNoU2l6ZQADAAiSAVN5c3RlbS5Db2xsZWN0aW9ucy5HZW5lcmljLkdlbmVyaWNFcXVhbGl0eUNvbXBhcmVyYDFbW1N5c3RlbS5TdHJpbmcsIG1zY29ybGliLCBWZXJzaW9uPTQuMC4wLjAsIEN1bHR1cmU9bmV1dHJhbCwgUHVibGljS2V5VG9rZW49Yjc3YTVjNTYxOTM0ZTA4OV1dCAAAAAAJAgAAAAAAAAAEAgAAAJIBU3lzdGVtLkNvbGxlY3Rpb25zLkdlbmVyaWMuR2VuZXJpY0VxdWFsaXR5Q29tcGFyZXJgMVtbU3lzdGVtLlN0cmluZywgbXNjb3JsaWIsIFZlcnNpb249NC4wLjAuMCwgQ3VsdHVyZT1uZXV0cmFsLCBQdWJsaWNLZXlUb2tlbj1iNzdhNWM1NjE5MzRlMDg5XV0AAAAACx4MX3ZpZXdDb3VudGVyAgFkZGQCDg9kFgICAw8WAh4HVmlzaWJsZWgWAmYPZBYEAgIPZBYGAgEPFgIfBGhkAgMPFgIfBGhkAgUPFgIfBGhkAgMPDxYCHglBY2Nlc3NLZXkFAS9kZAIqD2QWAgIDDxYCHwALKwQBZBgBBRljdGwwMCRUb3BOYXZpZ2F0aW9uTWVudVY0Dw9kBRNHQVRUIFNwZWNpZmljYXRpb25zZHURFB7xpBhzr/iz3Ld3k0Fvv9ibd6R5E4Zkj97aZG8j">
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+var theForm = document.forms['aspnetForm'];
+if (!theForm) {
+    theForm = document.aspnetForm;
+}
+function __doPostBack(eventTarget, eventArgument) {
+    if (!theForm.onsubmit || (theForm.onsubmit() != false)) {
+        theForm.__EVENTTARGET.value = eventTarget;
+        theForm.__EVENTARGUMENT.value = eventArgument;
+        theForm.submit();
+    }
+}
+//]]>
+</script>
+
+
+<script src="./BluetoothLE Services_files/WebResource.axd" type="text/javascript"></script>
+
+
+<script type="text/javascript">
+//<![CDATA[
+var MSOWebPartPageFormName = 'aspnetForm';
+var g_presenceEnabled = true;
+var g_wsaEnabled = false;
+var g_wsaQoSEnabled = false;
+var g_wsaQoSDataPoints = [];
+var g_wsaLCID = 1033;
+var g_wsaListTemplateId = 850;
+var g_wsaSiteTemplateId = 'BLANKINTERNET#2';
+var _fV4UI=true;var _spPageContextInfo = {webServerRelativeUrl: "\u002fgatt\u002fservices", webAbsoluteUrl: "https:\u002f\u002fdeveloper.bluetooth.org\u002fgatt\u002fservices", siteAbsoluteUrl: "https:\u002f\u002fdeveloper.bluetooth.org", serverRequestPath: "\u002fgatt\u002fservices\u002fPages\u002fServicesHome.aspx", layoutsUrl: "_layouts\u002f15", webTitle: "Services", webTemplate: "53", tenantAppVersion: "0", webLogoUrl: "\u002fPublishingImages\u002fbluetoothsiglogo.gif", webLanguage: 1033, currentLanguage: 1033, currentUICultureName: "en-US", currentCultureName: "en-US", clientServerTimeDelta: new Date("2015-03-29T17:46:49.3764963Z") - new Date(), siteClientTag: "90$$15.0.4420.1017", crossDomainPhotosEnabled:false, webUIVersion:15, webPermMasks:{High:16,Low:196673},pageListId:"{24ffda20-1012-483b-a493-d43af17d127b}",pageItemId:25, pagePersonalizationScope:1, alertsEnabled:true, siteServerRelativeUrl: "\u002f", allowSilverlightPrompt:'True'};function CallServer_33317612(arg, context) {WebForm_DoCallback('ctl00$ctl19',arg,SP.UI.MyLinksRibbon.MyLinksRibbonPageComponent.ribbonActionCallback,context,null,false); }function _myLinksRibbonLoad2()
+{
+    var fnd = function () {
+        try {
+            mylinks_init.MyLinksInit('CallServer_33317612'); 
+        } 
+        catch (Ex)
+        { }
+    };
+    RegisterSod('mylinks_init', '/_layouts/15/SP.UI.MyLinksRibbon.js');
+    LoadSodByKey('mylinks_init', fnd);
+}
+
+function _myLinksRibbonLoad1()
+{
+    ExecuteOrDelayUntilScriptLoaded(_myLinksRibbonLoad2, 'SP.Ribbon.js');
+}
+
+_spBodyOnLoadFunctionNames.push('_myLinksRibbonLoad1');
+var L_Menu_BaseUrl="/gatt/services";
+var L_Menu_LCID="1033";
+var L_Menu_SiteTheme="null";
+document.onreadystatechange=fnRemoveAllStatus; function fnRemoveAllStatus(){removeAllStatus(true)};var _spWebPartComponents = new Object();_spWebPartComponents["WebPartWPQ2"] = new Object();_spWebPartComponents["WebPartWPQ2"].firstTabId = "Ribbon.Read";_spWebPartComponents["WebPartWPQ2"].initPageComponentScript = "SP.Ribbon.WebPartComponent.fetchListViewWebPartPageComponent\u0028\u0027g_7857bc84_955c_476f_9303_75db2bae7ac9\u0027, \u0027WebPartWPQ2\u0027, \u00271b86610a-f953-4bbd-8114-fb5afff118ad\u0027, \u00272680c68a-568f-4eee-a3d3-da19c2339c54\u0027\u0029;";_spWebPartComponents["WebPartWPQ2"].contextualGroupCommands = ["LibraryContextualGroup"];_spWebPartComponents["WebPartWPQ2"].hasNonPromotedContextualGroups = true;_spWebPartComponents["WebPartWPQ2"].isDefaultWebPart = false;_spWebPartComponents["WebPartWPQ2"].pageComponentId = "WebPartWPQ2";_spWebPartComponents["WebPartWPQ2"].storageId="2680c68a-568f-4eee-a3d3-da19c2339c54";//]]>
+</script>
+
+<script src="./BluetoothLE Services_files/blank.js" type="text/javascript"></script>
+<script type="text/javascript">
+//<![CDATA[
+(function(){
+
+        if (typeof(_spBodyOnLoadFunctions) === 'undefined' || _spBodyOnLoadFunctions === null) {
+            return;
+        }
+        _spBodyOnLoadFunctions.push(function() 
+        {
+          ExecuteOrDelayUntilScriptLoaded(
+            function()
+            {
+              var pairs = SP.ScriptHelpers.getDocumentQueryPairs();
+              var followDoc, itemId, listId, docName;
+              for (var key in pairs)
+              {
+                if(key.toLowerCase() == 'followdocument') 
+                  followDoc = pairs[key];
+                else if(key.toLowerCase() == 'itemid') 
+                  itemId = pairs[key];
+                else if(key.toLowerCase() == 'listid') 
+                  listId = pairs[key];
+                else if(key.toLowerCase() == 'docname') 
+                  docName = decodeURI(pairs[key]);
+              } 
+
+              if(followDoc != null && followDoc == '1' && listId!=null && itemId != null && docName != null)
+              {
+                SP.SOD.executeFunc('followingcommon.js', 'FollowDocumentFromEmail', function() 
+                { 
+                  FollowDocumentFromEmail(itemId, listId, docName);
+                });
+              }
+
+            }, 'SP.init.js');
+
+        });
+    })();(function(){
+
+        if (typeof(_spBodyOnLoadFunctions) === 'undefined' || _spBodyOnLoadFunctions === null) {
+            return;
+        }
+        _spBodyOnLoadFunctions.push(function() {
+
+            if (typeof(SPClientTemplates) === 'undefined' || SPClientTemplates === null || (typeof(APD_InAssetPicker) === 'function' && APD_InAssetPicker())) {
+                return;
+            }
+
+            var renderFollowFooter = function(renderCtx,  calloutActionMenu)
+            {
+                if (renderCtx.ListTemplateType == 700) 
+                    myDocsActionsMenuPopulator(renderCtx, calloutActionMenu);
+                else
+                    CalloutOnPostRenderTemplate(renderCtx, calloutActionMenu);
+
+                var listItem = renderCtx.CurrentItem;
+                if (typeof(listItem) === 'undefined' || listItem === null) {
+                    return;
+                }
+                if (listItem.FSObjType == 0) {
+                    calloutActionMenu.addAction(new CalloutAction({
+                        text: Strings.STS.L_CalloutFollowAction,
+                        tooltip: Strings.STS.L_CalloutFollowAction_Tooltip,
+                        onClickCallback: function (calloutActionClickEvent, calloutAction) {
+                            var callout = GetCalloutFromRenderCtx(renderCtx);
+                            if (!(typeof(callout) === 'undefined' || callout === null))
+                                callout.close();
+                            SP.SOD.executeFunc('followingcommon.js', 'FollowSelectedDocument', function() { FollowSelectedDocument(renderCtx); });
+                        }
+                    }));
+                }
+            };
+
+            var registerOverride = function(id) {
+                var followingOverridePostRenderCtx = {};
+                followingOverridePostRenderCtx.BaseViewID = 'Callout';
+                followingOverridePostRenderCtx.ListTemplateType = id;
+                followingOverridePostRenderCtx.Templates = {};
+                followingOverridePostRenderCtx.Templates.Footer = function(renderCtx) {
+                    var  renderECB;
+                    if (typeof(isSharedWithMeView) === 'undefined' || isSharedWithMeView === null) {
+                        renderECB = true;
+                    } else {
+                        var viewCtx = getViewCtxFromCalloutCtx(renderCtx);
+                        renderECB = !isSharedWithMeView(viewCtx);
+                    }
+                    return CalloutRenderFooterTemplate(renderCtx, renderFollowFooter, renderECB);
+                };
+                SPClientTemplates.TemplateManager.RegisterTemplateOverrides(followingOverridePostRenderCtx);
+            }
+            registerOverride(101);
+            registerOverride(700);
+        });
+    })();if (typeof(DeferWebFormInitCallback) == 'function') DeferWebFormInitCallback();function WebForm_OnSubmit() {
+UpdateFormDigest('\u002fgatt\u002fservices', 1440000);
+                    var workspaceElem = GetCachedElement("s4-workspace");
+                    if (workspaceElem != null)
+                    {
+                        var scrollElem = GetCachedElement("_maintainWorkspaceScrollPosition");
+                        if (scrollElem != null)
+                        {
+                            scrollElem.value = workspaceElem.scrollTop;
+                        }
+                    };
+                if (typeof(_spFormOnSubmitWrapper) != 'undefined') {return _spFormOnSubmitWrapper();} else {return true;};
+return true;
+}
+//]]>
+</script>
+
+<div class="aspNetHidden">
+
+	<input type="hidden" name="__SCROLLPOSITIONX" id="__SCROLLPOSITIONX" value="0">
+	<input type="hidden" name="__SCROLLPOSITIONY" id="__SCROLLPOSITIONY" value="0">
+</div>
+	<script type="text/javascript"> var submitHook = function () { return false; }; theForm._spOldSubmit = theForm.submit; theForm.submit = function () { if (!submitHook()) { this._spOldSubmit(); } }; </script>
+	<span id="DeltaSPWebPartManager">
+		
+	</span>
+	<script type="text/javascript">
+//<![CDATA[
+Sys.WebForms.PageRequestManager._initialize('ctl00$ScriptManager', 'aspnetForm', ['fctl00$WebPartAdderUpdatePanel',''], [], ['ctl00$WebPartAdder',''], 90, 'ctl00');
+//]]>
+</script>
+
+	<span id="DeltaDelegateControls">
+		
+		
+	</span>
+	<div>
+	<div id="TurnOnAccessibility" class="s4-notdlg noindex"><a id="linkTurnOnAcc" href="https://developer.bluetooth.org/gatt/services/Pages/ServicesHome.aspx#" class="ms-accessible ms-acc-button" onclick="SetIsAccessibilityFeatureEnabled(true);UpdateAccessibilityUI();document.getElementById(&#39;linkTurnOffAcc&#39;).focus();return false;">Turn on more accessible mode</a></div><div id="TurnOffAccessibility" style="display: none;" class="s4-notdlg noindex"><a id="linkTurnOffAcc" href="https://developer.bluetooth.org/gatt/services/Pages/ServicesHome.aspx#" class="ms-accessible ms-acc-button" onclick="SetIsAccessibilityFeatureEnabled(false);UpdateAccessibilityUI();document.getElementById(&#39;linkTurnOnAcc&#39;).focus();return false;">Turn off more accessible mode</a></div><div class="s4-notdlg s4-skipribbonshortcut noindex"><a href="javascript:;" id="ctl00_A1" onclick="document.getElementById(&#39;startNavigation&#39;).focus();" class="ms-accessible ms-acc-button" accesskey="Y">Skip Ribbon Commands</a></div><div class="s4-notdlg noindex"><a href="javascript:;" id="ctl00_A2" onclick="document.getElementById(&#39;mainContent&#39;).focus();" class="ms-accessible ms-acc-button">Skip to main content</a></div><div id="TurnOffAnimation" class="s4-notdlg noindex"><a id="linkTurnOffAnimation" href="https://developer.bluetooth.org/gatt/services/Pages/ServicesHome.aspx#" class="ms-accessible ms-acc-button" onclick="ToggleAnimationStatus();return false;">Turn off Animations</a></div><div id="TurnOnAnimation" style="display: none;" class="s4-notdlg noindex"><a id="linkTurnOnAnimation" href="https://developer.bluetooth.org/gatt/services/Pages/ServicesHome.aspx#" class="ms-accessible ms-acc-button" onclick="ToggleAnimationStatus();return false;">Turn on Animations</a></div><a id="HiddenAnchor" href="javascript:;" style="display:none;"></a>
+</div>
+
+	
+<div id="suiteBar" class="ms-dialogHidden noindex">
+	<div id="suiteBarLeft">
+		<div class="ms-table ms-fullWidth">
+			<div class="ms-tableRow">
+				<div class="ms-tableCell ms-verticalAlignMiddle">
+					
+				</div>
+				<div id="DeltaSuiteLinks" class="ms-core-deltaSuiteLinks">
+					
+						<div id="suiteLinksBox">
+							
+						</div>
+				
+</div>
+			</div>
+		</div>
+	</div>
+	<div id="suiteBarRight">
+		<div id="DeltaSuiteBarRight" class="ms-core-deltaSuiteBarRight">
+	
+				<div id="welcomeMenuBox">
+  
+<a id="ctl00_IdWelcome_ExplicitLogin" class="ms-signInLink" href="https://developer.bluetooth.org/gatt/services/_layouts/15/Authenticate.aspx?Source=%2Fgatt%2Fservices%2FPages%2FServicesHome%2Easpx" style="display:inline-block;">Sign In</a>
+
+				</div>
+				<div id="suiteBarButtons">
+					   <span class="ms-siteactions-root" id="siteactiontd">
+					   </span>
+<span id="ms-help">
+	<a onmouseover="this.firstChild.firstChild.firstChild.style.left=&#39;-1px&#39;; this.firstChild.firstChild.firstChild.style.top=&#39;-1px&#39;;" onmouseout="this.firstChild.firstChild.firstChild.style.left=&#39;-19px&#39;; this.firstChild.firstChild.firstChild.style.top=&#39;-1px&#39;;" id="ctl00_TopHelpLink" accesskey="6" title="Help" onclick="TopHelpButtonClick(&#39;HelpHome&#39;,event);return false" href="https://developer.bluetooth.org/_catalogs/masterpage/#" style="display:inline-block;height:30px;width:30px;"><span style="display:inline-block;overflow:hidden;height:16px;width:16px;padding-left:7px;padding-top:7px;padding-right:7px;padding-bottom:7px;"><span style="height:16px;width:16px;position:relative;display:inline-block;overflow:hidden;" class="s4-clust"><img src="./BluetoothLE Services_files/spintl.png" alt="Help" style="border:0;position:absolute;left:-19px;top:-1px;"></span></span></a>
+</span>
+				</div>
+		
+</div>
+	</div>
+</div>
+		
+			<div id="s4-ribbonrow" style="height: 0px;">
+				<div id="globalNavBox">
+<div id="ribbonBox">
+	<div id="s4-ribboncont">
+		<div id="DeltaSPRibbon">
+	
+			
+
+			<div class="ms-cui-ribbonTopBars"><div class="ms-cui-topBar1"></div><div class="ms-cui-topBar2"><div id="RibbonContainer-TabRowLeft" class="ms-cui-TabRowLeft ms-core-defaultFont ms-dialogHidden">
+				</div></div></div>
+		
+</div>
+	</div>
+	<span id="DeltaSPNavigation">
+		
+			<span id="ctl00_SPNavigation_ctl00_publishingRibbon"></span>
+
+		
+	</span>
+</div>
+<div id="DeltaWebPartAdderUpdatePanelContainer" class="ms-core-webpartadder" style="top: 0px;">
+	
+  <div id="WebPartAdderUpdatePanelContainer">
+	<div id="ctl00_WebPartAdderUpdatePanel">
+		
+		<span id="ctl00_WebPartAdder"></span>
+		
+	</div>
+  </div>
+
+</div>
+				</div>
+			</div>
+		
+		<div id="s4-workspace" class="s4-nosetwidth" style="height: 725px;">
+			<div id="s4-bodyContainer">
+				
+				
+		<div class="customHead customPagePadding s4-notdlg">
+				
+				<a href="https://developer.bluetooth.org/Pages/default.aspx"><div class="customLogo"></div></a>
+				
+				<div class="customHeaderRight">
+					<div class="customLogin">
+						
+							<!--<div class="customLogin">-->
+								<a href="https://developer.bluetooth.org/_layouts/Authenticate.aspx" title="Log In">Log In</a>
+							<!--</div>-->
+							<!-- Hide the Ribbon -->
+							<style type="text/css">
+								body #s4-ribbonrow {
+									display: none;
+								}
+                                body #suiteBar {
+									display: none;
+								}
+                                body #s4-workspace
+							    {
+                                    margin-top:0px;
+							    }
+							</style>
+						
+					</div>
+					
+					<!--<div class="customClear"></div>-->
+					
+					<div class="customSearch">
+                        <span id="divLanguages" style="float:left; padding-right:20px">
+                            English <img src="./BluetoothLE Services_files/orangePipe.jpg"> 
+                            <a href="http://developer.bluetooth.cn/" target="_self" style="color: #bbb;">简体中文</a>
+                        </span>
+
+						
+							<div class="ms-webpart-chrome ms-webpart-chrome-fullWidth ">
+	<div webpartid="00000000-0000-0000-0000-000000000000" haspers="true" id="WebPartWPQ1" width="100%" class="ms-WPBody noindex " onlyformepart="true" allowdelete="false" style=""><div componentid="ctl00_PlaceHolderSearchArea_SmallSearchInputBox1_csr" id="ctl00_PlaceHolderSearchArea_SmallSearchInputBox1_csr"><div id="SearchBox" name="Control"><div class="ms-srch-sb ms-srch-sb-border" id="ctl00_PlaceHolderSearchArea_SmallSearchInputBox1_csr_sboxdiv"><input type="text" value="Search..." maxlength="2048" accesskey="S" title="Search..." id="ctl00_PlaceHolderSearchArea_SmallSearchInputBox1_csr_sbox" autocomplete="off" autocorrect="off" onkeypress="EnsureScriptFunc(&#39;Search.ClientControls.js&#39;, &#39;Srch.U&#39;, function() {if (Srch.U.isEnterKey(String.fromCharCode(event.keyCode))) {$find(&#39;ctl00_PlaceHolderSearchArea_SmallSearchInputBox1_csr&#39;).search($get(&#39;ctl00_PlaceHolderSearchArea_SmallSearchInputBox1_csr_sbox&#39;).value);return Srch.U.cancelEvent(event);}})" onkeydown="EnsureScriptFunc(&#39;Search.ClientControls.js&#39;, &#39;Srch.U&#39;, function() {var ctl = $find(&#39;ctl00_PlaceHolderSearchArea_SmallSearchInputBox1_csr&#39;);ctl.activateDefaultQuerySuggestionBehavior();})" onfocus="EnsureScriptFunc(&#39;Search.ClientControls.js&#39;, &#39;Srch.U&#39;, function() {var ctl = $find(&#39;ctl00_PlaceHolderSearchArea_SmallSearchInputBox1_csr&#39;);ctl.hidePrompt();ctl.setBorder(true);})" onblur="EnsureScriptFunc(&#39;Search.ClientControls.js&#39;, &#39;Srch.U&#39;, function() {var ctl = $find(&#39;ctl00_PlaceHolderSearchArea_SmallSearchInputBox1_csr&#39;); if (ctl){ ctl.showPrompt(); ctl.setBorder(false);}})" class="ms-textSmall ms-srch-sb-prompt ms-helperText"><a title="Search" class="ms-srch-sb-searchLink" id="ctl00_PlaceHolderSearchArea_SmallSearchInputBox1_csr_SearchLink" onclick="EnsureScriptFunc(&#39;Search.ClientControls.js&#39;, &#39;Srch.U&#39;, function() {$find(&#39;ctl00_PlaceHolderSearchArea_SmallSearchInputBox1_csr&#39;).search($get(&#39;ctl00_PlaceHolderSearchArea_SmallSearchInputBox1_csr_sbox&#39;).value);})" href="javascript: {}"><img src="./BluetoothLE Services_files/searchresultui.png" class="ms-srch-sb-searchImg" id="searchImg" alt="Search"></a><div class="ms-qSuggest-container ms-shadow" id="AutoCompContainer"><div id="ctl00_PlaceHolderSearchArea_SmallSearchInputBox1_csr_AutoCompList"></div></div></div></div></div><noscript>&lt;div id="ctl00_PlaceHolderSearchArea_SmallSearchInputBox1_noscript"&gt;It looks like your browser does not have JavaScript enabled. Please turn on JavaScript and try again.&lt;/div&gt;</noscript><div id="ctl00_PlaceHolderSearchArea_SmallSearchInputBox1">
+
+	</div><div class="ms-clear"></div></div>
+</div>
+						
+					</div>
+					
+					<div class="customClear"></div>
+					
+				</div>
+		</div>	
+		
+		<div class="customNav customPagePadding s4-notdlg">
+
+			<div class="customTopNavHolder">
+
+				
+
+				<div id="zz1_TopNavigationMenuV4" class="s4-tn noindex ms-core-listMenu-horizontalBox">
+	<ul id="zz2_RootAspMenu" class="root ms-core-listMenu-root static">
+		<li class="static dynamic-children"><a class="static dynamic-children menu-item ms-core-listMenu-item ms-displayInline ms-navedit-linkNode" tabindex="0" href="https://developer.bluetooth.org/TechnologyOverview/Pages/Technology-Overview.aspx" accesskey="1"><span aria-haspopup="true" class="additional-background ms-navedit-flyoutArrow dynamic-children"><span class="menu-item-text">Technology Overview</span></span></a><ul class="dynamic">
+			<li class="dynamic"><a class="dynamic menu-item ms-core-listMenu-item ms-displayInline ms-navedit-linkNode" tabindex="0" href="https://developer.bluetooth.org/TechnologyOverview/Pages/core-specification.aspx"><span class="additional-background ms-navedit-flyoutArrow"><span class="menu-item-text">Bluetooth Core Specification</span></span></a></li><li class="dynamic"><a class="dynamic menu-item ms-core-listMenu-item ms-displayInline ms-navedit-linkNode" tabindex="0" href="https://developer.bluetooth.org/TechnologyOverview/Pages/OverviewOfOperations.aspx"><span class="additional-background ms-navedit-flyoutArrow"><span class="menu-item-text">Overview of Operations</span></span></a></li><li class="dynamic"><a class="dynamic menu-item ms-core-listMenu-item ms-displayInline ms-navedit-linkNode" tabindex="0" href="https://developer.bluetooth.org/TechnologyOverview/Pages/Radio.aspx"><span class="additional-background ms-navedit-flyoutArrow"><span class="menu-item-text">Radio</span></span></a></li><li class="dynamic"><a class="dynamic menu-item ms-core-listMenu-item ms-displayInline ms-navedit-linkNode" tabindex="0" href="https://developer.bluetooth.org/TechnologyOverview/Pages/Baseband.aspx"><span class="additional-background ms-navedit-flyoutArrow"><span class="menu-item-text">Baseband</span></span></a></li><li class="dynamic"><a class="dynamic menu-item ms-core-listMenu-item ms-displayInline ms-navedit-linkNode" tabindex="0" href="https://developer.bluetooth.org/TechnologyOverview/Pages/LMP.aspx"><span class="additional-background ms-navedit-flyoutArrow"><span class="menu-item-text">Link Manager Protocol</span></span></a></li><li class="dynamic"><a class="dynamic menu-item ms-core-listMenu-item ms-displayInline ms-navedit-linkNode" tabindex="0" href="https://developer.bluetooth.org/TechnologyOverview/Pages/HCI.aspx"><span class="additional-background ms-navedit-flyoutArrow"><span class="menu-item-text">Host Controller Interface</span></span></a></li><li class="dynamic"><a class="dynamic menu-item ms-core-listMenu-item ms-displayInline ms-navedit-linkNode" tabindex="0" href="https://developer.bluetooth.org/TechnologyOverview/Pages/L2CAP.aspx"><span class="additional-background ms-navedit-flyoutArrow"><span class="menu-item-text">Logical Link Control and Adaptation</span></span></a></li><li class="dynamic"><a class="dynamic menu-item ms-core-listMenu-item ms-displayInline ms-navedit-linkNode" tabindex="0" href="https://developer.bluetooth.org/TechnologyOverview/Pages/GATT.aspx"><span class="additional-background ms-navedit-flyoutArrow"><span class="menu-item-text">Generic Attribute Profile</span></span></a></li><li class="dynamic"><a class="dynamic menu-item ms-core-listMenu-item ms-displayInline ms-navedit-linkNode" tabindex="0" href="https://developer.bluetooth.org/TechnologyOverview/Pages/Core.aspx"><span class="additional-background ms-navedit-flyoutArrow"><span class="menu-item-text">Core System Architecture</span></span></a></li><li class="dynamic"><a class="dynamic menu-item ms-core-listMenu-item ms-displayInline ms-navedit-linkNode" tabindex="0" href="https://developer.bluetooth.org/TechnologyOverview/Pages/Profiles.aspx"><span class="additional-background ms-navedit-flyoutArrow"><span class="menu-item-text">Profiles Overview</span></span></a></li><li class="dynamic"><a class="dynamic menu-item ms-core-listMenu-item ms-displayInline ms-navedit-linkNode" tabindex="0" href="https://developer.bluetooth.org/TechnologyOverview/Pages/DataTransport.aspx"><span class="additional-background ms-navedit-flyoutArrow"><span class="menu-item-text">Data Transport Architecture</span></span></a></li><li class="dynamic"><a class="dynamic menu-item ms-core-listMenu-item ms-displayInline ms-navedit-linkNode" tabindex="0" href="https://developer.bluetooth.org/TechnologyOverview/Pages/Topology.aspx"><span class="additional-background ms-navedit-flyoutArrow"><span class="menu-item-text">Communications Topology</span></span></a></li><li class="dynamic"><a class="dynamic menu-item ms-core-listMenu-item ms-displayInline ms-navedit-linkNode" tabindex="0" title="Previously located here: http://intdev/DevelopmentResources/Pages/Bluetooth-Smart-Optimizations.aspx" href="https://developer.bluetooth.org/TechnologyOverview/Pages/Technical-Considerations.aspx"><span class="additional-background ms-navedit-flyoutArrow"><span class="menu-item-text">Technical Considerations </span></span></a></li><li class="dynamic"><a class="dynamic menu-item ms-core-listMenu-item ms-displayInline ms-navedit-linkNode" tabindex="0" href="https://developer.bluetooth.org/TechnologyOverview/Pages/Security.aspx"><span class="additional-background ms-navedit-flyoutArrow"><span class="menu-item-text">Security, Classic</span></span></a></li><li class="dynamic"><a class="dynamic menu-item ms-core-listMenu-item ms-displayInline ms-navedit-linkNode" tabindex="0" href="https://developer.bluetooth.org/TechnologyOverview/Pages/LE-Security.aspx"><span class="additional-background ms-navedit-flyoutArrow"><span class="menu-item-text">Security, Low Energy</span></span></a></li>
+		</ul></li><li class="static dynamic-children"><a class="static dynamic-children menu-item ms-core-listMenu-item ms-displayInline ms-navedit-linkNode" tabindex="0" href="https://developer.bluetooth.org/DevelopmentResources/Pages/default.aspx"><span aria-haspopup="true" class="additional-background ms-navedit-flyoutArrow dynamic-children"><span class="menu-item-text">Tools &amp; Resources</span></span></a><ul class="dynamic">
+			<li class="dynamic"><a class="dynamic menu-item ms-core-listMenu-item ms-displayInline ms-navedit-linkNode" tabindex="0" href="https://developer.bluetooth.org/DevelopmentResources/Pages/Getting-Started.aspx"><span class="additional-background ms-navedit-flyoutArrow"><span class="menu-item-text">Getting Started</span></span></a></li><li class="dynamic"><a class="dynamic menu-item ms-core-listMenu-item ms-displayInline ms-navedit-linkNode" tabindex="0" href="https://developer.bluetooth.org/DevelopmentResources/DevelopmentPlatforms/Pages/Development-Platforms.aspx"><span class="additional-background ms-navedit-flyoutArrow"><span class="menu-item-text">Development Platforms</span></span></a></li><li class="dynamic"><a class="dynamic menu-item ms-core-listMenu-item ms-displayInline ms-navedit-linkNode" tabindex="0" href="https://developer.bluetooth.org/DevelopmentResources/Pages/TOOLS.aspx"><span class="additional-background ms-navedit-flyoutArrow"><span class="menu-item-text">Testing Tools</span></span></a></li><li class="dynamic"><a class="dynamic menu-item ms-core-listMenu-item ms-displayInline ms-navedit-linkNode" tabindex="0" href="https://developer.bluetooth.org/DevelopmentResources/Pages/Quick-Start-Kit.aspx"><span class="additional-background ms-navedit-flyoutArrow"><span class="menu-item-text">Quick Start Kit</span></span></a></li><li class="dynamic"><a class="dynamic menu-item ms-core-listMenu-item ms-displayInline ms-navedit-linkNode" tabindex="0" href="https://developer.bluetooth.org/Pages/bluetooth-smart-developers.aspx"><span class="additional-background ms-navedit-flyoutArrow"><span class="menu-item-text">Application Accelerator</span></span></a></li><li class="dynamic"><a class="dynamic menu-item ms-core-listMenu-item ms-displayInline ms-navedit-linkNode" tabindex="0" href="https://developer.bluetooth.org/Pages/smart-starter-kit.aspx"><span class="additional-background ms-navedit-flyoutArrow"><span class="menu-item-text">Smart Starter Kit</span></span></a></li><li class="dynamic"><a class="dynamic menu-item ms-core-listMenu-item ms-displayInline ms-navedit-linkNode" tabindex="0" href="https://developer.bluetooth.org/DevelopmentResources/Pages/White-Papers.aspx"><span class="additional-background ms-navedit-flyoutArrow"><span class="menu-item-text">White Papers</span></span></a></li><li class="dynamic"><a class="dynamic menu-item ms-core-listMenu-item ms-displayInline ms-navedit-linkNode" tabindex="0" href="https://developer.bluetooth.org/DevelopmentResources/Pages/Webinars.aspx"><span class="additional-background ms-navedit-flyoutArrow"><span class="menu-item-text">Webinars</span></span></a></li><li class="dynamic"><a class="dynamic menu-item ms-core-listMenu-item ms-displayInline ms-navedit-linkNode" tabindex="0" href="https://developer.bluetooth.org/DevelopmentResources/Pages/Events.aspx"><span class="additional-background ms-navedit-flyoutArrow"><span class="menu-item-text">Events</span></span></a></li><li class="dynamic"><a class="dynamic menu-item ms-core-listMenu-item ms-displayInline ms-navedit-linkNode" tabindex="0" href="https://developer.bluetooth.org/DevelopmentResources/Pages/Training-Videos.aspx"><span class="additional-background ms-navedit-flyoutArrow"><span class="menu-item-text">Training Videos</span></span></a></li>
+		</ul></li><li class="static dynamic-children selected"><a class="static dynamic-children selected menu-item ms-core-listMenu-item ms-displayInline ms-core-listMenu-selected ms-navedit-linkNode" tabindex="0" href="https://developer.bluetooth.org/gatt/Pages/default.aspx"><span aria-haspopup="true" class="additional-background ms-navedit-flyoutArrow dynamic-children"><span class="menu-item-text">GATT Specifications</span><span class="ms-hidden">Currently selected</span></span></a><ul class="dynamic">
+			<li class="dynamic"><a class="dynamic menu-item ms-core-listMenu-item ms-displayInline ms-navedit-linkNode" tabindex="0" href="https://developer.bluetooth.org/gatt/units/Pages/default.aspx"><span class="additional-background ms-navedit-flyoutArrow"><span class="menu-item-text">Units</span></span></a></li><li class="dynamic"><a class="dynamic menu-item ms-core-listMenu-item ms-displayInline ms-navedit-linkNode" tabindex="0" href="https://developer.bluetooth.org/gatt/Pages/FormatTypes.aspx"><span class="additional-background ms-navedit-flyoutArrow"><span class="menu-item-text">Format Types</span></span></a></li><li class="dynamic"><a class="dynamic menu-item ms-core-listMenu-item ms-displayInline ms-navedit-linkNode" tabindex="0" href="https://developer.bluetooth.org/gatt/Pages/GattNamespaceDescriptors.aspx"><span class="additional-background ms-navedit-flyoutArrow"><span class="menu-item-text">Gatt Bluetooth Namespace Descriptors</span></span></a></li><li class="dynamic"><a class="dynamic menu-item ms-core-listMenu-item ms-displayInline ms-navedit-linkNode" tabindex="0" href="https://developer.bluetooth.org/gatt/declarations/Pages/DeclarationsHome.aspx"><span class="additional-background ms-navedit-flyoutArrow"><span class="menu-item-text">Declarations</span></span></a></li><li class="dynamic"><a class="dynamic menu-item ms-core-listMenu-item ms-displayInline ms-navedit-linkNode" tabindex="0" href="https://developer.bluetooth.org/gatt/descriptors/Pages/DescriptorsHomePage.aspx"><span class="additional-background ms-navedit-flyoutArrow"><span class="menu-item-text">Descriptors</span></span></a></li><li class="dynamic"><a class="dynamic menu-item ms-core-listMenu-item ms-displayInline ms-navedit-linkNode" tabindex="0" href="https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicsHome.aspx"><span class="additional-background ms-navedit-flyoutArrow"><span class="menu-item-text">Characteristics</span></span></a></li><li class="dynamic"><a class="dynamic menu-item ms-core-listMenu-item ms-displayInline ms-navedit-linkNode" tabindex="0" href="./BluetoothLE Services_files/BluetoothLE Services.html"><span class="additional-background ms-navedit-flyoutArrow"><span class="menu-item-text">Services</span></span></a></li><li class="dynamic"><a class="dynamic menu-item ms-core-listMenu-item ms-displayInline ms-navedit-linkNode" tabindex="0" href="https://developer.bluetooth.org/gatt/profiles/Pages/ProfilesHome.aspx"><span class="additional-background ms-navedit-flyoutArrow"><span class="menu-item-text">Profiles</span></span></a></li>
+		</ul></li><li class="static dynamic-children"><a class="static dynamic-children menu-item ms-core-listMenu-item ms-displayInline ms-navedit-linkNode" tabindex="0" href="https://developer.bluetooth.org/DeveloperShowcase/Pages/default.aspx"><span aria-haspopup="true" class="additional-background ms-navedit-flyoutArrow dynamic-children"><span class="menu-item-text">Developer Showcase</span></span></a><ul class="dynamic">
+			<li class="dynamic"><a class="dynamic menu-item ms-core-listMenu-item ms-displayInline ms-navedit-linkNode" tabindex="0" href="https://developer.bluetooth.org/DeveloperShowcase/Pages/Bluetooth-Platform-Capability-Quick-Reference-Guide.aspx"><span class="additional-background ms-navedit-flyoutArrow"><span class="menu-item-text">Platform Capability Quick Reference Guide</span></span></a></li>
+		</ul></li><li class="static dynamic-children"><a class="static dynamic-children menu-item ms-core-listMenu-item ms-displayInline ms-navedit-linkNode" tabindex="0" href="https://developer.bluetooth.org/Community/Pages/default.aspx"><span aria-haspopup="true" class="additional-background ms-navedit-flyoutArrow dynamic-children"><span class="menu-item-text">Community</span></span></a><ul class="dynamic">
+			<li class="dynamic"><a class="dynamic menu-item ms-core-listMenu-item ms-displayInline ms-navedit-linkNode" tabindex="0" href="https://developer.bluetooth.org/Community/SitePages/Community%20Home.aspx"><span class="additional-background ms-navedit-flyoutArrow"><span class="menu-item-text">Forum</span></span></a></li><li class="dynamic"><a class="dynamic menu-item ms-core-listMenu-item ms-displayInline ms-navedit-linkNode" tabindex="0" href="https://developer.bluetooth.org/Community/Pages/CalendarPage.aspx"><span class="additional-background ms-navedit-flyoutArrow"><span class="menu-item-text">Calendar</span></span></a></li>
+		</ul></li><li class="static dynamic-children"><a class="static dynamic-children menu-item ms-core-listMenu-item ms-displayInline ms-navedit-linkNode" tabindex="0" href="https://developer.bluetooth.org/AboutUs/Pages/default.aspx"><span aria-haspopup="true" class="additional-background ms-navedit-flyoutArrow dynamic-children"><span class="menu-item-text">About Us</span></span></a><ul class="dynamic">
+			<li class="dynamic"><a class="dynamic menu-item ms-core-listMenu-item ms-displayInline ms-navedit-linkNode" tabindex="0" href="https://developer.bluetooth.org/AboutUs/Pages/SIG-Membership.aspx"><span class="additional-background ms-navedit-flyoutArrow"><span class="menu-item-text">Join the SIG</span></span></a></li><li class="dynamic"><a class="dynamic menu-item ms-core-listMenu-item ms-displayInline ms-navedit-linkNode" tabindex="0" href="https://developer.bluetooth.org/AboutUs/Pages/Contact-Us.aspx"><span class="additional-background ms-navedit-flyoutArrow"><span class="menu-item-text">Contact Us</span></span></a></li>
+		</ul></li>
+	</ul>
+</div>
+			</div>	
+		</div>
+        
+        <div class="customPageWidth">
+		
+		<!-- page editing status bar -->
+		<div class="s4-notdlg customStatus">
+			<div id="s4-statusbarcontainer">
+				<div id="pageStatusBar" class="ms-status-blue" style="display: none;"></div>
+			</div>
+		</div>
+				
+		<div class="customBody">
+			
+				<!--- Breadcrumb -->
+                <span id="ctl00_PlaceHolderBreadCrumbInPageTitleArea_ContentMap"><span><a title="Bluetooth Developer Portal" class="ms-sitemapdirectional" href="https://developer.bluetooth.org/Pages/default.aspx">Home</a></span><span> &gt; </span><span><a class="ms-sitemapdirectional" href="https://developer.bluetooth.org/gatt/Pages/default.aspx">GATT Specifications</a></span><span> &gt; </span><span class="ms-sitemapdirectional">Services</span></span>
+			
+			<div id="s4-leftpanel" class="s4-notdlg">
+				<!-- The Quick Launch bar. -->
+				
+	
+					<style type="text/css">	
+						/* hide the left nav and titles for pages that don't override the left nav bar */			
+						#s4-leftpanel {
+							display: none;
+						}
+						.s4-ca {
+							margin-left:0px;
+						}
+                        
+                        /*
+						.customBody {
+							padding:20px 40px 40px;
+							width: 900px;
+						}
+                        */
+					</style>
+				
+				
+				<!-- The small menu attached Quick Launch bar. Used only on very specific pages -->
+				
+			</div>
+				
+			<div class="s4-ca">
+				<!-- <div class="s4-notdlg"> -->
+					<!-- <strong></strong> -->
+					
+					<!-- place a table around this to handle funky markup in _Layouts/areacachesettings.aspx (if you want) -->
+					<!-- 
+					 -->
+				<!-- </div> -->
+				<div>
+					<!-- page content loads from the pages and pages layout -->
+					
+
+<div class="contentWrapperWithOutBanner">
+
+<div class="contentMain">
+
+<!--<div class="contentNoRightColumn">-->
+<div id="ctl00_PlaceHolderMain_ctl00_label" style="display:none">BTRichHTML2</div><div id="ctl00_PlaceHolderMain_ctl00__ControlWrapper_RichHtmlField" class="ms-rtestate-field" style="display:inline" aria-labelledby="ctl00_PlaceHolderMain_ctl00_label"><h2>Services</h2>
+<p>Services are collections of characteristics and relationships to other services that encapsulate the behavior of part of a device.</p>
+<p>The material contained on this page is informative only. Authoritative compliance information is contained in the <a href="https://www.bluetooth.org/Technical/Specifications/adopted.htm" target="_blank">applicable Bluetooth specification</a> <img src="./BluetoothLE Services_files/external_link.png" border="0" alt="">.</p>
+<div class="ms-rtestate-read ms-rte-wpbox"><div class="ms-rtestate-notify  ms-rtestate-read 2920bb0b-cfdf-49e1-b8e6-299427cd15a4" id="div_2920bb0b-cfdf-49e1-b8e6-299427cd15a4"></div>
+<span id="__publishingReusableFragment"></span><span id="__publishingReusableFragment"></span><div id="vid_2920bb0b-cfdf-49e1-b8e6-299427cd15a4" style="display:none;"></div></div>
+<div class="ms-rtestate-notify  ms-rtestate-read 7857bc84-955c-476f-9303-75db2bae7ac9" id="div_7857bc84-955c-476f-9303-75db2bae7ac9"><div id="MSOZoneCell_WebPartWPQ2" class="s4-wpcell ms-webpartzone-cell ms-webpart-cell-vertical ms-fullWidth " onkeyup="WpKeyUp(event)" onmouseup="WpClick(event)">
+	<div class="ms-webpart-chrome ms-webpart-chrome-vertical ms-webpart-chrome-fullWidth ">
+	<div class="ms-webpart-chrome-title" id="WebPartWPQ2_ChromeTitle">
+		<span title="Single XML Download - This library contains Services." id="WebPartTitleWPQ2" class="js-webpart-titleCell"><h2 style="text-align:justify;" class="ms-webpart-titleText"><a accesskey="W" href="https://developer.bluetooth.org/gatt/services/Documents"><nobr><span>Single XML Download</span><span id="WebPartCaptionWPQ2"></span></nobr></a></h2></span>
+	</div><div webpartid="2680c68a-568f-4eee-a3d3-da19c2339c54" webpartid2="7857bc84-955c-476f-9303-75db2bae7ac9" haspers="false" id="WebPartWPQ2" width="100%" class="noindex ms-wpContentDivSpace " allowremove="false" allowdelete="false" allowexport="false" style=""><table width="100%" cellspacing="0" cellpadding="0" border="0" xmlns:x="http://www.w3.org/2001/XMLSchema" xmlns:d="http://schemas.microsoft.com/sharepoint/dsp" xmlns:asp="http://schemas.microsoft.com/ASPNET/20" xmlns:__designer="http://schemas.microsoft.com/WebParts/v2/DataView/designer" xmlns:sharepoint="Microsoft.SharePoint.WebControls" xmlns:pcm="urn:PageContentManager" xmlns:ddwrt2="urn:frontpage:internal"><tbody><tr><td id="scriptWPQ2"><div></div><iframe src="javascript:false;" id="FilterIframe1" name="FilterIframe1" style="display:none" height="0" width="0" filterlink="?"></iframe><table onmousedown="return OnTableMouseDown(event);" summary="Documents" xmlns:o="urn:schemas-microsoft-com:office:office" o:webquerysourcehref="&amp;XMLDATA=1&amp;RowLimit=0&amp;View=%7B2680C68A%2D568F%2D4EEE%2DA3D3%2DDA19C2339C54%7D" border="0" cellspacing="0" dir="none" onmouseover="EnsureSelectionHandler(event,this,1)" cellpadding="1" id="onetidDoclibViewTbl0" class="ms-listviewtable" handledeleteinit="true"><thead id="js-listviewthead-WPQ2"><tr valign="top" class="ms-viewheadertr ms-vhltr"><th scope="col" onmouseover="OnChildColumn(this)" style="max-width: 500px;" class="ms-vh2" onmousedown="ListHeaderMenu_OnMouseDown(this);"><div sortable="" sortdisable="" filterdisable="" filterable="FALSE" filterdisablemessage="" name="SpecificationName" ctxnum="1" displayname="SpecificationName" fieldtype="URL" resulttype="" sortfields="View={2680c68a-568f-4eee-a3d3-da19c2339c54}&amp;SortField=SpecificationName&amp;SortDir=Asc" class="ms-vh-div"><a class="ms-headerSortTitleLink" id="diidSort1SpecificationName" onfocus="OnFocusFilter(this)" onclick="javascript: var pointerType = this.getAttribute(&#39;pointerType&#39;); if (pointerType != null &amp;&amp; typeof MSPointerEvent != &#39;undefined&#39; &amp;&amp; Number(pointerType) != MSPointerEvent.MSPOINTER_TYPE_MOUSE) { ListHeaderTouchHandler(event); return false; } return OnClickFilter(this, event);" href="javascript: " sortingfields="View={2680c68a-568f-4eee-a3d3-da19c2339c54}&amp;SortField=SpecificationName&amp;SortDir=Asc Title=" click="" to="" sort="" column"="">SpecificationName</a><span class="ms-sortarrowdown-iconouter" id="diidSortArrowSpan1SpecificationName" style="display: none;"><img class="ms-sortarrowdown-icon" src="./BluetoothLE Services_files/spcommon.png" alt=""></span><span class="ms-filter-iconouter" id="diidFilterSpan1SpecificationName" style="display: none;"><img class="ms-filter-icon" src="./BluetoothLE Services_files/spcommon.png" alt=""></span></div><div class="ms-positionRelative"><div class="s4-ctx"><span> </span><a onfocus="OnChildColumn(this.parentNode.parentNode.parentNode); return false;" class="ms-headerSortArrowLink" onclick="PopMenuFromChevron(event); return false;" href="javascript:;" title="Open Menu"><img style="visibility: hidden;" src="./BluetoothLE Services_files/ecbarw.png" alt="" +="" stshtmlencode(strings.sts.l_openmenu)="" ""="" ms-jsgrid-click-passthrough="true"></a><span> </span></div></div></th><th scope="col" onmouseover="OnChildColumn(this)" style="max-width: 500px;" class="ms-vh2" onmousedown="ListHeaderMenu_OnMouseDown(this);"><div sortable="" sortdisable="" filterdisable="" filterable="" filterdisablemessage="" name="SpecificationType" ctxnum="1" displayname="SpecificationType" fieldtype="Text" resulttype="" sortfields="View={2680c68a-568f-4eee-a3d3-da19c2339c54}&amp;SortField=SpecificationType&amp;SortDir=Asc" class="ms-vh-div"><a class="ms-headerSortTitleLink" id="diidSort1SpecificationType" onfocus="OnFocusFilter(this)" onclick="javascript: var pointerType = this.getAttribute(&#39;pointerType&#39;); if (pointerType != null &amp;&amp; typeof MSPointerEvent != &#39;undefined&#39; &amp;&amp; Number(pointerType) != MSPointerEvent.MSPOINTER_TYPE_MOUSE) { ListHeaderTouchHandler(event); return false; } return OnClickFilter(this, event);" href="javascript: " sortingfields="View={2680c68a-568f-4eee-a3d3-da19c2339c54}&amp;SortField=SpecificationType&amp;SortDir=Asc Title=" click="" to="" sort="" column"="">SpecificationType</a><span class="ms-sortarrowdown-iconouter" id="diidSortArrowSpan1SpecificationType" style="display: none;"><img class="ms-sortarrowdown-icon" src="./BluetoothLE Services_files/spcommon.png" alt=""></span><span class="ms-filter-iconouter" id="diidFilterSpan1SpecificationType" style="display: none;"><img class="ms-filter-icon" src="./BluetoothLE Services_files/spcommon.png" alt=""></span></div><div class="ms-positionRelative"><div class="s4-ctx"><span> </span><a onfocus="OnChildColumn(this.parentNode.parentNode.parentNode); return false;" class="ms-headerSortArrowLink" onclick="PopMenuFromChevron(event); return false;" href="javascript:;" title="Open Menu"><img style="visibility: hidden;" src="./BluetoothLE Services_files/ecbarw.png" alt="" +="" stshtmlencode(strings.sts.l_openmenu)="" ""="" ms-jsgrid-click-passthrough="true"></a><span> </span></div></div></th><th scope="col" onmouseover="OnChildColumn(this)" style="max-width: 500px;" class="ms-vh2" onmousedown="ListHeaderMenu_OnMouseDown(this);"><div sortable="" sortdisable="" filterdisable="" filterable="" filterdisablemessage="" name="AssignedNumber" ctxnum="1" displayname="AssignedNumber" fieldtype="Text" resulttype="" sortfields="View={2680c68a-568f-4eee-a3d3-da19c2339c54}&amp;SortField=AssignedNumber&amp;SortDir=Asc" class="ms-vh-div"><a class="ms-headerSortTitleLink" id="diidSort1AssignedNumber" onfocus="OnFocusFilter(this)" onclick="javascript: var pointerType = this.getAttribute(&#39;pointerType&#39;); if (pointerType != null &amp;&amp; typeof MSPointerEvent != &#39;undefined&#39; &amp;&amp; Number(pointerType) != MSPointerEvent.MSPOINTER_TYPE_MOUSE) { ListHeaderTouchHandler(event); return false; } return OnClickFilter(this, event);" href="javascript: " sortingfields="View={2680c68a-568f-4eee-a3d3-da19c2339c54}&amp;SortField=AssignedNumber&amp;SortDir=Asc Title=" click="" to="" sort="" column"="">AssignedNumber</a><span class="ms-sortarrowdown-iconouter" id="diidSortArrowSpan1AssignedNumber" style="display: none;"><img class="ms-sortarrowdown-icon" src="./BluetoothLE Services_files/spcommon.png" alt=""></span><span class="ms-filter-iconouter" id="diidFilterSpan1AssignedNumber" style="display: none;"><img class="ms-filter-icon" src="./BluetoothLE Services_files/spcommon.png" alt=""></span></div><div class="ms-positionRelative"><div class="s4-ctx"><span> </span><a onfocus="OnChildColumn(this.parentNode.parentNode.parentNode); return false;" class="ms-headerSortArrowLink" onclick="PopMenuFromChevron(event); return false;" href="javascript:;" title="Open Menu"><img style="visibility: hidden;" src="./BluetoothLE Services_files/ecbarw.png" alt="" +="" stshtmlencode(strings.sts.l_openmenu)="" ""="" ms-jsgrid-click-passthrough="true"></a><span> </span></div></div></th><th scope="col" onmouseover="OnChildColumn(this)" style="max-width: 500px;" class="ms-vh2" onmousedown="ListHeaderMenu_OnMouseDown(this);"><div sortable="" sortdisable="" filterdisable="" filterable="" filterdisablemessage="" name="SpecificationLevel" ctxnum="1" displayname="SpecificationLevel" fieldtype="Choice" resulttype="" sortfields="View={2680c68a-568f-4eee-a3d3-da19c2339c54}&amp;SortField=SpecificationLevel&amp;SortDir=Asc" class="ms-vh-div"><a class="ms-headerSortTitleLink" id="diidSort1SpecificationLevel" onfocus="OnFocusFilter(this)" onclick="javascript: var pointerType = this.getAttribute(&#39;pointerType&#39;); if (pointerType != null &amp;&amp; typeof MSPointerEvent != &#39;undefined&#39; &amp;&amp; Number(pointerType) != MSPointerEvent.MSPOINTER_TYPE_MOUSE) { ListHeaderTouchHandler(event); return false; } return OnClickFilter(this, event);" href="javascript: " sortingfields="View={2680c68a-568f-4eee-a3d3-da19c2339c54}&amp;SortField=SpecificationLevel&amp;SortDir=Asc Title=" click="" to="" sort="" column"="">SpecificationLevel</a><span class="ms-sortarrowdown-iconouter" id="diidSortArrowSpan1SpecificationLevel" style="display: none;"><img class="ms-sortarrowdown-icon" src="./BluetoothLE Services_files/spcommon.png" alt=""></span><span class="ms-filter-iconouter" id="diidFilterSpan1SpecificationLevel" style="display: none;"><img class="ms-filter-icon" src="./BluetoothLE Services_files/spcommon.png" alt=""></span></div><div class="ms-positionRelative"><div class="s4-ctx"><span> </span><a onfocus="OnChildColumn(this.parentNode.parentNode.parentNode); return false;" class="ms-headerSortArrowLink" onclick="PopMenuFromChevron(event); return false;" href="javascript:;" title="Open Menu"><img style="visibility: hidden;" src="./BluetoothLE Services_files/ecbarw.png" alt="" +="" stshtmlencode(strings.sts.l_openmenu)="" ""="" ms-jsgrid-click-passthrough="true"></a><span> </span></div></div></th></tr></thead><script id="scriptBodyWPQ2"></script><tbody><tr class=" ms-itmHoverEnabled " iid="1,70,0" id="1,70,0" setedgeborder="true"><td class="ms-cellstyle ms-vb2"><a href="https://developer.bluetooth.org/gatt/services/Pages/ServiceViewer.aspx?u=org.bluetooth.service.alert_notification.xml">Alert Notification Service</a></td><td class="ms-cellstyle ms-vb2">org.bluetooth.service.alert_notification</td><td class="ms-cellstyle ms-vb2">0x1811</td><td class="ms-vb-lastCell ms-cellstyle ms-vb2 ms-vb-lastCell">Adopted</td></tr><tr class="ms-alternating  ms-itmHoverEnabled " iid="1,68,0" id="1,68,0" setedgeborder="true"><td class="ms-cellstyle ms-vb2"><a href="https://developer.bluetooth.org/gatt/services/Pages/ServiceViewer.aspx?u=org.bluetooth.service.battery_service.xml">Battery Service</a></td><td class="ms-cellstyle ms-vb2">org.bluetooth.service.battery_service</td><td class="ms-cellstyle ms-vb2">0x180F</td><td class="ms-vb-lastCell ms-cellstyle ms-vb2 ms-vb-lastCell">Adopted</td></tr><tr class=" ms-itmHoverEnabled " iid="1,69,0" id="1,69,0" setedgeborder="true"><td class="ms-cellstyle ms-vb2"><a href="https://developer.bluetooth.org/gatt/services/Pages/ServiceViewer.aspx?u=org.bluetooth.service.blood_pressure.xml">Blood Pressure</a></td><td class="ms-cellstyle ms-vb2">org.bluetooth.service.blood_pressure</td><td class="ms-cellstyle ms-vb2">0x1810</td><td class="ms-vb-lastCell ms-cellstyle ms-vb2 ms-vb-lastCell">Adopted</td></tr><tr class="ms-alternating  ms-itmHoverEnabled " iid="1,93,0" id="1,93,0" setedgeborder="true"><td class="ms-cellstyle ms-vb2"><a href="https://developer.bluetooth.org/gatt/services/Pages/ServiceViewer.aspx?u=org.bluetooth.service.body_composition.xml">Body Composition</a></td><td class="ms-cellstyle ms-vb2">org.bluetooth.service.body_composition</td><td class="ms-cellstyle ms-vb2">0x181B</td><td class="ms-vb-lastCell ms-cellstyle ms-vb2 ms-vb-lastCell">Adopted</td></tr><tr class=" ms-itmHoverEnabled " iid="1,98,0" id="1,98,0" setedgeborder="true"><td class="ms-cellstyle ms-vb2"><a href="https://developer.bluetooth.org/gatt/services/Pages/ServiceViewer.aspx?u=org.bluetooth.service.bond_management.xml">Bond Management</a></td><td class="ms-cellstyle ms-vb2">org.bluetooth.service.bond_management</td><td class="ms-cellstyle ms-vb2">0x181E</td><td class="ms-vb-lastCell ms-cellstyle ms-vb2 ms-vb-lastCell">Adopted</td></tr><tr class="ms-alternating  ms-itmHoverEnabled " iid="1,99,0" id="1,99,0" setedgeborder="true"><td class="ms-cellstyle ms-vb2"><a href="https://developer.bluetooth.org/gatt/services/Pages/ServiceViewer.aspx?u=org.bluetooth.service.continuous_glucose_monitoring.xml">Continuous Glucose Monitoring</a></td><td class="ms-cellstyle ms-vb2">org.bluetooth.service.continuous_glucose_monitoring</td><td class="ms-cellstyle ms-vb2">0x181F</td><td class="ms-vb-lastCell ms-cellstyle ms-vb2 ms-vb-lastCell">Adopted</td></tr><tr class=" ms-itmHoverEnabled " iid="1,53,0" id="1,53,0" setedgeborder="true"><td class="ms-cellstyle ms-vb2"><a href="https://developer.bluetooth.org/gatt/services/Pages/ServiceViewer.aspx?u=org.bluetooth.service.current_time.xml">Current Time Service</a></td><td class="ms-cellstyle ms-vb2">org.bluetooth.service.current_time</td><td class="ms-cellstyle ms-vb2">0x1805</td><td class="ms-vb-lastCell ms-cellstyle ms-vb2 ms-vb-lastCell">Adopted</td></tr><tr class="ms-alternating  ms-itmHoverEnabled " iid="1,87,0" id="1,87,0" setedgeborder="true"><td class="ms-cellstyle ms-vb2"><a href="https://developer.bluetooth.org/gatt/services/Pages/ServiceViewer.aspx?u=org.bluetooth.service.cycling_power.xml">Cycling Power</a></td><td class="ms-cellstyle ms-vb2">org.bluetooth.service.cycling_power</td><td class="ms-cellstyle ms-vb2">0x1818</td><td class="ms-vb-lastCell ms-cellstyle ms-vb2 ms-vb-lastCell">Adopted</td></tr><tr class=" ms-itmHoverEnabled " iid="1,81,0" id="1,81,0" setedgeborder="true"><td class="ms-cellstyle ms-vb2"><a href="https://developer.bluetooth.org/gatt/services/Pages/ServiceViewer.aspx?u=org.bluetooth.service.cycling_speed_and_cadence.xml">Cycling Speed and Cadence</a></td><td class="ms-cellstyle ms-vb2">org.bluetooth.service.cycling_speed_and_cadence</td><td class="ms-cellstyle ms-vb2">0x1816</td><td class="ms-vb-lastCell ms-cellstyle ms-vb2 ms-vb-lastCell">Adopted</td></tr><tr class="ms-alternating  ms-itmHoverEnabled " iid="1,63,0" id="1,63,0" setedgeborder="true"><td class="ms-cellstyle ms-vb2"><a href="https://developer.bluetooth.org/gatt/services/Pages/ServiceViewer.aspx?u=org.bluetooth.service.device_information.xml">Device Information</a></td><td class="ms-cellstyle ms-vb2">org.bluetooth.service.device_information</td><td class="ms-cellstyle ms-vb2">0x180A</td><td class="ms-vb-lastCell ms-cellstyle ms-vb2 ms-vb-lastCell">Adopted</td></tr><tr class=" ms-itmHoverEnabled " iid="1,91,0" id="1,91,0" setedgeborder="true"><td class="ms-cellstyle ms-vb2"><a href="https://developer.bluetooth.org/gatt/services/Pages/ServiceViewer.aspx?u=org.bluetooth.service.environmental_sensing.xml">Environmental Sensing</a></td><td class="ms-cellstyle ms-vb2">org.bluetooth.service.environmental_sensing</td><td class="ms-cellstyle ms-vb2">0x181A</td><td class="ms-vb-lastCell ms-cellstyle ms-vb2 ms-vb-lastCell">Adopted</td></tr><tr class="ms-alternating  ms-itmHoverEnabled " iid="1,52,0" id="1,52,0" setedgeborder="true"><td class="ms-cellstyle ms-vb2"><a href="https://developer.bluetooth.org/gatt/services/Pages/ServiceViewer.aspx?u=org.bluetooth.service.generic_access.xml">Generic Access</a></td><td class="ms-cellstyle ms-vb2">org.bluetooth.service.generic_access</td><td class="ms-cellstyle ms-vb2">0x1800</td><td class="ms-vb-lastCell ms-cellstyle ms-vb2 ms-vb-lastCell">Adopted</td></tr><tr class=" ms-itmHoverEnabled " iid="1,49,0" id="1,49,0" setedgeborder="true"><td class="ms-cellstyle ms-vb2"><a href="https://developer.bluetooth.org/gatt/services/Pages/ServiceViewer.aspx?u=org.bluetooth.service.generic_attribute.xml">Generic Attribute</a></td><td class="ms-cellstyle ms-vb2">org.bluetooth.service.generic_attribute</td><td class="ms-cellstyle ms-vb2">0x1801</td><td class="ms-vb-lastCell ms-cellstyle ms-vb2 ms-vb-lastCell">Adopted</td></tr><tr class="ms-alternating  ms-itmHoverEnabled " iid="1,78,0" id="1,78,0" setedgeborder="true"><td class="ms-cellstyle ms-vb2"><a href="https://developer.bluetooth.org/gatt/services/Pages/ServiceViewer.aspx?u=org.bluetooth.service.glucose.xml">Glucose</a></td><td class="ms-cellstyle ms-vb2">org.bluetooth.service.glucose</td><td class="ms-cellstyle ms-vb2">0x1808</td><td class="ms-vb-lastCell ms-cellstyle ms-vb2 ms-vb-lastCell">Adopted</td></tr><tr class=" ms-itmHoverEnabled " iid="1,54,0" id="1,54,0" setedgeborder="true"><td class="ms-cellstyle ms-vb2"><a href="https://developer.bluetooth.org/gatt/services/Pages/ServiceViewer.aspx?u=org.bluetooth.service.health_thermometer.xml">Health Thermometer</a></td><td class="ms-cellstyle ms-vb2">org.bluetooth.service.health_thermometer</td><td class="ms-cellstyle ms-vb2">0x1809</td><td class="ms-vb-lastCell ms-cellstyle ms-vb2 ms-vb-lastCell">Adopted</td></tr><tr class="ms-alternating  ms-itmHoverEnabled " iid="1,66,0" id="1,66,0" setedgeborder="true"><td class="ms-cellstyle ms-vb2"><a href="https://developer.bluetooth.org/gatt/services/Pages/ServiceViewer.aspx?u=org.bluetooth.service.heart_rate.xml">Heart Rate</a></td><td class="ms-cellstyle ms-vb2">org.bluetooth.service.heart_rate</td><td class="ms-cellstyle ms-vb2">0x180D</td><td class="ms-vb-lastCell ms-cellstyle ms-vb2 ms-vb-lastCell">Adopted</td></tr><tr class=" ms-itmHoverEnabled " iid="1,71,0" id="1,71,0" setedgeborder="true"><td class="ms-cellstyle ms-vb2"><a href="https://developer.bluetooth.org/gatt/services/Pages/ServiceViewer.aspx?u=org.bluetooth.service.human_interface_device.xml">Human Interface Device</a></td><td class="ms-cellstyle ms-vb2">org.bluetooth.service.human_interface_device</td><td class="ms-cellstyle ms-vb2">0x1812</td><td class="ms-vb-lastCell ms-cellstyle ms-vb2 ms-vb-lastCell">Adopted</td></tr><tr class="ms-alternating  ms-itmHoverEnabled " iid="1,50,0" id="1,50,0" setedgeborder="true"><td class="ms-cellstyle ms-vb2"><a href="https://developer.bluetooth.org/gatt/services/Pages/ServiceViewer.aspx?u=org.bluetooth.service.immediate_alert.xml">Immediate Alert</a></td><td class="ms-cellstyle ms-vb2">org.bluetooth.service.immediate_alert</td><td class="ms-cellstyle ms-vb2">0x1802</td><td class="ms-vb-lastCell ms-cellstyle ms-vb2 ms-vb-lastCell">Adopted</td></tr><tr class=" ms-itmHoverEnabled " iid="1,101,0" id="1,101,0" setedgeborder="true"><td class="ms-cellstyle ms-vb2"><a href="https://developer.bluetooth.org/gatt/services/Pages/ServiceViewer.aspx?u=org.bluetooth.service.internet_protocol_support.xml">Internet Protocol Support</a></td><td class="ms-cellstyle ms-vb2">org.bluetooth.service.internet_protocol_support</td><td class="ms-cellstyle ms-vb2">0x1820</td><td class="ms-vb-lastCell ms-cellstyle ms-vb2 ms-vb-lastCell">Adopted</td></tr><tr class="ms-alternating  ms-itmHoverEnabled " iid="1,51,0" id="1,51,0" setedgeborder="true"><td class="ms-cellstyle ms-vb2"><a href="https://developer.bluetooth.org/gatt/services/Pages/ServiceViewer.aspx?u=org.bluetooth.service.link_loss.xml">Link Loss</a></td><td class="ms-cellstyle ms-vb2">org.bluetooth.service.link_loss</td><td class="ms-cellstyle ms-vb2">0x1803</td><td class="ms-vb-lastCell ms-cellstyle ms-vb2 ms-vb-lastCell">Adopted</td></tr><tr class=" ms-itmHoverEnabled " iid="1,88,0" id="1,88,0" setedgeborder="true"><td class="ms-cellstyle ms-vb2"><a href="https://developer.bluetooth.org/gatt/services/Pages/ServiceViewer.aspx?u=org.bluetooth.service.location_and_navigation.xml">Location and Navigation</a></td><td class="ms-cellstyle ms-vb2">org.bluetooth.service.location_and_navigation</td><td class="ms-cellstyle ms-vb2">0x1819</td><td class="ms-vb-lastCell ms-cellstyle ms-vb2 ms-vb-lastCell">Adopted</td></tr><tr class="ms-alternating  ms-itmHoverEnabled " iid="1,64,0" id="1,64,0" setedgeborder="true"><td class="ms-cellstyle ms-vb2"><a href="https://developer.bluetooth.org/gatt/services/Pages/ServiceViewer.aspx?u=org.bluetooth.service.next_dst_change.xml">Next DST Change Service</a></td><td class="ms-cellstyle ms-vb2">org.bluetooth.service.next_dst_change</td><td class="ms-cellstyle ms-vb2">0x1807</td><td class="ms-vb-lastCell ms-cellstyle ms-vb2 ms-vb-lastCell">Adopted</td></tr><tr class=" ms-itmHoverEnabled " iid="1,67,0" id="1,67,0" setedgeborder="true"><td class="ms-cellstyle ms-vb2"><a href="https://developer.bluetooth.org/gatt/services/Pages/ServiceViewer.aspx?u=org.bluetooth.service.phone_alert_status.xml">Phone Alert Status Service</a></td><td class="ms-cellstyle ms-vb2">org.bluetooth.service.phone_alert_status</td><td class="ms-cellstyle ms-vb2">0x180E</td><td class="ms-vb-lastCell ms-cellstyle ms-vb2 ms-vb-lastCell">Adopted</td></tr><tr class="ms-alternating  ms-itmHoverEnabled " iid="1,59,0" id="1,59,0" setedgeborder="true"><td class="ms-cellstyle ms-vb2"><a href="https://developer.bluetooth.org/gatt/services/Pages/ServiceViewer.aspx?u=org.bluetooth.service.reference_time_update.xml">Reference Time Update Service</a></td><td class="ms-cellstyle ms-vb2">org.bluetooth.service.reference_time_update</td><td class="ms-cellstyle ms-vb2">0x1806</td><td class="ms-vb-lastCell ms-cellstyle ms-vb2 ms-vb-lastCell">Adopted</td></tr><tr class=" ms-itmHoverEnabled " iid="1,80,0" id="1,80,0" setedgeborder="true"><td class="ms-cellstyle ms-vb2"><a href="https://developer.bluetooth.org/gatt/services/Pages/ServiceViewer.aspx?u=org.bluetooth.service.running_speed_and_cadence.xml">Running Speed and Cadence</a></td><td class="ms-cellstyle ms-vb2">org.bluetooth.service.running_speed_and_cadence</td><td class="ms-cellstyle ms-vb2">0x1814</td><td class="ms-vb-lastCell ms-cellstyle ms-vb2 ms-vb-lastCell">Adopted</td></tr><tr class="ms-alternating  ms-itmHoverEnabled " iid="1,72,0" id="1,72,0" setedgeborder="true"><td class="ms-cellstyle ms-vb2"><a href="https://developer.bluetooth.org/gatt/services/Pages/ServiceViewer.aspx?u=org.bluetooth.service.scan_parameters.xml">Scan Parameters</a></td><td class="ms-cellstyle ms-vb2">org.bluetooth.service.scan_parameters</td><td class="ms-cellstyle ms-vb2">0x1813</td><td class="ms-vb-lastCell ms-cellstyle ms-vb2 ms-vb-lastCell">Adopted</td></tr><tr class=" ms-itmHoverEnabled " iid="1,48,0" id="1,48,0" setedgeborder="true"><td class="ms-cellstyle ms-vb2"><a href="https://developer.bluetooth.org/gatt/services/Pages/ServiceViewer.aspx?u=org.bluetooth.service.tx_power.xml">Tx Power</a></td><td class="ms-cellstyle ms-vb2">org.bluetooth.service.tx_power</td><td class="ms-cellstyle ms-vb2">0x1804</td><td class="ms-vb-lastCell ms-cellstyle ms-vb2 ms-vb-lastCell">Adopted</td></tr><tr class="ms-alternating  ms-itmHoverEnabled " iid="1,94,0" id="1,94,0" setedgeborder="true"><td class="ms-cellstyle ms-vb2"><a href="https://developer.bluetooth.org/gatt/services/Pages/ServiceViewer.aspx?u=org.bluetooth.service.user_data.xml">User Data</a></td><td class="ms-cellstyle ms-vb2">org.bluetooth.service.user_data</td><td class="ms-cellstyle ms-vb2">0x181C</td><td class="ms-vb-lastCell ms-cellstyle ms-vb2 ms-vb-lastCell">Adopted</td></tr><tr class=" ms-itmHoverEnabled " iid="1,95,0" id="1,95,0" setedgeborder="true"><td class="ms-cellstyle ms-vb2"><a href="https://developer.bluetooth.org/gatt/services/Pages/ServiceViewer.aspx?u=org.bluetooth.service.weight_scale.xml">Weight Scale</a></td><td class="ms-cellstyle ms-vb2">org.bluetooth.service.weight_scale</td><td class="ms-cellstyle ms-vb2">0x181D</td><td class="ms-vb-lastCell ms-cellstyle ms-vb2 ms-vb-lastCell">Adopted</td></tr></tbody></table></td></tr></tbody></table><div id="scriptPagingWPQ2" xmlns:x="http://www.w3.org/2001/XMLSchema" xmlns:d="http://schemas.microsoft.com/sharepoint/dsp" xmlns:asp="http://schemas.microsoft.com/ASPNET/20" xmlns:__designer="http://schemas.microsoft.com/WebParts/v2/DataView/designer" xmlns:sharepoint="Microsoft.SharePoint.WebControls" xmlns:pcm="urn:PageContentManager" xmlns:ddwrt2="urn:frontpage:internal"><table border="0" cellpadding="0" cellspacing="0" class="ms-bottompaging" id="bottomPaging"><tbody><tr><td><div id="inplaceSearchDiv_WPQ2_lsstatus"></div></td></tr></tbody></table></div><div class="ms-clear"></div></div>
+</div>
+</div></div><span id="__publishingReusableFragment"></span>
+<div><span id="__publishingReusableFragment"></span><span id="__publishingReusableFragment"></span><span id="__publishingReusableFragment"></span><span id="__publishingReusableFragment"></span><span id="__publishingReusableFragment"></span><span id="__publishingReusableFragment"></span><span id="__publishingReusableFragment"></span><span id="__publishingReusableFragment"></span><span id="__publishingReusableFragment"></span><span id="__publishingReusableFragment"></span><span id="__publishingReusableFragment"></span><span id="__publishingReusableFragment"></span><span id="__publishingReusableFragment"></span>&nbsp;</div>
+<div id="vid_7857bc84-955c-476f-9303-75db2bae7ac9" style="display:none;"></div>
+<div>&nbsp;</div>
+<div style="text-align:right;"><a href="https://www.bluetooth.org/ticketing/ticket.cfm">Submit a ticket</a></div></div>
+
+
+</div>
+</div>
+<div style="display:none" id="hidZone"><div class="ms-webpart-zone ms-fullWidth">
+	<div id="MSOZoneCell_WebPartWPQ2" class="s4-wpcell ms-webpartzone-cell ms-webpart-cell-vertical ms-fullWidth " onkeyup="WpKeyUp(event)" onmouseup="WpClick(event)">
+
+	</div>
+</div></div>
+				</div>
+				<div class="customClear"></div>
+			</div>
+		</div>
+
+
+
+		<!-- the developer dashboard can be turned on by administrators and shows debuging and performance info for the page -->
+		<div id="DeveloperDashboard" class="ms-developerdashboard">
+			
+		</div>
+		<div class="customClear"></div>
+		
+	</div>
+                 <div id="DeltaFormDigest">
+	
+	                    
+							
+	                    
+                    
+</div>
+			</div>
+            <div class="customFooter customPagePadding s4-notdlg">
+        <div class="footerContainer">
+			<div class="customFooterLeft">
+				© <script type="text/javascript">document.write((new Date()).getFullYear());</script>2015 Bluetooth SIG, Inc. All rights reserved.
+			</div>
+
+			<div class="customFooterRight">
+                <a href="http://www.linkedin.com/company/bluetooth-sig" target="_blank" border="0"><img src="./BluetoothLE Services_files/linkedIn.gif"></a>&nbsp;
+                <a href="https://www.facebook.com/Bluetooth" target="_blank" border="0"><img src="./BluetoothLE Services_files/FB.gif"></a>&nbsp;
+                <a href="http://twitter.com/BluetoothSIG" target="_blank" border="0"><img src="./BluetoothLE Services_files/twitterFollow.gif"></a>&nbsp;
+                <a href="https://plus.google.com/u/0/114911112534988881717/posts" target="_blank" border="0"><img src="./BluetoothLE Services_files/gPlus.gif"></a>&nbsp;
+                <img src="./BluetoothLE Services_files/divider.gif">&nbsp;
+                
+                <a href="http://developer.bluetooth.cn/" target="_blank">developer.bluetooth.cn</a> &nbsp;<img src="./BluetoothLE Services_files/divider.gif">&nbsp;
+                <a href="http://www.bluetooth.org/" target="_blank">Bluetooth.org</a> &nbsp;<img src="./BluetoothLE Services_files/divider.gif">&nbsp;
+                <a href="http://www.bluetooth.com/Pages/Bluetooth-Home.aspx" target="_blank">Bluetooth.com</a> &nbsp;
+                <img src="./BluetoothLE Services_files/divider.gif">&nbsp;
+                
+                <a href="https://developer.bluetooth.org/Pages/Legal.aspx">Legal</a>&nbsp;<img src="./BluetoothLE Services_files/divider.gif">&nbsp;
+                <a href="https://developer.bluetooth.org/Pages/Privacy-Policy.aspx">Privacy Policy</a>&nbsp;
+                <img src="./BluetoothLE Services_files/divider.gif">&nbsp;
+                <a href="https://developer.bluetooth.org/Pages/Site-Map.aspx">Site Map</a>
+			</div>
+
+          </div><!--end div class="footerContainer"-->
+			
+		
+			</div><!--end footer area-->
+		</div>
+	
+
+      <!-- =====  Hidden Placeholders ============================================================ -->
+
+
+
+
+<script type="text/javascript">
+//<![CDATA[
+
+WebForm_InitCallback();var _spFormDigestRefreshInterval = 1440000;
+                    function DoPagingCallbackctl00$ctl39$g_7857bc84_955c_476f_9303_75db2bae7ac9(pagingInputs) {WebForm_DoCallback('ctl00$ctl39$g_7857bc84_955c_476f_9303_75db2bae7ac9',pagingInputs,UpdatePaging,0,CallBackError,true) } 
+if (typeof(_spBodyOnLoadFunctionNames) != "undefined") {
+if (_spBodyOnLoadFunctionNames != null) {
+_spBodyOnLoadFunctionNames.push("ExpDataViewGroupOnPageLoad");
+}
+}var _fV4UI = true;
+function _RegisterWebPartPageCUI()
+{
+    var initInfo = {editable: false,isEditMode: false,allowWebPartAdder: false,listId: "{24ffda20-1012-483b-a493-d43af17d127b}",itemId: 25,recycleBinEnabled: true,enableMinorVersioning: true,enableModeration: true,forceCheckout: true,rootFolderUrl: "\u002fgatt\u002fservices\u002fPages",itemPermissions:{High:16,Low:196673}};
+    SP.Ribbon.WebPartComponent.registerWithPageManager(initInfo);
+    var wpcomp = SP.Ribbon.WebPartComponent.get_instance();
+    var hid;
+    hid = document.getElementById("_wpSelected");
+    if (hid != null)
+    {
+        var wpid = hid.value;
+        if (wpid.length > 0)
+        {
+            var zc = document.getElementById(wpid);
+            if (zc != null)
+                wpcomp.selectWebPart(zc, false);
+        }
+    }
+    hid = document.getElementById("_wzSelected");
+    if (hid != null)
+    {
+        var wzid = hid.value;
+        if (wzid.length > 0)
+        {
+            wpcomp.selectWebPartZone(null, wzid);
+        }
+    }
+};
+function __RegisterWebPartPageCUI() {
+ExecuteOrDelayUntilScriptLoaded(_RegisterWebPartPageCUI, "sp.ribbon.js");}
+_spBodyOnLoadFunctionNames.push("__RegisterWebPartPageCUI");var __wpmExportWarning='This Web Part Page has been personalized. As a result, one or more Web Part properties may contain confidential information. Make sure the properties contain information that is safe for others to read. After exporting this Web Part, view properties in the Web Part description file (.WebPart) by using a text editor such as Microsoft Notepad.';var __wpmCloseProviderWarning='You are about to close this Web Part.  It is currently providing data to other Web Parts, and these connections will be deleted if this Web Part is closed.  To close this Web Part, click OK.  To keep this Web Part, click Cancel.';var __wpmDeleteWarning='You are about to permanently delete this Web Part.  Are you sure you want to do this?  To delete this Web Part, click OK.  To keep this Web Part, click Cancel.';
+window.CoreJsApiPresent = true;
+window.ExecuteOrDelayUntilScriptLoaded && ExecuteOrDelayUntilScriptLoaded(function()
+{
+    var fnReg = JsApi.ExtensibilityManager._RegisterFilesForNamespace;
+    var ns = 'SP.SPGantt.InstrumentedApi'; var api = 'GanttSharedApi.generated.js'; var shim = 'GanttApiShim.generated.js';
+    RegisterSodDep(shim, api);
+                                  
+    fnReg(ns, api, ns + '.ClientApi', 1);
+    fnReg(ns, shim, ns + '.ShimPlaceholder', 2);
+}, 
+                             'JsApiExtensibilityManager.js');Type.registerNamespace('SP.SPGantt.InstrumentedApi');
+              SP.SPGantt.InstrumentedApi.ExecuteWithJsApiLoaded = function(fn) { var fnEx = window.ExecuteOrDelayUntilScriptLoaded && ExecuteOrDelayUntilScriptLoaded; fnEx && fnEx(function() { JsApi.ExtensibilityManager.ExecuteWithJsApisInNamespaceLoaded('SP.SPGantt.InstrumentedApi', fn); }, 'JsApiExtensibilityManager.js'); };if(typeof g_spPreFetchKeys != 'undefined'){ g_spPreFetchKeys.push('DragDrop.js'); _spBodyOnLoadFunctionNames.push('WPQRegisterDragDropUpload'); g_spDragDropUpload['WebPartWPQ2'] = new SPDragUploadInfo('WebPartWPQ2','https:\u002f\u002fdeveloper.bluetooth.org','\u002fgatt\u002fservices','{1B86610A-F953-4BBD-8114-FB5AFFF118AD}','\u002fDocuments', false, false, null, null, null, null);}g_spPreFetchKeys.push('sharing.js');
+ExecuteOrDelayUntilScriptLoaded(
+function()
+{
+var initInfo = 
+{
+itemPermMasks: {High:16,Low:196673},
+listPermMasks: {High:16,Low:196673},
+listId: "24ffda20-1012-483b-a493-d43af17d127b",
+itemId: 25,
+workflowsAssociated: true,
+editable: false,
+doNotShowProperties: false,
+enableVersioning: true
+};
+SP.Ribbon.DocLibAspxPageComponent.registerWithPageManager(initInfo);
+},
+"sp.ribbon.js");
+var g_disableCheckoutInEditMode = false;
+var _spWebPermMasks = {High:16,Low:196673};
+            ExecuteOrDelayUntilScriptLoaded(
+                function() 
+                {                    
+                    Srch.ScriptApplicationManager.get_current().states = {"browserLanguage":1033,"webUILanguageName":"en-US","webDefaultLanguageName":"en-US","contextUrl":"https://developer.bluetooth.org/gatt/services","showAdminDetails":false,"defaultPagesListName":"Pages","isSPFSKU":false,"defaultQueryProperties":{"culture":1033,"uiLanguage":1033,"summaryLength":180,"desiredSnippetLength":90,"enableStemming":true,"enablePhonetic":false,"enableNicknames":false,"trimDuplicates":true,"bypassResultTypes":false,"enableInterleaving":true,"enableQueryRules":true,"processBestBets":true,"enableOrderingHitHighlightedProperty":false,"hitHighlightedMultivaluePropertyLimit":-1,"processPersonalFavorites":true}};
+                    Srch.U.trace(null, 'SerializeToClient', 'ScriptApplicationManager state initialized.');
+                }, 'Search.ClientControls.js');var g_clientIdDeltaPlaceHolderUtilityContent = "DeltaPlaceHolderUtilityContent";
+
+theForm.oldSubmit = theForm.submit;
+theForm.submit = WebForm_SaveScrollPositionSubmit;
+
+theForm.oldOnSubmit = theForm.onsubmit;
+theForm.onsubmit = WebForm_SaveScrollPositionOnSubmit;
+
+var g_commandUIHandlers = {"name":"CommandHandlers","attrs":{},"children":[]};
+
+                    ExecuteOrDelayUntilScriptLoaded(
+                        function() 
+                        {
+                            if ($isNull($find('ctl00_PlaceHolderSearchArea_SmallSearchInputBox1_csr')))
+                            {
+                                var sb = $create(Srch.SearchBox, {"delayLoadTemplateScripts":true,"messages":[],"queryGroupNames":["MasterPage"],"renderTemplateId":"~sitecollection/_catalogs/masterpage/Display Templates/Search/Control_SearchBox_Compact.js","resultsPageAddress":"/Pages/SearchResults.aspx","serverInitialRender":true,"showDataErrors":true,"states":{},"tryInplaceQuery":false}, null, null, $get("ctl00_PlaceHolderSearchArea_SmallSearchInputBox1_csr"));
+                                sb.activate('Search...', 'ctl00_PlaceHolderSearchArea_SmallSearchInputBox1_csr_sbox', 'ctl00_PlaceHolderSearchArea_SmallSearchInputBox1_csr_sboxdiv', 'ctl00_PlaceHolderSearchArea_SmallSearchInputBox1_csr_NavButton', 'ctl00_PlaceHolderSearchArea_SmallSearchInputBox1_csr_AutoCompList', 'ctl00_PlaceHolderSearchArea_SmallSearchInputBox1_csr_NavDropdownList', 'ctl00_PlaceHolderSearchArea_SmallSearchInputBox1_csr_SearchLink', 'ms-srch-sbprogress', 'ms-srch-sb-prompt ms-helperText');
+                            }
+                        }, 'Search.ClientControls.js');g_QuickLaunchControlIds.push("zz1_TopNavigationMenuV4");_spBodyOnLoadFunctionNames.push('QuickLaunchInitDroppable'); var g_zz1_TopNavigationMenuV4 = null; function init_zz1_TopNavigationMenuV4() { if (g_zz1_TopNavigationMenuV4 == null) g_zz1_TopNavigationMenuV4 = $create(SP.UI.AspMenu, null, null, null, $get('zz1_TopNavigationMenuV4')); } if(g_spPreFetchKeys) {{ g_spPreFetchKeys.push('SP.Core.js');}}EnsureScriptFunc('SP.Core.js', 'SP.UI.AspMenu', init_zz1_TopNavigationMenuV4);
+var WPQ2ListData = { "Row" : 
+[{
+"ID": "70",
+"PermMask": "0x1000030041",
+"FSObjType": "0",
+"HTML_x0020_File_x0020_Type": "",
+"ContentType": "Service",
+"SpecificationName": "\u002fgatt\u002fservices\u002fPages\u002fServiceViewer.aspx?u=org.bluetooth.service.alert_notification.xml",
+"SpecificationName.desc": "Alert Notification Service",
+"SpecificationType": "org.bluetooth.service.alert_notification",
+"AssignedNumber": "0x1811",
+"SpecificationLevel": "Adopted"
+}
+,{
+"ID": "68",
+"PermMask": "0x1000030041",
+"FSObjType": "0",
+"HTML_x0020_File_x0020_Type": "",
+"ContentType": "Service",
+"SpecificationName": "\u002fgatt\u002fservices\u002fPages\u002fServiceViewer.aspx?u=org.bluetooth.service.battery_service.xml",
+"SpecificationName.desc": "Battery Service",
+"SpecificationType": "org.bluetooth.service.battery_service",
+"AssignedNumber": "0x180F",
+"SpecificationLevel": "Adopted"
+}
+,{
+"ID": "69",
+"PermMask": "0x1000030041",
+"FSObjType": "0",
+"HTML_x0020_File_x0020_Type": "",
+"ContentType": "Service",
+"SpecificationName": "\u002fgatt\u002fservices\u002fPages\u002fServiceViewer.aspx?u=org.bluetooth.service.blood_pressure.xml",
+"SpecificationName.desc": "Blood Pressure",
+"SpecificationType": "org.bluetooth.service.blood_pressure",
+"AssignedNumber": "0x1810",
+"SpecificationLevel": "Adopted"
+}
+,{
+"ID": "93",
+"PermMask": "0x1000030041",
+"FSObjType": "0",
+"HTML_x0020_File_x0020_Type": "",
+"ContentType": "Service",
+"SpecificationName": "\u002fgatt\u002fservices\u002fPages\u002fServiceViewer.aspx?u=org.bluetooth.service.body_composition.xml",
+"SpecificationName.desc": "Body Composition",
+"SpecificationType": "org.bluetooth.service.body_composition",
+"AssignedNumber": "0x181B",
+"SpecificationLevel": "Adopted"
+}
+,{
+"ID": "98",
+"PermMask": "0x1000030041",
+"FSObjType": "0",
+"HTML_x0020_File_x0020_Type": "",
+"ContentType": "Service",
+"SpecificationName": "\u002fgatt\u002fservices\u002fPages\u002fServiceViewer.aspx?u=org.bluetooth.service.bond_management.xml",
+"SpecificationName.desc": "Bond Management",
+"SpecificationType": "org.bluetooth.service.bond_management",
+"AssignedNumber": "0x181E",
+"SpecificationLevel": "Adopted"
+}
+,{
+"ID": "99",
+"PermMask": "0x1000030041",
+"FSObjType": "0",
+"HTML_x0020_File_x0020_Type": "",
+"ContentType": "Service",
+"SpecificationName": "\u002fgatt\u002fservices\u002fPages\u002fServiceViewer.aspx?u=org.bluetooth.service.continuous_glucose_monitoring.xml",
+"SpecificationName.desc": "Continuous Glucose Monitoring",
+"SpecificationType": "org.bluetooth.service.continuous_glucose_monitoring",
+"AssignedNumber": "0x181F",
+"SpecificationLevel": "Adopted"
+}
+,{
+"ID": "53",
+"PermMask": "0x1000030041",
+"FSObjType": "0",
+"HTML_x0020_File_x0020_Type": "",
+"ContentType": "Service",
+"SpecificationName": "\u002fgatt\u002fservices\u002fPages\u002fServiceViewer.aspx?u=org.bluetooth.service.current_time.xml",
+"SpecificationName.desc": "Current Time Service",
+"SpecificationType": "org.bluetooth.service.current_time",
+"AssignedNumber": "0x1805",
+"SpecificationLevel": "Adopted"
+}
+,{
+"ID": "87",
+"PermMask": "0x1000030041",
+"FSObjType": "0",
+"HTML_x0020_File_x0020_Type": "",
+"ContentType": "Service",
+"SpecificationName": "\u002fgatt\u002fservices\u002fPages\u002fServiceViewer.aspx?u=org.bluetooth.service.cycling_power.xml",
+"SpecificationName.desc": "Cycling Power",
+"SpecificationType": "org.bluetooth.service.cycling_power",
+"AssignedNumber": "0x1818",
+"SpecificationLevel": "Adopted"
+}
+,{
+"ID": "81",
+"PermMask": "0x1000030041",
+"FSObjType": "0",
+"HTML_x0020_File_x0020_Type": "",
+"ContentType": "Service",
+"SpecificationName": "\u002fgatt\u002fservices\u002fPages\u002fServiceViewer.aspx?u=org.bluetooth.service.cycling_speed_and_cadence.xml",
+"SpecificationName.desc": "Cycling Speed and Cadence",
+"SpecificationType": "org.bluetooth.service.cycling_speed_and_cadence",
+"AssignedNumber": "0x1816",
+"SpecificationLevel": "Adopted"
+}
+,{
+"ID": "63",
+"PermMask": "0x1000030041",
+"FSObjType": "0",
+"HTML_x0020_File_x0020_Type": "",
+"ContentType": "Service",
+"SpecificationName": "\u002fgatt\u002fservices\u002fPages\u002fServiceViewer.aspx?u=org.bluetooth.service.device_information.xml",
+"SpecificationName.desc": "Device Information",
+"SpecificationType": "org.bluetooth.service.device_information",
+"AssignedNumber": "0x180A",
+"SpecificationLevel": "Adopted"
+}
+,{
+"ID": "91",
+"PermMask": "0x1000030041",
+"FSObjType": "0",
+"HTML_x0020_File_x0020_Type": "",
+"ContentType": "Service",
+"SpecificationName": "\u002fgatt\u002fservices\u002fPages\u002fServiceViewer.aspx?u=org.bluetooth.service.environmental_sensing.xml",
+"SpecificationName.desc": "Environmental Sensing",
+"SpecificationType": "org.bluetooth.service.environmental_sensing",
+"AssignedNumber": "0x181A",
+"SpecificationLevel": "Adopted"
+}
+,{
+"ID": "52",
+"PermMask": "0x1000030041",
+"FSObjType": "0",
+"HTML_x0020_File_x0020_Type": "",
+"ContentType": "Service",
+"SpecificationName": "\u002fgatt\u002fservices\u002fPages\u002fServiceViewer.aspx?u=org.bluetooth.service.generic_access.xml",
+"SpecificationName.desc": "Generic Access",
+"SpecificationType": "org.bluetooth.service.generic_access",
+"AssignedNumber": "0x1800",
+"SpecificationLevel": "Adopted"
+}
+,{
+"ID": "49",
+"PermMask": "0x1000030041",
+"FSObjType": "0",
+"HTML_x0020_File_x0020_Type": "",
+"ContentType": "Service",
+"SpecificationName": "\u002fgatt\u002fservices\u002fPages\u002fServiceViewer.aspx?u=org.bluetooth.service.generic_attribute.xml",
+"SpecificationName.desc": "Generic Attribute",
+"SpecificationType": "org.bluetooth.service.generic_attribute",
+"AssignedNumber": "0x1801",
+"SpecificationLevel": "Adopted"
+}
+,{
+"ID": "78",
+"PermMask": "0x1000030041",
+"FSObjType": "0",
+"HTML_x0020_File_x0020_Type": "",
+"ContentType": "Service",
+"SpecificationName": "\u002fgatt\u002fservices\u002fPages\u002fServiceViewer.aspx?u=org.bluetooth.service.glucose.xml",
+"SpecificationName.desc": "Glucose",
+"SpecificationType": "org.bluetooth.service.glucose",
+"AssignedNumber": "0x1808",
+"SpecificationLevel": "Adopted"
+}
+,{
+"ID": "54",
+"PermMask": "0x1000030041",
+"FSObjType": "0",
+"HTML_x0020_File_x0020_Type": "",
+"ContentType": "Service",
+"SpecificationName": "\u002fgatt\u002fservices\u002fPages\u002fServiceViewer.aspx?u=org.bluetooth.service.health_thermometer.xml",
+"SpecificationName.desc": "Health Thermometer",
+"SpecificationType": "org.bluetooth.service.health_thermometer",
+"AssignedNumber": "0x1809",
+"SpecificationLevel": "Adopted"
+}
+,{
+"ID": "66",
+"PermMask": "0x1000030041",
+"FSObjType": "0",
+"HTML_x0020_File_x0020_Type": "",
+"ContentType": "Service",
+"SpecificationName": "\u002fgatt\u002fservices\u002fPages\u002fServiceViewer.aspx?u=org.bluetooth.service.heart_rate.xml",
+"SpecificationName.desc": "Heart Rate",
+"SpecificationType": "org.bluetooth.service.heart_rate",
+"AssignedNumber": "0x180D",
+"SpecificationLevel": "Adopted"
+}
+,{
+"ID": "71",
+"PermMask": "0x1000030041",
+"FSObjType": "0",
+"HTML_x0020_File_x0020_Type": "",
+"ContentType": "Service",
+"SpecificationName": "\u002fgatt\u002fservices\u002fPages\u002fServiceViewer.aspx?u=org.bluetooth.service.human_interface_device.xml",
+"SpecificationName.desc": "Human Interface Device",
+"SpecificationType": "org.bluetooth.service.human_interface_device",
+"AssignedNumber": "0x1812",
+"SpecificationLevel": "Adopted"
+}
+,{
+"ID": "50",
+"PermMask": "0x1000030041",
+"FSObjType": "0",
+"HTML_x0020_File_x0020_Type": "",
+"ContentType": "Service",
+"SpecificationName": "\u002fgatt\u002fservices\u002fPages\u002fServiceViewer.aspx?u=org.bluetooth.service.immediate_alert.xml",
+"SpecificationName.desc": "Immediate Alert",
+"SpecificationType": "org.bluetooth.service.immediate_alert",
+"AssignedNumber": "0x1802",
+"SpecificationLevel": "Adopted"
+}
+,{
+"ID": "101",
+"PermMask": "0x1000030041",
+"FSObjType": "0",
+"HTML_x0020_File_x0020_Type": "",
+"ContentType": "Service",
+"SpecificationName": "\u002fgatt\u002fservices\u002fPages\u002fServiceViewer.aspx?u=org.bluetooth.service.internet_protocol_support.xml",
+"SpecificationName.desc": "Internet Protocol Support",
+"SpecificationType": "org.bluetooth.service.internet_protocol_support",
+"AssignedNumber": "0x1820",
+"SpecificationLevel": "Adopted"
+}
+,{
+"ID": "51",
+"PermMask": "0x1000030041",
+"FSObjType": "0",
+"HTML_x0020_File_x0020_Type": "",
+"ContentType": "Service",
+"SpecificationName": "\u002fgatt\u002fservices\u002fPages\u002fServiceViewer.aspx?u=org.bluetooth.service.link_loss.xml",
+"SpecificationName.desc": "Link Loss",
+"SpecificationType": "org.bluetooth.service.link_loss",
+"AssignedNumber": "0x1803",
+"SpecificationLevel": "Adopted"
+}
+,{
+"ID": "88",
+"PermMask": "0x1000030041",
+"FSObjType": "0",
+"HTML_x0020_File_x0020_Type": "",
+"ContentType": "Service",
+"SpecificationName": "\u002fgatt\u002fservices\u002fPages\u002fServiceViewer.aspx?u=org.bluetooth.service.location_and_navigation.xml",
+"SpecificationName.desc": "Location and Navigation",
+"SpecificationType": "org.bluetooth.service.location_and_navigation",
+"AssignedNumber": "0x1819",
+"SpecificationLevel": "Adopted"
+}
+,{
+"ID": "64",
+"PermMask": "0x1000030041",
+"FSObjType": "0",
+"HTML_x0020_File_x0020_Type": "",
+"ContentType": "Service",
+"SpecificationName": "\u002fgatt\u002fservices\u002fPages\u002fServiceViewer.aspx?u=org.bluetooth.service.next_dst_change.xml",
+"SpecificationName.desc": "Next DST Change Service",
+"SpecificationType": "org.bluetooth.service.next_dst_change",
+"AssignedNumber": "0x1807",
+"SpecificationLevel": "Adopted"
+}
+,{
+"ID": "67",
+"PermMask": "0x1000030041",
+"FSObjType": "0",
+"HTML_x0020_File_x0020_Type": "",
+"ContentType": "Service",
+"SpecificationName": "\u002fgatt\u002fservices\u002fPages\u002fServiceViewer.aspx?u=org.bluetooth.service.phone_alert_status.xml",
+"SpecificationName.desc": "Phone Alert Status Service",
+"SpecificationType": "org.bluetooth.service.phone_alert_status",
+"AssignedNumber": "0x180E",
+"SpecificationLevel": "Adopted"
+}
+,{
+"ID": "59",
+"PermMask": "0x1000030041",
+"FSObjType": "0",
+"HTML_x0020_File_x0020_Type": "",
+"ContentType": "Service",
+"SpecificationName": "\u002fgatt\u002fservices\u002fPages\u002fServiceViewer.aspx?u=org.bluetooth.service.reference_time_update.xml",
+"SpecificationName.desc": "Reference Time Update Service",
+"SpecificationType": "org.bluetooth.service.reference_time_update",
+"AssignedNumber": "0x1806",
+"SpecificationLevel": "Adopted"
+}
+,{
+"ID": "80",
+"PermMask": "0x1000030041",
+"FSObjType": "0",
+"HTML_x0020_File_x0020_Type": "",
+"ContentType": "Service",
+"SpecificationName": "\u002fgatt\u002fservices\u002fPages\u002fServiceViewer.aspx?u=org.bluetooth.service.running_speed_and_cadence.xml",
+"SpecificationName.desc": "Running Speed and Cadence",
+"SpecificationType": "org.bluetooth.service.running_speed_and_cadence",
+"AssignedNumber": "0x1814",
+"SpecificationLevel": "Adopted"
+}
+,{
+"ID": "72",
+"PermMask": "0x1000030041",
+"FSObjType": "0",
+"HTML_x0020_File_x0020_Type": "",
+"ContentType": "Service",
+"SpecificationName": "\u002fgatt\u002fservices\u002fPages\u002fServiceViewer.aspx?u=org.bluetooth.service.scan_parameters.xml",
+"SpecificationName.desc": "Scan Parameters",
+"SpecificationType": "org.bluetooth.service.scan_parameters",
+"AssignedNumber": "0x1813",
+"SpecificationLevel": "Adopted"
+}
+,{
+"ID": "48",
+"PermMask": "0x1000030041",
+"FSObjType": "0",
+"HTML_x0020_File_x0020_Type": "",
+"ContentType": "Service",
+"SpecificationName": "\u002fgatt\u002fservices\u002fPages\u002fServiceViewer.aspx?u=org.bluetooth.service.tx_power.xml",
+"SpecificationName.desc": "Tx Power",
+"SpecificationType": "org.bluetooth.service.tx_power",
+"AssignedNumber": "0x1804",
+"SpecificationLevel": "Adopted"
+}
+,{
+"ID": "94",
+"PermMask": "0x1000030041",
+"FSObjType": "0",
+"HTML_x0020_File_x0020_Type": "",
+"ContentType": "Service",
+"SpecificationName": "\u002fgatt\u002fservices\u002fPages\u002fServiceViewer.aspx?u=org.bluetooth.service.user_data.xml",
+"SpecificationName.desc": "User Data",
+"SpecificationType": "org.bluetooth.service.user_data",
+"AssignedNumber": "0x181C",
+"SpecificationLevel": "Adopted"
+}
+,{
+"ID": "95",
+"PermMask": "0x1000030041",
+"FSObjType": "0",
+"HTML_x0020_File_x0020_Type": "",
+"ContentType": "Service",
+"SpecificationName": "\u002fgatt\u002fservices\u002fPages\u002fServiceViewer.aspx?u=org.bluetooth.service.weight_scale.xml",
+"SpecificationName.desc": "Weight Scale",
+"SpecificationType": "org.bluetooth.service.weight_scale",
+"AssignedNumber": "0x181D",
+"SpecificationLevel": "Adopted"
+}
+],"FirstRow" : 1,
+"LastRow" : 29
+,"FilterLink" : "?"
+,"ForceNoHierarchy" : "1"
+,"HierarchyHasIndention" : ""
+
+};var WPQ2SchemaData = { "Field": [ 
+{"Name": "SpecificationName",
+"FieldType": "URL",
+"RealFieldName": "SpecificationName",
+"DisplayName": "SpecificationName",
+"ID": "72089427-96dd-4e12-80cf-104e5d4f035c",
+"Format": "Hyperlink",
+"Type": "URL",
+"Filterable": "FALSE",
+"AllowGridEditing": "TRUE"}
+,{"Name": "SpecificationType",
+"FieldType": "Text",
+"RealFieldName": "SpecificationType",
+"DisplayName": "SpecificationType",
+"ID": "9ca498d2-f2f5-42ee-b150-c1c1f4e19bbd",
+"Type": "Text",
+"AutoHyperLink": "TRUE",
+"AllowGridEditing": "TRUE"}
+,{"Name": "AssignedNumber",
+"FieldType": "Text",
+"RealFieldName": "AssignedNumber",
+"DisplayName": "AssignedNumber",
+"ID": "e4867ec1-4b6a-46db-8aa4-20cf2747c17e",
+"Type": "Text",
+"AutoHyperLink": "TRUE",
+"AllowGridEditing": "TRUE"}
+,{"Name": "SpecificationLevel",
+"FieldType": "Choice",
+"RealFieldName": "SpecificationLevel",
+"DisplayName": "SpecificationLevel",
+"ID": "adbf5a5d-b233-4b52-b178-a7ec42a92b5f",
+"Type": "Choice",
+"AllowGridEditing": "TRUE"}
+],"LCID" : "1033","Userid" : ""
+,"PagePath" : "/gatt/services/Pages/ServicesHome.aspx"
+,"ShowWebPart" : ""
+,"View" : "{2680C68A-568F-4EEE-A3D3-DA19C2339C54}"
+,"RootFolderParam" : "View={2680c68a-568f-4eee-a3d3-da19c2339c54}&"
+,"FieldSortParam" : ""
+,"HttpVDir" : "https://developer.bluetooth.org/gatt/services"
+,"IsDocLib" : "1"
+,"UIVersion" : "15","NoListItem" : "There are no items to show in this view of the \"Documents\" document library.","NoListItemHowTo" : "To add a new item, click \"New\" or \"Upload\".","DefaultItemOpen" : "1","ForceCheckout" : "1","Direction" : "none","TabularView" : "0","SelectedID" : "-1"
+,"Toolbar" : "Freeform"
+};
+          ctx = new ContextInfo();
+          ctx.wpq= "WPQ2";
+          ctx.Templates = {};
+          ctx.ListData = WPQ2ListData;
+          ctx.ListSchema = WPQ2SchemaData;
+          ctx.BaseViewID = 1;
+          ctx.ListTemplateType = 101;
+          
+          ctx.existingServerFilterHash = ajaxNavigate.getParam("ServerFilter");
+          if (null != ctx.existingServerFilterHash) {
+            ctx.existingServerFilterHash = ctx.existingServerFilterHash.replace(/-/g, '&').replace(/&&/g, '-');
+            var serverFilterRootFolder = GetUrlKeyValue("RootFolder", true,ctx.existingServerFilterHash);
+            var currentRootFolder = GetUrlKeyValue("RootFolder", true);
+            if("" == serverFilterRootFolder && "" != currentRootFolder)
+            {
+              ctx.existingServerFilterHash += "&RootFolder=" + currentRootFolder;
+            }
+            var uri=new URI(ajaxNavigate.get_href());
+            uri.setFragment("");
+            uri.setQuery(ctx.existingServerFilterHash);
+            STSNavigate(uri.getString());
+          }
+          
+              ctx.listBaseType = 1;
+          
+            ctx.noGroupCollapse = true;
+          
+          ctx.NavigateForFormsPages = false;
+          ctx.BasePermissions = {ManageLists: false, ManagePersonalViews: false, OpenItems: false};
+          ctx.CurrentUserIsSiteAdmin = false;
+          ctx.IsAppWeb = false;
+          ctx.AllowGridMode = false;
+          ctx.inGridMode = false;
+          ctx.listTemplate = "101";
+          ctx.listName = "{1B86610A-F953-4BBD-8114-FB5AFFF118AD}";
+          ctx.rootFolder = "";
+          ctx.view = "{2680C68A-568F-4EEE-A3D3-DA19C2339C54}";
+          ctx.viewTitle = "";
+          ctx.listUrlDir = "/gatt/services/Documents";
+          ctx.HttpPath = "https://developer.bluetooth.org/gatt/services/_vti_bin/owssvr.dll?CS=65001";
+          ctx.HttpRoot = "https://developer.bluetooth.org/gatt/services";
+          ctx.imagesPath = "/_layouts/15/images/";
+          ctx.PortalUrl = "";
+          ctx.SendToLocationName = "";
+          ctx.SendToLocationUrl = "";
+          
+              ctx.RecycleBinEnabled = 1;
+            
+          ctx.OfficialFileName = "";
+          ctx.OfficialFileNames = "";
+          ctx.WriteSecurity = "1";
+          ctx.SiteTitle = "Services";
+          ctx.ListTitle = "Documents";
+          if (ctx.PortalUrl == "") ctx.PortalUrl = null;
+          ctx.displayFormUrl = "https://developer.bluetooth.org/gatt/services/_layouts/15/listform.aspx?PageType=4&ListId=%7B1B86610A%2DF953%2D4BBD%2D8114%2DFB5AFFF118AD%7D";
+          ctx.newFormUrl = "https://developer.bluetooth.org/gatt/services/_layouts/15/listform.aspx?PageType=8&ListId=%7B1B86610A%2DF953%2D4BBD%2D8114%2DFB5AFFF118AD%7D&RootFolder=";
+          ctx.editFormUrl = "https://developer.bluetooth.org/gatt/services/_layouts/15/listform.aspx?PageType=6&ListId=%7B1B86610A%2DF953%2D4BBD%2D8114%2DFB5AFFF118AD%7D";
+          ctx.isWebEditorPreview = 0;
+          ctx.ctxId = 1;
+          ctx.isXslView = true;
+          ctx.IsClientRendering = true;
+          if (g_ViewIdToViewCounterMap["{2680C68A-568F-4EEE-A3D3-DA19C2339C54}"] == null)
+              g_ViewIdToViewCounterMap["{2680C68A-568F-4EEE-A3D3-DA19C2339C54}"]= 1;
+          ctx.CurrentUserId = -1;
+          
+            ctx.isForceCheckout = true;
+          
+            ctx.EnableMinorVersions = true;
+          
+            ctx.verEnabled = 1;
+          
+            ctx.WorkflowsAssociated = true;
+          
+            ctx.ContentTypesEnabled = true;
+          
+          ctx.RegionalSettingsTimeZoneBias = "480";
+          
+          ctx1 = ctx;
+          g_ctxDict['ctx1'] = ctx;
+      
+        function IsSharePointOpenDocuments( test )
+        {
+          if (test instanceof Array)
+            return false;
+          else
+            return (test != null) && typeof(test) == 'object';
+        }
+        var EditDocumentButton = [];
+        try {EditDocumentButton = new CreateObject("SharePoint.OpenDocuments.3");}
+        catch(err){}
+        if (IsSharePointOpenDocuments(EditDocumentButton))
+          fNewDoc3 = true;
+        else
+        {
+          try {EditDocumentButton = new CreateObject("SharePoint.OpenDocuments.2");}
+          catch(err){}
+          if (IsSharePointOpenDocuments(EditDocumentButton))
+            fNewDoc2 = true;
+          else
+          {
+            try {EditDocumentButton = new CreateObject("SharePoint.OpenDocuments.1");}
+            catch(err){}
+          }
+        }
+        fNewDoc = IsSharePointOpenDocuments(EditDocumentButton);
+      
+      ctx1.bInitialRender = true;
+      RenderListView(ctx1, 'WPQ2');
+      ctx1.bInitialRender = false;
+    //]]>
+</script>
+</form>
+	<span id="DeltaPlaceHolderUtilityContent">
+		
+	</span>
+	<script type="text/javascript">// <![CDATA[ 
+
+var g_Workspace = "s4-workspace"; // ]]>
+</script>
+
+
+
+<script type="text/javascript" async="" src="./BluetoothLE Services_files/7b6610c3a40aa8ed7c.js"></script></body></html>
