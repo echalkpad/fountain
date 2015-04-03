@@ -6,7 +6,7 @@ var Cylon = require("cylon");
 Cylon.robot({
   // Change the port to the correct port for your Arduino.
   connections: {
-    arduino: { adaptor: 'firmata', port: '/dev/ttyACM0' }
+    arduino: { adaptor: 'firmata', port: '/dev/tty.usbmodem621' }
   },
 
   devices: {

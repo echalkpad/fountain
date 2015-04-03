@@ -7,25 +7,6 @@
 	},
 	"buffers":
 	[
-		{
-			"contents": "#!/usr/bin/env node\n\nvar Cylon = require(\"cylon\");\n\n// Initialize the robot\nCylon.robot({\n  // Change the port to the correct port for your Arduino.\n  connections: {\n    arduino: { adaptor: 'firmata', port: '/dev/ttyACM0' }\n  },\n\n  devices: {\n    led: { driver: 'led', pin: 13 }\n  },\n\n  work: function(my) {\n    every((1).second(), function() {\n      my.led.toggle();\n    });\n  }\n}).start();\n",
-			"file": "src/robot-hello.js",
-			"file_size": 411,
-			"file_write_time": 130723864587030584,
-			"settings":
-			{
-				"buffer_size": 392,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "cylon-intro.sublime-project",
-			"settings":
-			{
-				"buffer_size": 166,
-				"line_ending": "Unix"
-			}
-		}
 	],
 	"build_system": "Run",
 	"build_system_choices":
@@ -83,10 +64,14 @@
 	},
 	"expanded_folders":
 	[
-		"/E/users/finson/repos/fountain/cylon/src"
+		"/Users/Finson/repos/fountain/cylon/src"
 	],
 	"file_history":
 	[
+		"/Users/Finson/repos/fountain/cylon/src/robot-hello.js",
+		"/Users/Finson/Library/Application Support/Sublime Text 3/Packages/Default/Preferences.sublime-settings",
+		"/Users/Finson/repos/fountain/cylon/cylon-intro.sublime-project",
+		"/Users/Finson/Library/Application Support/Sublime Text 3/Packages/User/Preferences.sublime-settings",
 		"/C/Users/finson/AppData/Roaming/Sublime Text 3/Packages/User/Distraction Free.sublime-settings",
 		"/C/Users/finson/AppData/Roaming/Sublime Text 3/Packages/Default/Preferences.sublime-settings",
 		"/C/Users/finson/AppData/Roaming/Sublime Text 3/Packages/User/SublimeREPL.sublime-settings",
@@ -98,7 +83,7 @@
 	],
 	"find":
 	{
-		"height": 34.0
+		"height": 23.0
 	},
 	"find_in_files":
 	{
@@ -130,73 +115,14 @@
 	"groups":
 	[
 		{
-			"selected": 0,
 			"sheets":
 			[
-				{
-					"buffer": 0,
-					"file": "src/robot-hello.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 392,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								392,
-								392
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "cylon-intro.sublime-project",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 166,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								72,
-								72
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JSON.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				}
 			]
 		}
 	],
 	"incremental_find":
 	{
-		"height": 26.0
+		"height": 23.0
 	},
 	"input":
 	{
@@ -237,7 +163,7 @@
 	"project": "cylon-intro.sublime-project",
 	"replace":
 	{
-		"height": 48.0
+		"height": 42.0
 	},
 	"save_all_on_build": true,
 	"select_file":
