@@ -3,6 +3,7 @@
 api/
 wrk/
 node_modules/
+*.sublime-workspace
 
 
 #################
