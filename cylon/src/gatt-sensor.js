@@ -1,43 +1,48 @@
 /*
  * gatt-sensor.js
  * This module is an interface layer that mimics an api that might be used to
- * talk over Bluetooth BLE to a device implementing specific sensor 
- * characteristics defined by the Bluetooth SIG in 
+ * talk over Bluetooth BLE to a device implementing specific sensor
+ * characteristics defined by the Bluetooth SIG in
  * org.bluetooth.service.environmental_sensing.  This
  * module is intended for use with Cylon.js, and is based on the existing
  * module analog-sensor.js.
- * 
+ *
  * Doug Johnson, 2015
-
+ *
+ *------------------------------------------
+ *
  * Analog Sensor driver
  * http://cylonjs.com
  *
  * Copyright (c) 2013-2014 The Hybrid Group
  * Licensed under the Apache 2.0 license.
-*/
-/*
-Descriptor Value Changed
-Apparent Wind Direction
-Apparent Wind Speed
-Dew Point
-Elevation
-Gust Factor
-Heat Index
-Humidity
-Irradiance
-Pollen Concentration
-Rainfall
-Pressure
-Temperature
-True Wind Direction
-True Wind Speed
-UV Index
-Wind Chill
-Barometric Pressure Trend
-Magnetic Declination
-Magnetic Flux Density - 2D
-Magnetic Flux Density - 3D
-*/
+ *
+ *------------------------------------------
+ *
+ * Possible Sensor types
+ *
+ * Descriptor Value Changed
+ * Apparent Wind Direction
+ * Apparent Wind Speed
+ * Dew Point
+ * Elevation
+ * Gust Factor
+ * Heat Index
+ * Humidity
+ * Irradiance - org.bluetooth.characteristic.irradiance
+ * Pollen Concentration
+ * Rainfall
+ * Pressure
+ * Temperature
+ * True Wind Direction
+ * True Wind Speed
+ * UV Index
+ * Wind Chill
+ * Barometric Pressure Trend
+ * Magnetic Declination
+ * Magnetic Flux Density - 2D
+ * Magnetic Flux Density - 3D
+ */
 
 "use strict";
 
