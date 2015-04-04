@@ -1,11 +1,11 @@
 /*
  * sensing-service.js
  * This module is an interface layer that mimics an api that might be used to
- * talk over Bluetooth BLE to a device implementing the service defined by 
+ * talk over Bluetooth BLE to a device implementing the service defined by
  * the Bluetooth SIG as org.bluetooth.service.environmental_sensing.  This
  * module is intended for use with Cylon.js, and is based on the existing
  * module cylon-gpio.
- * 
+ *
  * Doug Johnson, 2015
  *
  * cylon-gpio
@@ -18,11 +18,8 @@
 "use strict";
 
 var Drivers = {
-  "gatt-sensor": require("./gatt-sensor"),
-    "led": require("./led"),
+  "gatt-sensor": require("./gatt-sensor")
 };
-
-
 
 module.exports = {
   drivers: Object.keys(Drivers),

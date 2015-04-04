@@ -3,6 +3,7 @@
 api/
 wrk/
 node_modules/
+*.sublime-workspace
 
 
 #################
@@ -223,3 +224,4 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
+*.sublime-workspace
