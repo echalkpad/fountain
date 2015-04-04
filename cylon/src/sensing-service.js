@@ -18,10 +18,8 @@
 "use strict";
 
 var Drivers = {
-  "environment-sensor": require("./analog-sensor")
+  "gatt-sensor": require("./gatt-sensor")
 };
-
-
 
 module.exports = {
   drivers: Object.keys(Drivers),
