@@ -1,0 +1,9 @@
+
+
+#ifndef __ENVIRONMENTAL_SENSING_SERVICE_H__
+#define __ENVIRONMENTAL_SENSING_SERVICE_H__
+
+#include "GattService.h"
+
+
+#endif // ifndef __ENVIRONMENTAL_SENSING_SERVICE_H__
