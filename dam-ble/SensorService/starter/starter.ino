@@ -15,13 +15,14 @@ BLEPeripheral blePeripheral = BLEPeripheral(BLE_REQ, BLE_RDY, BLE_RST);
 //  128-bit: "19b10010e8f2537e4f6cd104768a1214" (dashed format also supported)
 
 // create one or more services
-BLEService service = BLEService("fff0");
+BLEService service = BLEService("181A");
 
 // create one or more characteristics
-BLECharCharacteristic characteristic = BLECharCharacteristic("fff1", BLERead | BLEWrite);
+BLECharCharacteristic c1 = BLECharCharacteristic("2A6E", BLERead );  // temperature
+BLECharCharacteristic c2 = BLECharCharacteristic("2A77", BLERead );  // irradiance
 
 // create one or more descriptors (optional)
-BLEDescriptor descriptor = BLEDescriptor("2901", "value");
+//BLEDescriptor descriptor = BLEDescriptor("2901", "value");
 
 void setup() {
   Serial.begin(115200);
@@ -29,16 +30,18 @@ void setup() {
   delay(5000);  //5 seconds delay for enabling to see the start up comments on the serial board
 #endif
 
-  blePeripheral.setLocalName("local-name"); // optional
+  blePeripheral.setLocalName("SenseNode"); // optional
   blePeripheral.setAdvertisedServiceUuid(service.uuid()); // optional
 
   // add attributes (services, characteristics, descriptors) to peripheral
   blePeripheral.addAttribute(service);
-  blePeripheral.addAttribute(characteristic);
-  blePeripheral.addAttribute(descriptor);
+  blePeripheral.addAttribute(c1);
+  blePeripheral.addAttribute(c2);
+ // blePeripheral.addAttribute(descriptor);
 
   // set initial value
-  characteristic.setValue(0);
+  c1.setValue(20);
+  c2.setValue(30);
 
   // begin initialization
   blePeripheral.begin();
@@ -54,13 +57,13 @@ void loop() {
 
     while (central.connected()) {
       // central still connected to peripheral
-      if (characteristic.written()) {
-        // central wrote new value to characteristic
-        Serial.println(characteristic.value(), DEC);
-
-        // set value on characteristic
-        characteristic.setValue(5);
-      }
+//      if (characteristic.written()) {
+//        // central wrote new value to characteristic
+//        Serial.println(characteristic.value(), DEC);
+//
+//        // set value on characteristic
+//        characteristic.setValue(5);
+//      }
     }
 
     // central disconnected
