@@ -15,7 +15,7 @@ BLEPeripheral blePeripheral = BLEPeripheral(BLE_REQ, BLE_RDY, BLE_RST);
 //  128-bit: "19b10010e8f2537e4f6cd104768a1214" (dashed format also supported)
 
 // create one or more services
-BLEService service = BLEService("181A");
+BLEService service = BLEService("181A");  // Environmental Sensing Service
 
 // create one or more characteristics
 BLECharCharacteristic c1 = BLECharCharacteristic("2A6E", BLERead );  // temperature
@@ -30,7 +30,7 @@ void setup() {
   delay(5000);  //5 seconds delay for enabling to see the start up comments on the serial board
 #endif
 
-  blePeripheral.setLocalName("SenseNode"); // optional
+  blePeripheral.setLocalName("SensorServer"); // optional
   blePeripheral.setAdvertisedServiceUuid(service.uuid()); // optional
 
   // add attributes (services, characteristics, descriptors) to peripheral
@@ -40,8 +40,8 @@ void setup() {
  // blePeripheral.addAttribute(descriptor);
 
   // set initial value
-  c1.setValue(20);
-  c2.setValue(30);
+//  c1.setValue(22);
+//  c2.setValue(33);
 
   // begin initialization
   blePeripheral.begin();
@@ -56,6 +56,7 @@ void loop() {
     Serial.println(central.address());
 
     while (central.connected()) {
+      blePeripheral.poll();
       // central still connected to peripheral
 //      if (characteristic.written()) {
 //        // central wrote new value to characteristic

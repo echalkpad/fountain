@@ -35,17 +35,25 @@ noble.on('discover', function(peripheral) {
   console.log("   UUID: " + peripheral.uuid);
   console.log("address: " + peripheral.address);
 
-  console.log("------- advertisement");
+  console.log("------- advertisement object");
   console.log(peripheral.advertisement);
+
+  console.log("------- peripheral object");
+ // console.log(peripheral);
 
   servers[peripheral.uuid] = peripheral;
 
-  peripheral.connect();
+  if (peripheral.uuid === 'eb2299410ba7') {
+    console.log("------> connection requested");
+    peripheral.connect();
+  }
+
 });
 
 noble.on('connect', function () {
-  console.log('connected');
- // peripheral.discoverServices(); // any service UUID
+  console.log('------- connected');
+//  var pd = servers[]
+  peripheral.discoverServices(); // any service UUID
  // service.discoverIncludedServices(); // any service UUID
 });
 
@@ -58,7 +66,7 @@ noble.on('rssiUpdate', function(rssi) {
 });
 
 noble.on('servicesDiscover', function(s) {
-  console.log("\nDiscovered services: "+s);
+  console.log("\nDiscovered services... ");
 
   // var arrayLength = peripheral.advertisement.serviceUuids.length;
   // for (var i = 0; i < arrayLength; i++) {
