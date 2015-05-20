@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 
-var noble = require('noble');
-var services = require('./services.json');
+var Nxt = require('mindstorms_bluetooth');
+
+var nxt = new Nxt("/dev/tty.NXT-DevB");
+nxt.play_tone(440, 1000);
 
 var scanStartTime;
 var date = new Date();
