@@ -1,0 +1,23 @@
+SystemID: C:\Users\finson\Downloads\org.bluetooth.service.environmental_sensing.xml
+
+Description: /Service[1]/Characteristics[1]/Characteristic[ 1]/@name - Descriptor Value Changed
+Description: /Service[1]/Characteristics[1]/Characteristic[ 2]/@name - Apparent Wind Direction
+Description: /Service[1]/Characteristics[1]/Characteristic[ 3]/@name - Apparent Wind Speed
+Description: /Service[1]/Characteristics[1]/Characteristic[ 4]/@name - Dew Point
+Description: /Service[1]/Characteristics[1]/Characteristic[ 5]/@name - Elevation
+Description: /Service[1]/Characteristics[1]/Characteristic[ 6]/@name - Gust Factor
+Description: /Service[1]/Characteristics[1]/Characteristic[ 7]/@name - Heat Index
+Description: /Service[1]/Characteristics[1]/Characteristic[ 8]/@name - Humidity
+Description: /Service[1]/Characteristics[1]/Characteristic[ 9]/@name - Irradiance
+Description: /Service[1]/Characteristics[1]/Characteristic[10]/@name - Pollen Concentration
+Description: /Service[1]/Characteristics[1]/Characteristic[11]/@name - Rainfall
+Description: /Service[1]/Characteristics[1]/Characteristic[12]/@name - Pressure
+Description: /Service[1]/Characteristics[1]/Characteristic[13]/@name - Temperature
+Description: /Service[1]/Characteristics[1]/Characteristic[14]/@name - True Wind Direction
+Description: /Service[1]/Characteristics[1]/Characteristic[15]/@name - True Wind Speed
+Description: /Service[1]/Characteristics[1]/Characteristic[16]/@name - UV Index
+Description: /Service[1]/Characteristics[1]/Characteristic[17]/@name - Wind Chill
+Description: /Service[1]/Characteristics[1]/Characteristic[18]/@name - Barometric Pressure Trend
+Description: /Service[1]/Characteristics[1]/Characteristic[19]/@name - Magnetic Declination
+Description: /Service[1]/Characteristics[1]/Characteristic[20]/@name - Magnetic Flux Density - 2D
+Description: /Service[1]/Characteristics[1]/Characteristic[21]/@name - Magnetic Flux Density - 3D

@@ -2,6 +2,9 @@
 
 api/
 wrk/
+node_modules/
+*.sublime-workspace
+
 
 #################
 ## Eclipse
@@ -221,3 +224,4 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
+*.sublime-workspace
