@@ -1,14 +1,14 @@
 "use strict";
 
 // This module provides access to the non-direct Lego NXT commands.
-// For more information, see Appendix 1 - Lego Mindstorms NXT Communication 
+// For more information, see Appendix 1 - Lego Mindstorms NXT Communication
 // Protocol document, in the NXT Bluetooth Development Kit.
 
 var NxtSys = function (nxt) {
 	this.nxt = nxt;
 
 	this.EVENTID = {
-		'openread' : 0x80,							
+		'openread' : 0x80,
 		'openwrite' : 0x81,
 		'read' : 0x82,
 		'write' : 0x83,
@@ -29,7 +29,6 @@ var NxtSys = function (nxt) {
 		'poll' : 0xa2,
 		'bluetoothfactoryreset' : 0xa4
 	};
-
 };
 
 NxtSys.prototype.sys_commands = {
@@ -55,27 +54,6 @@ NxtSys.prototype.sys_commands = {
 	0xa4: 'bluetoothfactoryreset'
 };
 
-
-NxtSys.prototype.nxt_error_messages = {
-	0x00: "OK",
-	0x20: "Pending communication transaction in progress",
-	0x40: "Specified mailbox queue is empty",
-	0xbd: "Request failed (i.e. specified file not found)",
-	0xbe: "Unknown command opcode",
-	0xbf: "Insane packet",
-	0xc0: "Data contains out-of-range values",
-	0xdd: "Communication bus error",
-	0xde: "No free memory in communication buffer",
-	0xdf: "Specified channel/connection is not valid",
-	0xe0: "Specified channel/connection not configured or busy",
-	0xec: "No active program",
-	0xed: "Illegal size specified",
-	0xee: "Illegal mailbox queue ID specified",
-	0xef: "Attempted to access invalid field of a structure",
-	0xf0: "Bad input or output specified",
-	0xfb: "Insufficient memory available",
-	0xff: "Bad arguments"
-};
 
 NxtSys.prototype.get_firmware_version = function () {
 	var command = new Buffer([0x01, 0x88]);
