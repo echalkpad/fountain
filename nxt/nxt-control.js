@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 
 var Nxt = require('mindstorms_bluetooth').Nxt;
-
 var nxt = new Nxt("/dev/rfcomm0");
-//var nxt = new Nxt("/org/bluez/569/hci0/dev_00_16_53_1A_59_B9");
+
+var NxtSys = require('./nxtsys.js');
+var nxtSys = new NxtSys(nxt);
 
 //console.log(nxt);
 console.log("===========");
@@ -17,12 +18,24 @@ nxt.on('getinputvalue', function(data) {
 });
 
 nxt.on('getbatterylevel', function(data) {
-    console.log("event: getbatterylevel");
-    console.log(data);
     if (data[1] == nxt.EVENTID.getbatterylevel) {
         var bat = (data[4] << 8) | data[3];
         console.log('Battery level: '+bat);
+    } else {
+      console.log("event: getbatterylevel");
+      console.log(data);
     }
+});
+
+nxtSys.on('getdeviceinfo',function(data) {
+     if (data[1] == nxtSys.EVENTID.getdeviceinfo) {
+       console.log("event: getdeviceinfo - a");
+      console.log(data);
+    } else {
+      console.log("event: getdeviceinfo -  b");
+      console.log(data);
+    }
+
 });
 
 nxt.sp.on("open", function () {
@@ -38,9 +51,8 @@ nxt.sp.on("open", function () {
     setInterval(function(){
         nxt.get_battery_level();
  //       nxt.get_input_values(nxt.INPUT_PORT_1);
-    }, 500);
+ //       
+        nxtSys.get_device_info();
+    }, 1000);
 
-//    nxt.get_battery_level();
 });
-
-//
