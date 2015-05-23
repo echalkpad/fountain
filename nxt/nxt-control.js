@@ -6,6 +6,10 @@ var nxt = new Nxt("/dev/rfcomm0");
 var NxtSys = require('./nxtsys.js');
 var nxtSys = new NxtSys(nxt);
 
+function toHex(d) {
+    return  ("0"+(Number(d).toString(16))).slice(-2).toUpperCase();
+}
+
 //console.log(nxt);
 console.log("===========");
 
@@ -28,11 +32,28 @@ nxt.on('getbatterylevel', function(data) {
 });
 
 nxtSys.on('getdeviceinfo',function(data) {
-     if (data[1] == nxtSys.EVENTID.getdeviceinfo) {
-       console.log("event: getdeviceinfo - a");
-      console.log(data);
+    if (data[1] == nxtSys.EVENTID.getdeviceinfo) {
+      if (data[2] == 0) {
+        console.log("Device Info: OK");
+        var btAddress = '';
+        for (var idx=18; idx<=23; idx++) {
+          btAddress += toHex(data[idx]);
+          if (idx != 23) {
+            btAddress += ':';
+          }
+        }
+        var rssi = (data[28] << 8) | data[25];
+        var flash = (data[32] << 8) | data[29];
+        console.log(" Name: "+data.slice(3,18));
+        console.log(" BT address: "+btAddress);
+        console.log(" RSSI: "+rssi);
+        console.log(" Free User Flash: "+flash);
+ //       console.log(data);
+      } else {
+        console.log("Device Info: Error. "+nxt.nxt_error_messages[data[2]]);
+      }
     } else {
-      console.log("event: getdeviceinfo -  b");
+      console.log("event: getdeviceinfo");
       console.log(data);
     }
 

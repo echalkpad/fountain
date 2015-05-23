@@ -6,6 +6,30 @@
 
 var NxtSys = function (nxt) {
 	this.nxt = nxt;
+
+	this.EVENTID = {
+		'openread' : 0x80,							
+		'openwrite' : 0x81,
+		'read' : 0x82,
+		'write' : 0x83,
+		'close' : 0x84,
+		'delete' : 0x85,
+		'findfirst' : 0x86,
+		'findnext' : 0x87,
+		'getfirmwareversion' : 0x88,
+		'openwritelinear' : 0x89,
+		'openreadlinear' : 0x8a,
+		'openwritedata' : 0x8b,
+		'openappenddata' : 0x8c,
+		'boot' : 0x97,
+		'setbrickname' : 0x98,
+		'getdeviceinfo' : 0x9b,
+		'deleteuserflash' : 0xa0,
+		'pollcommandlength' : 0xa1,
+		'poll' : 0xa2,
+		'bluetoothfactoryreset' : 0xa4
+	};
+
 };
 
 NxtSys.prototype.sys_commands = {
@@ -30,6 +54,7 @@ NxtSys.prototype.sys_commands = {
 	0xa2: 'poll',
 	0xa4: 'bluetoothfactoryreset'
 };
+
 
 NxtSys.prototype.nxt_error_messages = {
 	0x00: "OK",
@@ -62,5 +87,10 @@ NxtSys.prototype.get_device_info = function () {
 	this.nxt.execute_command(command);
 };
 
+NxtSys.prototype.on = function(event, handler){
+	if(this.EVENTID.hasOwnProperty(event)){
+		this.nxt.sp.data_handles[this.EVENTID[event]] = handler;
+	}
+};
 
 module.exports = NxtSys;
