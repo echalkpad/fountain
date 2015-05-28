@@ -28,12 +28,18 @@ nxt.sp.on("open", function () {
     console.log("Hardware set up");
     nxt.play_tone(440, 500);
 
-    // Start interval
+    nxtSys.get_device_info();
+
+
+
+
+
+    // Start interval timer for sampling
+
     setInterval(function(){
         nxt.get_battery_level();
  //       nxt.get_input_values(nxt.INPUT_PORT_1);
  //
-        nxtSys.get_device_info();
     }, 1000);
 
 });
