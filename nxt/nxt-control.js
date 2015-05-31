@@ -11,6 +11,9 @@ var nxtSys = new NxtSys(nxt);
 var Tuxi = require('tuxi');
 var tj = new Tuxi();
 
+var DistanceSensor = require('./Sensor9846Distance');
+var ds = new DistanceSensor(nxt,nxt.INPUT_PORT_3);
+
 //console.log(nxt);
 console.log("===========");
 
@@ -20,27 +23,25 @@ nxt.sp.on("open", function () {
 
     // Set up hardware
 
-    nxt.set_input_state(nxt.INPUT_PORT_0, nxt.NO_SENSOR, nxt.RAWMODE);
-    nxt.set_input_state(nxt.INPUT_PORT_1, nxt.NO_SENSOR, nxt.RAWMODE);
-    nxt.set_input_state(nxt.INPUT_PORT_2, nxt.NO_SENSOR, nxt.RAWMODE);
+    // nxt.set_input_state(nxt.INPUT_PORT_0, nxt.NO_SENSOR, nxt.RAWMODE);
+    // nxt.set_input_state(nxt.INPUT_PORT_1, nxt.NO_SENSOR, nxt.RAWMODE);
+    // nxt.set_input_state(nxt.INPUT_PORT_2, nxt.NO_SENSOR, nxt.RAWMODE);
     nxt.set_input_state(nxt.INPUT_PORT_3, nxt.LOWSPEED_9V, nxt.RAWMODE);
 
     console.log("Hardware set up");
-    nxt.play_tone(440, 500);
+ //   nxt.play_tone(440, 500);
 
-    nxtSys.get_device_info();
+ //   nxtSys.get_device_info();
 
-
-
-
+    setTimeout(ds.readVersion(), 1000)
 
     // Start interval timer for sampling
 
-    setInterval(function(){
-        nxt.get_battery_level();
+ //   setInterval(function(){
+ //       nxt.get_battery_level();
  //       nxt.get_input_values(nxt.INPUT_PORT_1);
  //
-    }, 1000);
+ //   }, 1000);
 
 });
 
@@ -69,8 +70,9 @@ nxt.on('getinputvalue', function(data) {
       // if(data[3] == nxt.INPUT_PORT_1){
       // var adc = (data[11] << 8) | data[10];
       // console.log('Touch ADC: ' + adc);
-  }
-});
+      // }
+      }
+}});
 
 nxt.on('playtone', function(data) {
   if (data[1] == nxt.EVENTID.playtone) {
@@ -122,4 +124,19 @@ nxtSys.on('getdeviceinfo',function(data) {
   }
 });
 
+
+nxt.on('setinputmode', function(data) {
+  if (data[1] == nxt.EVENTID.setinputmode) {
+    if (data[2] != 0) {
+      console.log("Error. Set Input Mode: "+nxt.nxt_error_messages[data[2]]);
+    } else {
+      console.log('event: setinputmode');
+      if (data.length != 3) {
+        console.log(data);
+      }
+    }
+  } else {
+    console.log("Error. The invoked callback function 'setinputmode' does not match Event ID "+data[1]+".");
+  }
+});
 
