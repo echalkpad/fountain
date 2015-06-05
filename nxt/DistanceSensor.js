@@ -6,7 +6,7 @@
 // @param aPort the NXT port to which the sensor is connected (0-3)
 
 var DistanceSensor = function (aPort) {
-	var thePort = aPort;
+	var thePort = aPort+1;
 };
 
 DistanceSensor.prototype.readVersion = function() {
