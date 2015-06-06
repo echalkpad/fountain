@@ -2,35 +2,10 @@
 /* jshint bitwise:false */
 'use strict';
 
-var EVENTID = {
-    'startprogram' : 0x00,
-    'stopprogram' : 0x01,
-    'playsoundfile': 0x02,
-    'playtone' : 0x03,
-    'setoutputstate' : 0x04,
-    'setinputmode' : 0x05,
-    'getoutputstate' : 0x06,
-    'getinputvalue' : 0x07,
-    'resetinputscaledvalue' : 0x08,
-    'messagewrite' : 0x09,
-    'resetmotorposition' : 0x0A,
-    'getbatterylevel' : 0x0B,
-    'stopsoundplayback' : 0x0C,
-    'keepalive' : 0x0D,
-    'lsgetstatus' : 0x0E,
-    'lswrite' : 0x0F,
-    'lsread' : 0x10,
-    'getcurrentprogramname' : 0x11,
-    'messageread' : 0x13
-  };
-
 var nxtCommPort = "/dev/rfcomm0";
 
-var NXTParser = require('./NXTParser');
-var packetParser = new NXTParser(EVENTID);
-
 var Nxt = require('mindstorms_bluetooth').Nxt;
-var nxt = new Nxt(nxtCommPort,{ parser: packetParser});
+var nxt = new Nxt(nxtCommPort);
 
 var NxtSys = require('./nxtsys.js');
 var nxtSys = new NxtSys(nxt);
@@ -42,9 +17,7 @@ var DistanceSensor = require('./Sensor9846Distance');
 var ds = new DistanceSensor(nxt, nxt.INPUT_PORT_4);
 
 var log = require('book');
-var debugLevel = 0;
 
-//log.info(nxt);
 log.info("===========");
 
 nxt.sp.on("open", function () {
@@ -68,20 +41,18 @@ nxt.sp.on("open", function () {
 
     // Start interval timer for sampling
 
- //   setInterval(function(){
- //       nxt.get_battery_level();
- //       nxt.get_input_values(nxt.INPUT_PORT_1);
- //
- //   }, 1000);
+   setInterval(function(){
+       nxt.get_battery_level();
+       nxt.get_input_values(nxt.INPUT_PORT_1);
+   }, 1000);
 
 });
 
 nxt.on('getinputvalue', function (data) {
-  if (data[1] === nxtSys.EVENTID.getinputvalue) {
+  if (data[1] === nxt.EVENTID.getinputvalue) {
     if (data[2] !== 0) {
       log.info("Error. Get Input Value: " + nxt.nxt_error_messages[data[2]]);
     } else {
-      log.info("event: getinputvalue");
       switch (data[3]) {
       case nxt.INPUT_PORT_0:
         log.info("input port " + data[3]);
@@ -98,10 +69,6 @@ nxt.on('getinputvalue', function (data) {
       default:
         log.info("Error: Get Input Value: Unexpected input port value: " + data[3]);
       }
-      // if(data[3] === nxt.INPUT_PORT_1){
-      // var adc = (data[11] << 8) | data[10];
-      // log.info('Touch ADC: '  +  adc);
-      // }
     }
   } else {
     log.panic("Error. The invoked callback function 'getinputvalue' does not match Event ID " + data[1] + ".");

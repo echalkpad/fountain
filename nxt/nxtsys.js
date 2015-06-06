@@ -67,7 +67,7 @@ NxtSys.prototype.get_device_info = function () {
 
 NxtSys.prototype.on = function(event, handler){
 	if(this.EVENTID.hasOwnProperty(event)){
-		this.nxt.sp.data_handles[this.EVENTID[event]] = handler;
+//		this.nxt.sp.data_handles[this.EVENTID[event]] = handler;
 	}
 };
 
