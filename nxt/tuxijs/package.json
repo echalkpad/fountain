@@ -1,0 +1,18 @@
+
+{
+  "author": "Doug Johnson <finson@whidbey.com>",
+  "name": "tuxi",
+  "description": "A nodejs module providing various utility functions.",
+  "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/finson/tuxijs.git"
+  },
+  "main": "./tuxi",
+  "engines": {
+    "node": ">=0.10"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {}
+}
