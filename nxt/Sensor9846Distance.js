@@ -8,6 +8,7 @@
 var Sensor9846Distance = function (aBrick, aChannel) {
   this.nxt = aBrick;
   this.theChannel = aChannel;
+  this.nxt.set_input_state(this.theChannel, this.nxt.LOWSPEED_9V, this.nxt.RAWMODE);
 };
 
 Sensor9846Distance.prototype.i2c_commands = {
