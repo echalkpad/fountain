@@ -6,15 +6,14 @@ var Main = function () {
 
 // This node.js program reads data from a Lego NXT brick.
 
-var Tuxi = require('./tuxijs/tuxi');
 var Nxt = require('./mindstorms_bluetooth/nxt').Nxt;
 var NxtSys = require('./nxtsys.js');
 var DistanceSensor = require('./Sensor9846Distance');
 var NXTListenerConfig = require("./NXTListenerConfigA");
 
-var tux = new Tuxi();
+var tux = new require('./tuxijs');
 this.log = new tux.Logger();
-var logPrefix = process.env.USER;
+var logPrefix = "Main";
 
 //console.log("NXTListenerConfig: ", NXTListenerConfig);
 
@@ -43,7 +42,7 @@ this.nxt.sp.on("open", function () {
 
 //  console.log("this 2: ", this);
 
-  ear = new NXTListenerConfig(this);
+  ear = new NXTListenerConfig(this.nxt);
 
   this.log.info(logPrefix, "== Connected Initialization Complete ==");
   //   nxt.play_tone(440, 500);
