@@ -169,6 +169,20 @@ Nxt.prototype.execute_command = function (command, callback) {
 	this.sp.write(real_command);
 };
 
+//------------------------------------------------
+
+Nxt.prototype.get_firmware_version = function () {
+	var command = new Buffer([0x01, 0x88]);
+	this.execute_command(command);
+};
+
+Nxt.prototype.get_device_info = function () {
+	var command = new Buffer([0x01, 0x9b]);
+	this.execute_command(command);
+};
+
+//------------------------------------------------
+
 Nxt.prototype.start_program = function (program_name) {
 	var command_arr = [0x00,0x00];
 	var chars = program_name.split('');
@@ -292,6 +306,8 @@ Nxt.prototype.close_connection = function (sp) {
 	this.sp.end(false, null);
 };
 
+//------------------------------------------------
+
 Nxt.prototype.nxt_error_messages = {
 	0x00: "OK",
 	0x20: "Pending communication transaction in progress",
@@ -314,6 +330,28 @@ Nxt.prototype.nxt_error_messages = {
 };
 
 Nxt.prototype.nxt_commands = {
+
+	0x80: 'openread',
+	0x81: 'openwrite',
+	0x82: 'read',
+	0x83: 'write',
+	0x84: 'close',
+	0x85: 'delete',
+	0x86: 'findfirst',
+	0x87: 'findnext',
+	0x88: 'getfirmwareversion',
+	0x89: 'openwritelinear',
+	0x8a: 'openreadlinear',
+	0x8b: 'openwritedata',
+	0x8c: 'openappenddata',
+	0x97: 'boot',
+	0x98: 'setbrickname',
+	0x9b: 'getdeviceinfo',
+	0xa0: 'deleteuserflash',
+	0xa1: 'pollcommandlength',
+	0xa2: 'poll',
+	0xa4: 'bluetoothfactoryreset',
+
 	0x00: 'startprogram',
 	0x01: 'stopprogram',
 	0x02: 'playsoundfile',
@@ -336,6 +374,28 @@ Nxt.prototype.nxt_commands = {
 };
 
 Nxt.prototype.EVENTID = {
+
+		'openread' : 0x80,
+		'openwrite' : 0x81,
+		'read' : 0x82,
+		'write' : 0x83,
+		'close' : 0x84,
+		'delete' : 0x85,
+		'findfirst' : 0x86,
+		'findnext' : 0x87,
+		'getfirmwareversion' : 0x88,
+		'openwritelinear' : 0x89,
+		'openreadlinear' : 0x8a,
+		'openwritedata' : 0x8b,
+		'openappenddata' : 0x8c,
+		'boot' : 0x97,
+		'setbrickname' : 0x98,
+		'getdeviceinfo' : 0x9b,
+		'deleteuserflash' : 0xa0,
+		'pollcommandlength' : 0xa1,
+		'poll' : 0xa2,
+		'bluetoothfactoryreset' : 0xa4,
+
 		'startprogram' : 0x00,
 		'stopprogram' : 0x01,
 		'playsoundfile': 0x02,
