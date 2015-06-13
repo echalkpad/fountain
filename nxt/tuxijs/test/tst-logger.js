@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 
-var Tuxi = require('../tuxi');
+var Tuxi = require('../../tuxijs');
 var tjs = new Tuxi();
 
 var log = new tjs.Logger();
