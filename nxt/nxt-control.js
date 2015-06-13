@@ -1,8 +1,6 @@
-#!/usr/bin/env node
 'use strict';
 
-
-var Main = function () {
+function Main () {
 
 // This node.js program reads data from a Lego NXT brick.
 
@@ -11,62 +9,51 @@ var NxtSys = require('./nxtsys.js');
 var DistanceSensor = require('./Sensor9846Distance');
 var NXTListenerConfig = require("./NXTListenerConfigA");
 
-var tux = new require('./tuxijs');
-this.log = new tux.Logger();
+var Tuxi = require('./tuxijs');
+var tux = new Tuxi();
+var log = new tux.Logger();
 var logPrefix = "Main";
 
-//console.log("NXTListenerConfig: ", NXTListenerConfig);
-
-this.log.info(logPrefix, "== Begin Static Initialization ==");
+log.info(logPrefix, "== Begin Static Initialization ==");
 
 var nxtCommPort = "/dev/rfcomm0";
 
+var nxt;
 var nxtSys;
 var ds;
 var ear;
 
 try {
-  this.nxt = new Nxt(nxtCommPort);
+  nxt = new Nxt(nxtCommPort);
   nxtSys = new NxtSys(this.nxt);
 } catch (e) {
   console.log(e);
   process.exit(1);
 }
 
-this.log.info(logPrefix,"== Static Initialization Complete ==");
+log.info(logPrefix,"== Static Initialization Complete ==");
 
-this.nxt.sp.on("open", function () {
+nxt.sp.on("open", function () {
+  log.info(logPrefix, "== Begin Connected Initialization ==");
+  log.info(logPrefix,"Connected to NXT on " + nxtCommPort);
 
-  this.log.info(logPrefix,"Connected to NXT on " + nxtCommPort);
-  ds = new DistanceSensor(this.nxt, this.nxt.INPUT_PORT_4);
+  ds = new DistanceSensor(nxt, nxt.INPUT_PORT_4);
+  ear = new NXTListenerConfig(nxt);
 
-//  console.log("this 2: ", this);
+  log.info(logPrefix, "== Connected Initialization Complete ==");
 
-  ear = new NXTListenerConfig(this.nxt);
-
-  this.log.info(logPrefix, "== Connected Initialization Complete ==");
   //   nxt.play_tone(440, 500);
-
   //   nxtSys.get_device_info();
-
-  //setTimeout(ds.readVersion(), 5000);
-  //setTimeout(ds.readState(), 5000)
+  //   setTimeout(ds.readVersion(), 5000);
+  //   setTimeout(ds.readState(), 5000)
 
   // Start interval timer for sampling
 
   setInterval(function(){
-    this.nxt.get_battery_level();
+    nxt.get_battery_level();
   }.bind(this), 1000);
 
 }.bind(this));
-  // console.log("this 1: ",this);
-  // console.log("me 1: ",me);
-  exports.nxt = this.nxt;
-  exports.Main = this.Main;
-};
+}
 
-Main.prototype.nxt = null;
-Main.prototype.log = null;
-
-var me = new Main();
-//console.log("me 2: ",me);
+new Main();
