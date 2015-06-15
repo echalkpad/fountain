@@ -46,8 +46,7 @@ var PacketParser = function () {
 
 var SerialPort = require("serialport").SerialPort;
 
-var Nxt = function (port, options) {
-	this.initialized = false;
+var Nxt = function (port, optNxt, optSerialPort) {
 	this.debug = false;
 
 	//Output ports
@@ -107,18 +106,28 @@ var Nxt = function (port, options) {
 
 	// map all response event ids to default handler for now
 
+	var key;
 	this.nxtEventHandler = {};
-	for (var item in this.nxt_commands) {
-		this.nxtEventHandler[item] = this.generic_response_handler;
+	for (key in this.nxt_commands) {
+		this.nxtEventHandler[key] = this.generic_response_handler;
 	}
 
-	var portOptions;
-	if ((typeof options === 'undefined') || (options === null)) {
-		portOptions = { parser: new PacketParser() };
-	} else {
-		portOptions = options;
-		if (!('parser' in options)) {
-			portOptions.parser = new PacketParser();
+	// process options to control this Nxt instance
+
+	var nxtOptions = {"log": new require('./NullLogger')};
+	if ((typeof optNxt !== 'undefined') && (optNxt !== null)) {
+		for (key in optNxt) {
+			nxtOptions[key] = optNxt[key];
+		}
+	}
+	this.log = nxtOptions.log;
+
+	// process options for the serial port
+
+	var portOptions = {"parser": new PacketParser() };
+	if ((typeof optSerialPort !== 'undefined') && (optNxt !== null)) {
+	for (key in optSerialPort) {
+			portOptions[key] = optSerialPort[key];
 		}
 	}
 
@@ -133,14 +142,9 @@ var Nxt = function (port, options) {
 // call the appropriate NXT event handler.
 
 Nxt.prototype.packetDataHandler = function (data) {
-  console.log("Response packet: "+ data[0] +" " + data[1] +" " + data[2] +
+  this.log.debug('packet',data[0] +" " + data[1] +" " + data[2] +
 		" plus "+ (data.length-3) + ' more bytes.');
-	console.log("Event: "+this.nxt_commands[data[1]] +", status: "+this.nxt_error_messages[data[2]]);
-	if (data[2] === 0) {
-		this.nxtEventHandler[data[1]](data);
-	} else {
-		console.log("Error: "+data[2]+", "+this.nxt_error_messages[data[2]]);
-	}
+	this.nxtEventHandler[data[1]](data);
 };
 
 Nxt.prototype.on = function(event, handler) {
@@ -157,14 +161,14 @@ Nxt.prototype.generic_response_handler = function (data) {
 		" plus "+ (data.length-3) + ' more bytes.');
 };
 
-Nxt.prototype.execute_command = function (command, callback) {
+Nxt.prototype.execute_command = function (command) {
 	//The bluetooth packet need a length (2-bytes) in front of the packet
 	var real_command = new Buffer(command.length + 2);
 	real_command[0] = command.length & 0xff;
 	real_command[1] = (command.length >> 8) & 0xff;
 	command.copy(real_command, 2);
 	if (this.initialized !== true) {
-		console.log("NXT not initialized!!!");
+		this.log.fatal('nxt.js',"NXT not initialized!!!");
 	}
 	this.sp.write(real_command);
 };
