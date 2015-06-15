@@ -18,6 +18,8 @@ var NXTListenerConfig = function (device) {
   this.nxt.on('setinputmode', this.rSetInputMode.bind(this));
   this.nxt.on('getinputvalue',this.rGetInputValue.bind(this));
   this.nxt.on('playtone', this.rPlaytone.bind(this));
+  this.nxt.on('lswrite', this.rLSWrite.bind(this));
+  this.nxt.on('lsgetstatus', this.rLSGetStatus.bind(this));
 
 };
 
@@ -108,19 +110,19 @@ NXTListenerConfig.prototype.rGetInputValue = function (data) {
     } else {
       switch (data[3]) {
       case this.nxt.INPUT_PORT_0:
-        this.log.info("input port " + data[3]);
+        this.log.info("event","input port " + data[3]);
         break;
       case this.nxt.INPUT_PORT_1:
-        this.log.info("input port " + data[3]);
+        this.log.info("event","input port " + data[3]);
         break;
       case this.nxt.INPUT_PORT_2:
-        this.log.info("input port " + data[3]);
+        this.log.info("event","input port " + data[3]);
         break;
       case this.nxt.INPUT_PORT_3:
-        this.log.info("input port " + data[3]);
+        this.log.info("event","input port " + data[3]);
         break;
       default:
-        this.log.warn("Error: Get Input Value: Unexpected input port value: " + data[3]);
+        this.log.warn('status',"Get Input Value: Unexpected input port value: " + data[3]);
       }
     }
   } else {
@@ -133,10 +135,34 @@ NXTListenerConfig.prototype.rPlaytone = function (data) {
     if (data[2] !== 0) {
       this.log.warn('status', "Play Tone: " + this.nxt.nxt_error_messages[data[2]]);
     } else {
-      this.log.info("event: Play Tone complete.");
+      this.log.info("event","Play Tone complete.");
     }
   } else {
     this.log.fatal('*bug*', "The invoked callback function 'rPlaytone' does not match Event ID " + data[1] + ".");
+  }
+};
+
+NXTListenerConfig.prototype.rLSWrite = function (data) {
+  if (data[1] === this.nxt.EVENTID.lswrite) {
+    if (data[2] !== 0) {
+      this.log.warn('status', "LS Write: " + this.nxt.nxt_error_messages[data[2]]);
+    } else {
+      this.log.info("event","LS Write complete.");
+    }
+  } else {
+    this.log.fatal('*bug*', "The invoked callback function 'rLSWrite' does not match Event ID " + data[1] + ".");
+  }
+};
+
+NXTListenerConfig.prototype.rLSGetStatus = function (data) {
+  if (data[1] === this.nxt.EVENTID.lsgetstatus) {
+    if (data[2] !== 0) {
+      this.log.warn('status', "LS Get Status: " + this.nxt.nxt_error_messages[data[2]]);
+    } else {
+      this.log.info("event","LS Get Status complete.");
+    }
+  } else {
+    this.log.fatal('*bug*', "The invoked callback function 'rLSGetStatus' does not match Event ID " + data[1] + ".");
   }
 };
 
