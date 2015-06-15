@@ -34,6 +34,18 @@ var PacketParser = function () {
   };
 };
 
+var NullLogger = function () {
+	this.level = Infinity;
+	this.trace = function () {};
+	this.debug = function () {};
+	this.info = function () {};
+	this.warn = function () {};
+	this.error = function () {};
+	this.fatal = function () {};
+};
+
+
+
 //TODO:
 // - Input checking
 // - proper close after use, maybe something with detect if command have been
@@ -114,7 +126,7 @@ var Nxt = function (port, optNxt, optSerialPort) {
 
 	// process options to control this Nxt instance
 
-	var nxtOptions = {"log": new require('./NullLogger')};
+	var nxtOptions = {"log": new this.NullLogger()};
 	if ((typeof optNxt !== 'undefined') && (optNxt !== null)) {
 		for (key in optNxt) {
 			nxtOptions[key] = optNxt[key];
