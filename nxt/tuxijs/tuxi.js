@@ -16,16 +16,30 @@ Tuxi.prototype.toHex = function (d) {
 // This function is a constructor that can be used with the 'new' operator
 // to create a new logging object.
 //
-// var log = new tux.Logger();
+// var Tuxi = require('tuxi');
+// var active = true;
+// var log = new Tuxi.LogMgr(active);
+// var prefix = "test";
 //
-// npmlog:     silly, verbose, info, http, warn, error, silent
+// apache:  all, trace, debug,   info,        warn, error, fatal, off
+// npmlog:       silly, verbose, info, http,  warn, error,        silent
+// slf4j:        trace, debug,   info,        warn, error
+// log4j:   all,        debug,   info,        warn, error, fatal, off
 
-// slf4j:        trace, debug, info, warn, error
-// log4j:   all,        debug, info, warn, error, fatal, off
-// apache:  all, trace, debug, info, warn, error, fatal, off
+var LogMgr = function (active) {
+    var aLogger;
 
-Tuxi.prototype.Logger = function () {
-    var aLogger = new require('npmlog');
+    var useNullLogger =
+      (typeof active === 'undefined') ||
+      (active === null ) ||
+      (active === 0) || (active === '0') ||
+      (active === false) || (active === 'false');
+
+    if (useNullLogger) {
+      aLogger = new NullLogger();
+    } else {
+      aLogger = new require('npmlog');
+    }
 
     aLogger.prefixStyle = {fg: 'yellow', bg: 'black'};
     aLogger.headingStyle = {fg: 'yellow'};
@@ -40,7 +54,27 @@ Tuxi.prototype.Logger = function () {
     aLogger.addLevel('fatal', 6000, { fg: 'red', bg: 'black' });
     aLogger.addLevel('off', Infinity);
     return aLogger;
-  };
+};
 
+var NullLogger = function () {
+    this.prefixStyle = {};
+    this.headingStyle = {};
+    this.heading = '';
 
-module.exports = Tuxi;
+    this.level = Infinity;
+    this.addLevel = function (lvl) {
+      if (!this[lvl]) {
+        this[lvl] = function () {};
+      }
+    };
+    this.addLevel('trace');
+    this.addLevel('debug');
+    this.addLevel('info');
+    this.addLevel('warn');
+    this.addLevel('error');
+    this.addLevel('fatal');
+};
+
+exports.Tuxi = Tuxi;
+exports.LogMgr = LogMgr;
+exports.NullLogger = NullLogger;
