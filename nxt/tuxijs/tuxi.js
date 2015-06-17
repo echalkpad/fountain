@@ -17,23 +17,22 @@ Tuxi.prototype.toHex = function (d) {
 // to create a new logging object.
 //
 // var Tuxi = require('tuxi');
-// var active = true;
-// var log = new Tuxi.LogMgr(active);
+// var log = new Tuxi.LogMgr(true);
 // var prefix = "test";
 //
-// apache:  all, trace, debug,   info,        warn, error, fatal, off
-// npmlog:       silly, verbose, info, http,  warn, error,        silent
-// slf4j:        trace, debug,   info,        warn, error
-// log4j:   all,        debug,   info,        warn, error, fatal, off
+// apache:   all, trace, debug,   info,        warn, error, fatal, off
+// npmlog: silly,        verbose, info, http,  warn, error,        silent
+// slf4j:         trace, debug,   info,        warn, error
+// log4j:    all,        debug,   info,        warn, error, fatal, off
 
-var LogMgr = function (active) {
+var LogMgr = function (enable) {
     var aLogger;
 
     var useNullLogger =
-      (typeof active === 'undefined') ||
-      (active === null ) ||
-      (active === 0) || (active === '0') ||
-      (active === false) || (active === 'false');
+      (typeof enable === 'undefined') ||
+      (enable === null ) ||
+      (enable === 0) || (enable === '0') ||
+      (enable === false) || (enable === 'false');
 
     if (useNullLogger) {
       aLogger = new NullLogger();
@@ -57,22 +56,11 @@ var LogMgr = function (active) {
 };
 
 var NullLogger = function () {
-    this.prefixStyle = {};
-    this.headingStyle = {};
-    this.heading = '';
-
-    this.level = Infinity;
     this.addLevel = function (lvl) {
       if (!this[lvl]) {
         this[lvl] = function () {};
       }
     };
-    this.addLevel('trace');
-    this.addLevel('debug');
-    this.addLevel('info');
-    this.addLevel('warn');
-    this.addLevel('error');
-    this.addLevel('fatal');
 };
 
 exports.Tuxi = Tuxi;

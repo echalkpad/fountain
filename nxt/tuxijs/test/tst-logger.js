@@ -3,7 +3,7 @@
 var Tuxi = require('../../tuxijs');
 
 var active = false;
-console.log("Active LogMgr: ",active);
+console.log("Enable LogMgr: ",active);
 
 var log = new Tuxi.LogMgr(active);
 var prefix = "test";
@@ -23,7 +23,7 @@ for (var lvl = 0; lvl<names.length; lvl++) {
 
 
 var active = true;
-console.log("Active LogMgr: ",active);
+console.log("Enable LogMgr: ",active);
 
 var log = new Tuxi.LogMgr(active);
 var prefix = "test";
