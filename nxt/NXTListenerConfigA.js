@@ -7,9 +7,9 @@ var NXTListenerConfig = function (device) {
 
   this.nxt = device;
 
-  var Tuxi = require('./tuxijs');
-  this.tux = new Tuxi();
-  this.log = new this.tux.Logger();
+  var tuxiModule = require('./tuxijs');
+  this.tux = new tuxiModule.Tuxi();
+  this.log = new tuxiModule.LogMgr(true);
   this.logPrefix = "NXTListenerConfig";
 
   this.nxt.on('getfirmwareversion',this.rGetFirmwareVersion.bind(this));

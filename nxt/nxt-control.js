@@ -9,8 +9,8 @@ var DistanceSensor = require('./Sensor9846Distance');
 var NXTListenerConfig = require("./NXTListenerConfigA");
 
 var Tuxi = require('./tuxijs');
-var tux = new Tuxi();
-var log = new tux.Logger();
+var log = new Tuxi.LogMgr(true);
+log.level = 'debug';
 var logPrefix = "Main";
 
 log.info(logPrefix, "== Static Initialization Started ==");
@@ -25,7 +25,7 @@ var nxtOptions = {'log': log};
 try {
   nxt = new Nxt(nxtCommPort,nxtOptions);
 } catch (e) {
-  console.log(e);
+  log.fatal(e.name,e.message);
   process.exit(1);
 }
 

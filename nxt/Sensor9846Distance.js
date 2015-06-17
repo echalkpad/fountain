@@ -62,14 +62,12 @@ Sensor9846Distance.prototype.i2c_errors = {
 };
 
 Sensor9846Distance.prototype.readVersion = function () {
-  console.log("readversion");
-  console.log("channel: " + this.theChannel + ", cmd string: " + this.i2c_commands.version);
+  this.nxt.log.debug("readversion","channel: ", this.theChannel, ", cmd string: ", this.i2c_commands.version);
   this.nxt.ls_write(this.theChannel, 8, this.i2c_commands.version);
 };
 
 Sensor9846Distance.prototype.readState = function () {
-  console.log("readstate");
-  console.log("ls_write with channel: " + this.theChannel + ", cmd string: " + this.i2c_commands.state);
+  this.nxt.log.debug("readstate","ls_write with channel: ", this.theChannel, ", cmd string: ", this.i2c_commands.state);
   this.nxt.ls_write(this.theChannel, 1, this.i2c_commands.state);
 };
 

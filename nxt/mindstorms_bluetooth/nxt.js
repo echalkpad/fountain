@@ -126,7 +126,7 @@ var Nxt = function (port, optNxt, optSerialPort) {
 
 	// process options to control this Nxt instance
 
-	var nxtOptions = {"log": new this.NullLogger()};
+	var nxtOptions = {"log": new NullLogger()};
 	if ((typeof optNxt !== 'undefined') && (optNxt !== null)) {
 		for (key in optNxt) {
 			nxtOptions[key] = optNxt[key];
