@@ -2,10 +2,10 @@
   This module implements the basic Analog and Digital I/O functions of Firmata.
 */
 
-#include "MsgBasic.h"
+#include "DirectCore.h"
 #include "SysexI2C.h"
 
-// int samplingInterval = 19;          // how often to run the main loop (in ms)
+// -----------------------------------------------------------------------------
 
  Servo servos[MAX_SERVOS];
  int analogInputsToReport = 0; // bitwise array to store pin reporting
@@ -93,6 +93,8 @@ void reportDigitalCallback(byte port, int value)
   // pins configured as analog
 }
 
+// -----------------------------------------------------------------------------
+
 /* sets the pin mode to the correct state and sets the relevant bits in the
  * two bit-arrays that track Digital I/O and PWM status
  */
@@ -167,6 +169,54 @@ void setPinModeCallback(byte pin, int mode)
     Firmata.sendString("Unknown pin mode"); // TODO: put error msgs in EEPROM
   }
   // TODO: save status to EEPROM here, if changed
+}
+
+// -----------------------------------------------------------------------------
+
+void sysexCallback(byte command, byte argc, byte *argv)
+{
+  if (hooks[command]) {
+    (*hooks[command])(command, argc,argv);
+  }
+}
+
+// -----------------------------------------------------------------------------
+
+void systemResetCallback()
+{
+  // initialize a defalt state
+  // TODO: option to load config from EEPROM instead of default
+  if (isI2CEnabled) {
+    disableI2CPins();
+  }
+  for (byte i=0; i < TOTAL_PORTS; i++) {
+    reportPINs[i] = false;      // by default, reporting off
+    portConfigInputs[i] = 0;  // until activated
+    previousPINs[i] = 0;
+  }
+  // pins with analog capability default to analog input
+  // otherwise, pins default to digital output
+  for (byte i=0; i < TOTAL_PINS; i++) {
+    if (IS_PIN_ANALOG(i)) {
+      // turns off pullup, configures everything
+      setPinModeCallback(i, ANALOG);
+    } else {
+      // sets the output to 0, configures portConfigInputs
+      setPinModeCallback(i, OUTPUT);
+    }
+  }
+  // by default, do not report any analog inputs
+  analogInputsToReport = 0;
+
+  /* send digital inputs to set the initial state on the host computer,
+   * since once in the loop(), this firmware will only send on change */
+  /*
+  TODO: this can never execute, since no pins default to digital input
+        but it will be needed when/if we support EEPROM stored config
+  for (byte i=0; i < TOTAL_PORTS; i++) {
+    outputPort(i, readPort(i, portConfigInputs[i]), true);
+  }
+  */
 }
 
 // -----------------------------------------------------------------------------

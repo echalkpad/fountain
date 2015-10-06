@@ -1,9 +1,10 @@
 /*
-  MsgBasic.h
+  DirectCore.h
+    This module implements the basic Analog and Digital I/O functions of Firmata.
 */
 
-#ifndef MsgBasic_h
-#define MsgBasic_h
+#ifndef DirectCore_h
+#define DirectCore_h
 
 #include <Firmata.h>
 #include <Servo.h>
@@ -15,10 +16,12 @@ void digitalWriteCallback(byte port, int value);
 void reportAnalogCallback(byte analogPin, int value);
 void reportDigitalCallback(byte port, int value);
 void setPinModeCallback(byte pin, int mode);
+void sysexCallback(byte command, byte argc, byte *argv);
+void systemResetCallback();
+
 void checkDigitalInputs(void);
 void outputPort(byte portNumber, byte portValue, byte forceSend);
 
-// extern int samplingInterval;
 extern Servo servos[MAX_SERVOS];
 
 extern byte pinConfig[TOTAL_PINS];         // configuration of every pin
@@ -29,4 +32,4 @@ extern int analogInputsToReport; // bitwise array to store pin reporting
 extern byte reportPINs[TOTAL_PORTS];       // 1 = report this port, 0 = silence
 extern byte previousPINs[TOTAL_PORTS];     // previous 8 bits sent
 
-#endif  /* MsgBasic_h */
+#endif  /* DirectCore_h */

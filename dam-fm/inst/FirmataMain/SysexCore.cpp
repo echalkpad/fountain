@@ -1,5 +1,5 @@
 /*
-  This module implements a method of extending Firmata's processing of Sysex command codes.
+    This module implements Firmata's processing of the "core" Sysex command codes.
 */
 
 #include <Firmata.h>
@@ -8,9 +8,11 @@
 
 int samplingInterval = 19;          // how often to run the main loop (in ms)
 
+sysexCallbackFunction hooks[127] = {0};
+
 // Initialize our part of the Sysex command jump table
 
-void setCoreHooks(sysexCallbackFunction *h) {
+void setSysexCoreHooks(sysexCallbackFunction *h) {
 	h[SAMPLING_INTERVAL] = processSamplingInterval;
 	h[SERVO_CONFIG] = processServoConfig;
 	h[EXTENDED_ANALOG] = processExtendedAnalog;

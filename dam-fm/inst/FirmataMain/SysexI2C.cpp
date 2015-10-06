@@ -1,5 +1,5 @@
 /*
-  This module implements Firmata's I2C capability using Sysex commands.
+  This module implements Firmata's I2C capabilities using Sysex commands.
 */
 
 #include "SysexI2C.h"
@@ -24,7 +24,7 @@ boolean isI2CEnabled = false;
 
 // Initialize our part of the Sysex command jump table
 
-void setI2CHooks(sysexCallbackFunction *h) {
+void setSysexI2CHooks(sysexCallbackFunction *h) {
   h[I2C_CONFIG] = processI2CConfig;
   h[I2C_REQUEST] = processI2CRequest;
 }
@@ -106,7 +106,7 @@ void processI2CRequest(byte command, byte argc, byte *argv) {
         queryIndex = -1;
       } else {
         // if read continuous mode is enabled for multiple devices,
-        // determine which device to stop reading and remove it's data from
+        // determine which device to stop reading and remove its data from
         // the array, shifiting other array data to fill the space
         for (byte i = 0; i < queryIndex + 1; i++) {
           if (query[i].addr = slaveAddress) {
