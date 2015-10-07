@@ -71,33 +71,43 @@ void loop() {
 
   // test data 1
 
-  for (int i = 0; i < sizeof(test_data_1); i++) {
-    Serial.print(test_data_1[i], HEX);
-    Serial.print("  ");
+  byte *src;
+  size_t srcSize;
+
+  for (int idx = 0; idx < 2; idx++) {
+    switch (idx) {
+      case 0:
+        src = test_data_1;
+        srcSize = sizeof test_data_1;
+        break;
+      case 1:
+        src = test_data_2;
+        srcSize = sizeof test_data_2;
+        break;
+    }
+
+
+    for (int i = 0; i < srcSize; i++) {
+      Serial.print(src[i], HEX);
+      Serial.print("  ");
+    }
+    Serial.println();
+
+    size_t expected_encoded_size = Z85_encode_bound(srcSize);
+    Z85_encode( src, srcSize, encoded, sizeof encoded );
+
+    Serial.println(encoded);
+
+    Z85_decode(encoded, strlen(encoded), decoded, sizeof decoded);
+
+    for (int i = 0; i < Z85_decode_bound(strlen(encoded)); i++) {
+      Serial.print(decoded[i], HEX);
+      Serial.print("  ");
+    }
+    Serial.println();
   }
-  Serial.println();
 
-  size_t expected_encoded_size = Z85_encode_bound(sizeof(test_data_1));
-  Z85_encode( test_data_1, sizeof test_data_1, encoded, sizeof encoded );
-
-  Serial.println(encoded);
-
-  Z85_decode(encoded, strlen(encoded), decoded, sizeof decoded);
-
-  for (int i = 0; i < Z85_decode_bound(strlen(encoded)); i++) {
-    Serial.print(decoded[i], HEX);
-    Serial.print("  ");
-  }
-  Serial.println();
-
-  //  //    encoded = Z85_encode (test_data_2, sizeof (test_data_2));
-  //  //    Serial.println (strlen (encoded) == 40);
-  //  //    Serial.println (streq (encoded, "JTKVSB%%)wK0E.X)V>+}o?pNmC{O&4W4b!Ni{Lh6"));
-  //  //    decoded = Z85_decode (encoded);
-  //  //    Serial.println (memcmp (test_data_2, decoded, sizeof (test_data_2)) == 0);
-  //  //    free (decoded);
-  //  //    free (encoded);
-  //  //
+   //  //
   //  //    //  Standard test keys defined by zmq_curve man page
   //  //    byte client_public [32] = {
   //  //        0xBB, 0x88, 0x47, 0x1D, 0x65, 0xE2, 0x65, 0x9B,
