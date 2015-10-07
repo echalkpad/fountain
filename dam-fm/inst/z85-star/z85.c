@@ -87,7 +87,6 @@ char* Z85_encode_unsafe(const byte* source, const byte* sourceEnd, char* dest)
    {
       // unpack big-endian frame
       value = (src[0] << 24) | (src[1] << 16) | (src[2] << 8) | src[3];
-
       value2 = DIV85(value); dst[4] = base85[value - value2 * 85]; value = value2;
       value2 = DIV85(value); dst[3] = base85[value - value2 * 85]; value = value2;
       value2 = DIV85(value); dst[2] = base85[value - value2 * 85]; value = value2;
