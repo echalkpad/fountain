@@ -26,23 +26,33 @@
 //  DEALINGS IN THE SOFTWARE.
 //  --------------------------------------------------------------------------
 
-// #include <stdlib.h>
-// #include <stdint.h>
-// #include <stdio.h>
-// #include <string.h>
-// #include <assert.h>
+#ifndef Z85Codec_h
+#define Z85Codec_h
+
+//#include <stdlib.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+
+#include "Arduino.h"
+#include "HardwareSerial.h" 
 
 typedef unsigned char byte;
 
-//  --------------------------------------------------------------------------
-//  Encode a byte array as a string
+#if defined (__cplusplus)
+extern "C" {
+#endif
 
-char *
-Z85_encode (byte *data, size_t size);
+size_t Z85_encode_bound(size_t inputByteCount);
+size_t Z85_decode_bound(size_t inputCharCount);
 
-//  --------------------------------------------------------------------------
-//  Decode an encoded string into a byte array; size of array will be
-//  strlen (string) * 4 / 5.
+void Z85_encode (byte *src, size_t srcSize,  char *dst, size_t dstSize );
+void Z85_decode (char *src, size_t srcSize,  byte *dst, size_t dstSize );
 
-byte *
-Z85_decode (char *string);
+#if defined (__cplusplus)
+}
+#endif
+
+#endif
+
