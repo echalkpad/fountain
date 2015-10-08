@@ -29,6 +29,14 @@
 //#include <stdlib.h>
 //#include <stdint.h>
 //#include <stdio.h>
+#include <netinet/in.h>
+ #if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+ #warning "byte order is big endian"
+#elif  __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+#error "byte order is little endian"
+#else
+#error "byte order is weird."
+#endif
 
 #include <string.h>
 

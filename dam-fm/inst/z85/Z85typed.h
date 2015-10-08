@@ -13,6 +13,11 @@ typedef char Z85_uint16_t_static_assert[(sizeof(uint16_t) * CHAR_BIT == 16) * 2 
 typedef char Z85_int32_t_static_assert[(sizeof(int32_t) * CHAR_BIT == 32) * 2 - 1];
 typedef char Z85_uint32_t_static_assert[(sizeof(uint32_t) * CHAR_BIT == 32) * 2 - 1];
 
+// htons()
+// htonl()
+// ntohs()
+// ntohl()
+
 void encodeInt8(int8_t *src,int itemCount, char *dst, size_t dstSize);
 void encodeInt16(int16_t *src,int itemCount, char *dst, size_t dstSize);
 void encodeInt32(int32_t *src,int itemCount, char *dst, size_t dstSize);
