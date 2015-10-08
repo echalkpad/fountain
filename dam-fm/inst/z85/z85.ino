@@ -33,6 +33,7 @@
 #include <string.h>
 
 #include "z85codec.h"
+#include "z85typed.h"
 
 char encoded[500];
 byte decoded[500];
@@ -94,8 +95,14 @@ void loop() {
     Serial.println();
 
     size_t expected_encoded_size = Z85_encode_bound(srcSize);
+    
     Z85_encode( src, srcSize, encoded, sizeof encoded );
-
+    Serial.println(encoded);
+    encoded[0] = 0;
+    encodeUInt8(src, srcSize, encoded, sizeof encoded);
+    Serial.println(encoded);
+    encoded[0] = 0;
+    encodeInt8((int8_t *)src, srcSize, encoded, sizeof encoded);
     Serial.println(encoded);
 
     Z85_decode(encoded, strlen(encoded), decoded, sizeof decoded);
