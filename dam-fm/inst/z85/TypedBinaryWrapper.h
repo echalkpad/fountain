@@ -1,6 +1,6 @@
 
-#ifndef Z85Typed_h
-#define Z85Typed_h
+#ifndef TYPED_BINARY_WRAPPER_H
+#define TYPED_BINARY_WRAPPER_H
 
 // make sure defined sizes are exactly what we think they are
 
@@ -13,10 +13,7 @@ typedef char Z85_uint16_t_static_assert[(sizeof(uint16_t) * CHAR_BIT == 16) * 2 
 typedef char Z85_int32_t_static_assert[(sizeof(int32_t) * CHAR_BIT == 32) * 2 - 1];
 typedef char Z85_uint32_t_static_assert[(sizeof(uint32_t) * CHAR_BIT == 32) * 2 - 1];
 
-// htons()
-// htonl()
-// ntohs()
-// ntohl()
+// declare a function to handle each supported binary integer type
 
 void encodeInt8(int8_t *src,int itemCount, char *dst, size_t dstSize);
 void encodeInt16(int16_t *src,int itemCount, char *dst, size_t dstSize);

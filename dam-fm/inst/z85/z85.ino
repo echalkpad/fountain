@@ -1,47 +1,6 @@
-//  --------------------------------------------------------------------------
-//  Reference implementation for rfc.zeromq.org/spec:32/Z85
-//
-//  This implementation provides a Z85 codec as an easy-to-reuse C class
-//  designed to be easy to port into other languages.
-
-//  --------------------------------------------------------------------------
-//  Copyright (c) 2010-2013 iMatix Corporation and Contributors
-//
-//  Permission is hereby granted, free of charge, to any person obtaining a
-//  copy of this software and associated documentation files (the "Software"),
-//  to deal in the Software without restriction, including without limitation
-//  the rights to use, copy, modify, merge, publish, distribute, sublicense,
-//  and/or sell copies of the Software, and to permit persons to whom the
-//  Software is furnished to do so, subject to the following conditions:
-//
-//  The above copyright notice and this permission notice shall be included in
-//  all copies or substantial portions of the Software.
-//
-//  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-//  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-//  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
-//  THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-//  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-//  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-//  DEALINGS IN THE SOFTWARE.
-//  --------------------------------------------------------------------------
-
-//#include <stdlib.h>
-//#include <stdint.h>
-//#include <stdio.h>
-#include <netinet/in.h>
- #if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
- #warning "byte order is big endian"
-#elif  __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-#error "byte order is little endian"
-#else
-#error "byte order is weird."
-#endif
-
 #include <string.h>
-
-#include "z85codec.h"
-#include "z85typed.h"
+#include "SevenBitCodec.h"
+#include "TypedBinaryWrapper.h"
 
 char encoded[500];
 byte decoded[500];
@@ -102,9 +61,9 @@ void loop() {
     }
     Serial.println();
 
-    size_t expected_encoded_size = Z85_encode_bound(srcSize);
-    
-    Z85_encode( src, srcSize, encoded, sizeof encoded );
+    size_t expected_encoded_size = encodedSize(srcSize);
+
+    encodeBytes( src, srcSize, encoded, sizeof encoded );
     Serial.println(encoded);
     encoded[0] = 0;
     encodeUInt8(src, srcSize, encoded, sizeof encoded);
@@ -113,9 +72,9 @@ void loop() {
     encodeInt8((int8_t *)src, srcSize, encoded, sizeof encoded);
     Serial.println(encoded);
 
-    Z85_decode(encoded, strlen(encoded), decoded, sizeof decoded);
+    decodeChars(encoded, strlen(encoded), decoded, sizeof decoded);
 
-    for (int i = 0; i < Z85_decode_bound(strlen(encoded)); i++) {
+    for (int i = 0; i < decodedSize(strlen(encoded)); i++) {
       Serial.print(decoded[i], HEX);
       Serial.print("  ");
     }

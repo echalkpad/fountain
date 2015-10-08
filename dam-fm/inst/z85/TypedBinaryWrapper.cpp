@@ -1,11 +1,10 @@
 /**
- * The purpose of the functions defined here is to make sure
- * that the values to be transmitted will survive any differences
+ * The purpose of the functions defined here is to manage differences
  * in byte order (big-endian, little-endian) between two hosts.
  */
 
-#include "z85codec.h"
-#include "z85typed.h"
+#include "SevenBitCodec.h"
+#include "TypedBinaryWrapper.h"
 
 // single byte values are not affected by addressing issues
 
@@ -21,7 +20,7 @@ void encodeUInt8(uint8_t *src,int itemCount, char *dst, size_t dstSize) {
   byte *from = (byte *)src;
   char *to = dst;
   for (size_t idx=0; idx<itemCount; idx+=4) {
-      Z85_encode (from, 4, to, 6);
+      encodeBytes(from, 4, to, 6);
       from += 4;
       to += 5;
   }

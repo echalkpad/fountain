@@ -1,4 +1,8 @@
 //  --------------------------------------------------------------------------
+//  These functions provide encode/decode capabilities for arrays of 8-bit
+//  bytes and 7-bit chars.  This code is copied almost directly from the
+//  reference implementation provided by iMatix as described below.
+//  --------------------------------------------------------------------------
 //  Reference implementation for rfc.zeromq.org/spec:32/Z85
 //
 //  This implementation provides a Z85 codec as an easy-to-reuse C class
@@ -26,11 +30,8 @@
 //  DEALINGS IN THE SOFTWARE.
 //  --------------------------------------------------------------------------
 
-#include "z85codec.h"
-
-typedef unsigned long uint32_t;
-// make sure uint32_t is 32-bit
-typedef char Z85_uint32_t_static_assert[(sizeof(uint32_t) * CHAR_BIT == 32) * 2 - 1];
+#include "SevenBitCodec.h"
+#include <string.h>
 
 //  Maps base 256 to base 85
 static char encoder [85 + 1] = {
@@ -65,13 +66,13 @@ static byte decoder [96] = {
 //  --------------------------------------------------------------------------
 //  Encode a byte array in src into a null-terminated string in dst.
 
-void Z85_encode (byte *src, size_t srcSize, char *dst, size_t dstSize ) {
+void encodeBytes (byte *src, size_t srcSize, char *dst, size_t dstSize ) {
 
   if (srcSize % 4) return;
 
   size_t encoded_size = srcSize * 5 / 4;
   if (dstSize < (encoded_size + 1)) return;
-  
+
   size_t char_nbr = 0;
   size_t byte_nbr = 0;
   uint32_t value = 0;
@@ -82,7 +83,7 @@ void Z85_encode (byte *src, size_t srcSize, char *dst, size_t dstSize ) {
       //  Output value in base 85
       uint32_t divisor = 85UL * 85UL * 85UL * 85UL;
       while (divisor) {
-        int bits = (value / divisor) % 85; 
+        int bits = (value / divisor) % 85;
         dst[char_nbr++] = encoder[(value / divisor) % 85];
         divisor /= 85;
       }
@@ -97,8 +98,8 @@ void Z85_encode (byte *src, size_t srcSize, char *dst, size_t dstSize ) {
 //  Decode an encoded string into a byte array; number of elements in array will be
 //  strlen (src) * 4 / 5.
 
-void Z85_decode (char *src, size_t srcSize,  byte *dst, size_t dstSize ) {
-  
+void decodeChars (char *src, size_t srcSize,  byte *dst, size_t dstSize ) {
+
     if (strlen (src) % 5) return;
 
     size_t decoded_size = strlen (src) * 4 / 5;
@@ -123,11 +124,13 @@ void Z85_decode (char *src, size_t srcSize,  byte *dst, size_t dstSize ) {
     return;
 }
 
-size_t Z85_encode_bound(size_t inputByteCount) {
+//  --------------------------------------------------------------------------
+
+size_t encodedSize(size_t inputByteCount) {
   return inputByteCount * 5 / 4;
 }
 
-size_t Z85_decode_bound(size_t inputCharCount) {
+size_t decodedSize(size_t inputCharCount) {
   return inputCharCount * 4 / 5;
 }
 
