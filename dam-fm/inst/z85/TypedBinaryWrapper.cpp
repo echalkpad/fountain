@@ -5,6 +5,7 @@
 
 #include "SevenBitCodec.h"
 #include "TypedBinaryWrapper.h"
+#include "swappers.h"
 
 // single byte values are not affected by addressing issues
 
@@ -15,7 +16,7 @@ void encodeInt8(int8_t *src,int itemCount, char *dst, size_t dstSize) {
 void encodeUInt8(uint8_t *src,int itemCount, char *dst, size_t dstSize) {
 
   if ((itemCount % 4) || (dstSize % 5)) return;
-  if (dstSize < ((itemCount*5)/4)+1) return;
+  if (dstSize < (encodedSize(itemCount)+1)) return;
 
   byte *from = (byte *)src;
   char *to = dst;
@@ -28,8 +29,27 @@ void encodeUInt8(uint8_t *src,int itemCount, char *dst, size_t dstSize) {
 
 // 2-byte values may need to have their bytes swapped
 
-void encodeInt16(int16_t *src,int itemCount, char *dst, size_t dstSize) {}
-void encodeUInt16(uint16_t *src,int itemCount, char *dst, size_t dstSize){}
+void encodeInt16(int16_t *src,int itemCount, char *dst, size_t dstSize) {
+  encodeUInt16((uint16_t *)src,itemCount,dst,dstSize);
+}
+
+void encodeUInt16(uint16_t *src,int itemCount, char *dst, size_t dstSize){
+  uint16_t buf[2];
+
+  size_t byteCount = 2 * itemCount;
+  if ((byteCount % 4) || (dstSize % 5)) return;
+  if (dstSize < (encodedSize(byteCount)+1)) return;
+
+  uint16_t *from = src;
+  char *to = dst;
+  for (size_t idx=0; idx<itemCount; idx+=2) {
+      buf[0] = htons(from[0]);
+      buf[1] = htons(from[1]);
+      encodeBytes((byte *)buf, 4, to, 6);
+      from += 2;
+      to += 5;
+  }
+}
 
 // 4-byte values may need to have their bytes swapped
 

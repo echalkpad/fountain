@@ -2,6 +2,8 @@
 #ifndef TYPED_BINARY_WRAPPER_H
 #define TYPED_BINARY_WRAPPER_H
 
+#include <stdint.h>
+
 // make sure defined sizes are exactly what we think they are
 
 typedef char Z85_int8_t_static_assert[(sizeof(int8_t) * CHAR_BIT == 8) * 2 - 1];
