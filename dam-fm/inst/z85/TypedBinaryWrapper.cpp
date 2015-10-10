@@ -12,6 +12,19 @@
 
 // ---------------------------------------------------------------------------
 
+// make sure defined sizes are exactly what we think they are
+
+typedef char type_int8_t_static_assert[(sizeof(int8_t) * CHAR_BIT == 8) * 2 - 1];
+typedef char type_uint8_t_static_assert[(sizeof(uint8_t) * CHAR_BIT == 8) * 2 - 1];
+
+typedef char type_int16_t_static_assert[(sizeof(int16_t) * CHAR_BIT == 16) * 2 - 1];
+typedef char type_uint16_t_static_assert[(sizeof(uint16_t) * CHAR_BIT == 16) * 2 - 1];
+
+typedef char type_int32_t_static_assert[(sizeof(int32_t) * CHAR_BIT == 32) * 2 - 1];
+typedef char type_uint32_t_static_assert[(sizeof(uint32_t) * CHAR_BIT == 32) * 2 - 1];
+
+// ---------------------------------------------------------------------------
+
 // single byte values are not affected by addressing issues
 
 void encodeInt8(int8_t *src,int itemCount, char *dst, size_t dstSize) {
