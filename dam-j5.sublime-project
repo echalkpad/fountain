@@ -1,0 +1,17 @@
+{
+	"folders":
+	[
+		{
+			"path": "E:\\users\\finson\\repos\\CFDevice\\main\\ConfigurableFirmataDeviceDriver"
+		},
+		{
+			"path": "E:\\users\\finson\\repos\\CFDevice\\libraries\\Luni\\src"
+		},
+		{
+			"path": "E:\\users\\finson\\repos\\johnny-five"
+		},
+		{
+			"path": "E:\\users\\finson\\repos\\firmata"
+		}
+	]
+}

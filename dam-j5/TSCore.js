@@ -2,29 +2,31 @@
  * Sample script to blink LED 13
  */
 
-
-console.log("blink start ...");
+console.log("TestSuite Core starting ...");
 
 var ledPin = 13;
 var ledOn = true;
 
-// Create and initialize the board object
+// Create and initialize a board object
 
 var firmata = require("firmata");
-var board = new firmata.Board("/dev/cu.usbmodem621", function(err) {
+var serialPortName;
+serialPortName = "COM42";
+// serialPortName = "/dev/cu.usbmodem621";
+
+var board = new firmata.Board(serialPortName, function(err) {
   if (err) {
     console.log(err);
     return;
   }
-  console.log("connected");
-  console.log("Firmware: " + board.firmware.name + "-" + board.firmware.version.major + "." + board.firmware.version.minor);
   board.pinMode(ledPin, board.MODES.OUTPUT);
 });
 
 // When the board is ready, start blinking the LED
 
 board.on("ready", function() {
-  console.log("hello");
+  console.log("connected");
+  console.log("Firmware: " + board.firmware.name + "-" + board.firmware.version.major + "." + board.firmware.version.minor);
   setInterval(function() {
     if (ledOn) {
       board.digitalWrite(ledPin, board.HIGH);
@@ -33,6 +35,7 @@ board.on("ready", function() {
     }
     ledOn = !ledOn;
   }, 500);
+  board.emit("blinking");
 });
 
 // Check core ability to respond
@@ -60,9 +63,9 @@ function TestSuite(opts) {
 
 TestSuite.prototype.testReportVersion = function() {
   console.info("testReportVersion function");
-}
+};
 
-board.on("ready", function () {
+board.on("blinking", function () {
   var suite = new TestSuite();
   suite.testReportVersion();
 });
