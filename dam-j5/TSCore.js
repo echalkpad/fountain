@@ -1,5 +1,6 @@
 /**
- * Sample script to blink LED 13
+ * This test script started life as blink.js, a sample script to blink LED 13, but
+ * has since grown into a more substantial program.
  */
 
 console.log("TestSuite Core starting ...");
@@ -11,8 +12,8 @@ var ledOn = true;
 
 var firmata = require("firmata");
 var serialPortName;
-serialPortName = "COM42";
-// serialPortName = "/dev/cu.usbmodem621";
+// serialPortName = "COM42";
+serialPortName = "/dev/cu.usbmodem621";
 
 var board = new firmata.Board(serialPortName, function(err) {
   if (err) {
@@ -60,9 +61,11 @@ function TestSuite(opts) {
 
   }
 
-
 TestSuite.prototype.testReportVersion = function() {
   console.info("testReportVersion function");
+  board.reportVersion(function() {
+    console.info("version reported");
+  });
 };
 
 board.on("blinking", function () {
