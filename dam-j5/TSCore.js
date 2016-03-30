@@ -5,15 +5,21 @@
 
 console.log("TestSuite Core starting ...");
 
+/**
+ * Module dependencies
+ */
+
+var firmata = require("firmata");
+var dd = require("DeviceDriver");
+
 var ledPin = 13;
 var ledOn = true;
 
 // Create and initialize a board object
 
-var firmata = require("firmata");
 var serialPortName;
-// serialPortName = "COM42";
-serialPortName = "/dev/cu.usbmodem621";
+serialPortName = "COM42";
+// serialPortName = "/dev/cu.usbmodem621";
 
 var board = new firmata.Board(serialPortName, function(err) {
   if (err) {
@@ -62,14 +68,52 @@ function TestSuite(opts) {
   }
 
 TestSuite.prototype.testReportVersion = function() {
-  console.info("testReportVersion function");
+  console.info("test: reportVersion");
   board.reportVersion(function() {
     console.info("version reported");
+  });
+};
+
+TestSuite.prototype.testQueryFirmware = function() {
+  console.info("test: queryFirmware");
+  board.queryFirmware(function() {
+    console.info("firmware version reported");
+  });
+};
+
+// TestSuite.prototype.testAnalogRead = function(pin) {
+//   console.info("test: analogRead");
+//   board.analogRead(pin, function() {
+//     console.info("analogRead complete");
+//   });
+// };
+
+TestSuite.prototype.testAnalogWrite = function(pin,value) {
+  console.info("test: analogWrite");
+  board.analogWrite(pin,value);
+};
+
+TestSuite.prototype.testQueryAnalogMapping = function() {
+  console.info("test: queryAnalogMapping");
+  board.queryAnalogMapping(function() {
+    console.info("analog mapping reported");
+  });
+};
+
+TestSuite.prototype.testCustomSysex = function() {
+  console.info("test: custom Sysex");
+  var msg = [ START_SYSEX,DD.DEVICE_QUERY];
+
+  board.queryAnalogMapping(function() {
+    console.info("analog mapping reported");
   });
 };
 
 board.on("blinking", function () {
   var suite = new TestSuite();
   suite.testReportVersion();
+  suite.testQueryFirmware();
+  // suite.testAnalogRead(12);
+  suite.testAnalogWrite(7,1);
+  suite.testQueryAnalogMapping();
 });
-
