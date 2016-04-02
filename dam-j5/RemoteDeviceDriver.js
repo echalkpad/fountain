@@ -2,8 +2,33 @@
    'use strict';
 //-----
 
-var firmata = require("firmata");
-const assert = require("assert");
+let firmata = require("firmata");
+
+class DeviceQueryOpen {
+
+  constructor(unitName,flags) {
+    this.action = RDD.ACTION('OPEN');
+    this.flags = flags;
+    this.register = 0;
+    this.requestedByteCount = 0;
+    this.unitName = unitName;
+  }
+
+  toByteBuffer() {
+    let msgBody = new Buffer(256);
+    let index = 0;
+    index = msgBody.writeUInt8(this.action,index);
+    index = msgBody.writeUInt16LE(this.flags,index);
+    index = msgBody.writeInt16LE(this.register,index);
+    index = msgBody.writeUInt16LE(this.requestedByteCount,index);
+    index = msgBody.writeUInt16LE(0,index);
+    index += msgBody.write(this.unitName,index,'utf8');
+    index = msgBody.writeUInt8(0,index);
+
+    let encodedMsgBody = msgBody.toString("base64",0,index);
+    return Array.from(encodedMsgBody);
+  }
+}
 
 /**
  * Define the types and methods needed for the Firmata Remote Device Driver
@@ -15,12 +40,15 @@ class RDD {
     console.log("RDD constructor",Object.keys(opts));
     if ('board' in opts) {
       this.board = opts.board;
+    } else {
+      throw new Error("A 'board' property must be specified to the RDD constructor.");
     }
+    this.board.sysexResponse(RDD.SYSEX('DEVICE_RESPONSE'), this.deviceResponseHandler);
   }
 
   open(unitName, flags) {
     console.info("RDD open: ",unitName);
-    var message = new DeviceQueryOpen(unitName,flags);
+    let message = new DeviceQueryOpen(unitName,flags);
     this.board.sysexCommand(message.toByteBuffer());
     return 1;
   }
@@ -40,15 +68,33 @@ class RDD {
     return this.STATUS.ESUCCESS;
   }
 
+  deviceResponseHandler(board) {
+    console.log("deviceResponseHandler invoked");
+    let cmd = board.currentBuffer[1];
+    let msgBody = new Buffer(board.currentBuffer.slice(2, -1)).toString("base64");
+    let index = 0;
+    let action = msgBody.readUInt8(index);
+    index += 1;
+    let handle = msgBody.readUInt16(index);
+    index += 2;
+    let register = msgBody.readInt16(index);
+    index += 2;
+    let requestedByteCount = msgBody.readUInt16(index);
+    index += 2;
+    let status = msgBody.readInt16(index);
+    index += 2;
+    console.log("DeviceResponse Status: ${status}");
+    console.log("DeviceResponse Body: action: ${action}, handle: ${handle}, register: {${register}, requested byte count: ${requestedByteCount}");
+  }
+
   /**
    * Define the Firmata op codes that the RemoteDeviceDriver module uses.
    */
   static SYSEX(key) {
-    var obj = {
+    let obj = {
       'DEVICE_QUERY' : 0x30,
       'DEVICE_RESPONSE' :0x31
     };
-    console.log("SYSEX obj,key,obj[key]",obj,key,obj[key]);
     return obj[key];
 }
 
@@ -208,32 +254,6 @@ class RDD {
     ENOTSUP : { name : "ENOTSUP", val : -150, msg : "Parameter values are valid, but the functionality they request is not available" },
     EPANIC : { name : "EPANIC", val : -151, msg : "Executing code that was supposed to be unreachable." }
   }[key];}
-}
-
-class DeviceQueryOpen {
-
-  constructor(unitName,flags) {
-    this.action = RDD.ACTION('OPEN');
-    this.flags = flags;
-    this.register = 0;
-    this.requestedByteCount = 0;
-    this.unitName = unitName;
-  }
-
-  toByteBuffer() {
-    var rawMsg = new Buffer(256);
-    var index = 0;
-    index = rawMsg.writeUInt8(this.action,index);
-    index = rawMsg.writeUInt16LE(this.flags,index);
-    index = rawMsg.writeUInt16LE(this.register,index);
-    index = rawMsg.writeUInt16LE(this.requestedByteCount,index);
-    index = rawMsg.writeUInt16LE(0,index);
-    index += rawMsg.write(this.unitName,index,'utf8');
-    index = rawMsg.writeUInt8(0,index);
-
-    var encodedMsg = rawMsg.toString("base64",0,index);
-    return Array.from(encodedMsg);
-  }
 }
 
 module.exports = RDD;
