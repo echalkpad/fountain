@@ -1,6 +1,10 @@
-(function () {
-   'use strict';
-//-----
+// This module provides a Johnny-Five accessible interface to DeviceDriver
+// running on a remote Arduino host.  The transport protocol is StandardFirmata
+// with the addition of DEVICE_QUERY and DEVICE_RESPONSE.
+//
+// This module is strict-mode throughout, and it uses some ES6 features.
+//
+// Doug Johnson, April 2016
 
 let firmata = require("firmata");
 
@@ -14,6 +18,8 @@ class DeviceQueryOpen {
     this.unitName = unitName;
   }
 
+// TODO: rename: toByteArray()
+//
   toByteBuffer() {
     let msgBody = new Buffer(256);
     let index = 0;
@@ -24,6 +30,8 @@ class DeviceQueryOpen {
     index = msgBody.writeUInt16LE(0,index);
     index += msgBody.write(this.unitName,index,'utf8');
     index = msgBody.writeUInt8(0,index);
+
+    //TODO insert the raw action code at the front of the msg before returning the array
 
     let encodedMsgBody = msgBody.toString("base64",0,index);
     return Array.from(encodedMsgBody);
@@ -36,6 +44,27 @@ class DeviceQueryOpen {
  */
 class RDD {
 
+  deviceResponseHandler(board) {
+    console.log("deviceResponseHandler invoked");
+    // let cmd = board.currentBuffer[1];
+    // let msgBody = new Buffer(board.currentBuffer.slice(2, -1)).toString("base64");
+    let msgBody = new Buffer([board.START_SYSEX, RDD.SYSEX('DEVICE_RESPONSE'),RDD.ACTION('OPEN'),
+      1,0,0,0,0,0,0,0,board.END_SYSEX]);
+    let index = 2;
+    let action = msgBody.readUInt8(index);
+    index += 1;
+    let handle = msgBody.readUInt16LE(index);
+    index += 2;
+    let register = msgBody.readInt16LE(index);
+    index += 2;
+    let requestedByteCount = msgBody.readUInt16LE(index);
+    index += 2;
+    let status = msgBody.readInt16LE(index);
+    index += 2;
+    console.log(`DeviceResponse Status: ${status}`);
+    console.log(`DeviceResponse Body: action: ${action}, handle: ${handle}, register: ${register}, requested byte count: ${requestedByteCount}`);
+  }
+
   constructor(opts) {
     console.log("RDD constructor",Object.keys(opts));
     if ('board' in opts) {
@@ -43,13 +72,12 @@ class RDD {
     } else {
       throw new Error("A 'board' property must be specified to the RDD constructor.");
     }
-    this.board.sysexResponse(RDD.SYSEX('DEVICE_RESPONSE'), this.deviceResponseHandler);
   }
 
   open(unitName, flags) {
     console.info("RDD open: ",unitName);
     let message = new DeviceQueryOpen(unitName,flags);
-    this.board.sysexCommand(message.toByteBuffer());
+    this.board.sysexCommand([RDD.SYSEX('DEVICE_QUERY'), ...message.toByteBuffer()]);
     return 1;
   }
 
@@ -66,25 +94,6 @@ class RDD {
   close(handle) {
     console.info("RDD close",handle);
     return this.STATUS.ESUCCESS;
-  }
-
-  deviceResponseHandler(board) {
-    console.log("deviceResponseHandler invoked");
-    let cmd = board.currentBuffer[1];
-    let msgBody = new Buffer(board.currentBuffer.slice(2, -1)).toString("base64");
-    let index = 0;
-    let action = msgBody.readUInt8(index);
-    index += 1;
-    let handle = msgBody.readUInt16(index);
-    index += 2;
-    let register = msgBody.readInt16(index);
-    index += 2;
-    let requestedByteCount = msgBody.readUInt16(index);
-    index += 2;
-    let status = msgBody.readInt16(index);
-    index += 2;
-    console.log("DeviceResponse Status: ${status}");
-    console.log("DeviceResponse Body: action: ${action}, handle: ${handle}, register: {${register}, requested byte count: ${requestedByteCount}");
   }
 
   /**
@@ -257,6 +266,3 @@ class RDD {
 }
 
 module.exports = RDD;
-
-//-----
-}());

@@ -1,6 +1,12 @@
-(function () {
-   'use strict';
-//-----
+// This is the main entry point for a simple demo of Johnny-Five controlling
+// Remote Device Drivers on an Arduino host through Firmata.
+//
+// This program is strict-mode throughout, and it uses some ES6 features.
+//
+// The program started life as a copy of blink.js, an example program that
+// comes in the JavaScript Firmata client library used with Johnny-Five.
+//
+// Doug Johnson, April 2016
 
 let robo = require("johnny-five");
 let firmata = require("firmata");
@@ -39,15 +45,13 @@ board.on("ready", function() {
   board.emit("blinking");
 });
 
-board.on("blinking", function () {
-  let dd = new RDD({'board': board});
-  let handle = dd.open("META:0",0);
-  console.info("Returned handle: ",handle);
-  console.log("Blinking sysex code DEVICE_RESPONSE: ",RDD.SYSEX('DEVICE_RESPONSE'));
-  console.log("Blinking action code OPEN: ",RDD.ACTION('OPEN'));
-  console.log("Blinking status code ESUCCESS: ",RDD.STATUS('ESUCCESS'));
+board.on("string",function (remoteString) {
+  console.log("Rcvd: [STRING_DATA] "+remoteString);
 });
 
+board.on("blinking", function () {
+  let dd = new RDD({'board': board, skipCapabilities: false});
+  board.sysexResponse(RDD.SYSEX('DEVICE_RESPONSE'), dd.deviceResponseHandler);
 
-//-----
-}());
+  let handle = dd.open("META:0",0);
+});
