@@ -18,9 +18,7 @@ class DeviceQueryOpen {
     this.unitName = unitName;
   }
 
-// TODO: rename: toByteArray()
-//
-  toByteBuffer() {
+  toByteArray() {
     let msgBody = new Buffer(256);
     let index = 0;
     index = msgBody.writeUInt8(this.action,index);
@@ -31,10 +29,29 @@ class DeviceQueryOpen {
     index += msgBody.write(this.unitName,index,'utf8');
     index = msgBody.writeUInt8(0,index);
 
-    //TODO insert the raw action code at the front of the msg before returning the array
+    console.log("msgBody (out) length: ", index);
+    console.log("msgBody (out): ",msgBody.slice(0,index));
 
-    let encodedMsgBody = msgBody.toString("base64",0,index);
-    return Array.from(encodedMsgBody);
+    let s = msgBody.toString("base64",0,index);
+    let encodedMsgBody = Uint8Array.from(s, x=> x.charCodeAt(0));
+    let msgArray =  [RDD.SYSEX('DEVICE_QUERY'), ...encodedMsgBody];
+
+    console.log("msgArray (out) length: ", msgArray.length);
+    console.log("msgArray (out): ",msgArray);
+
+    let msgArrayDoppel = msgArray.slice(1,msgArray.length);
+    console.log("encoded msgArrayDoppel length: ", msgArrayDoppel.length);
+    console.log("encoded msgArrayDoppel (arr): ", msgArrayDoppel);
+
+    let encodedMsgBodyBuffer = Buffer.from([...msgArrayDoppel]);                        // <-- this buffer is all zeroes!
+    console.log("encoded Msg Body Buffer length: ", encodedMsgBodyBuffer.length);
+    console.log("encoded Msg Body Buffer (buf): ", encodedMsgBodyBuffer);
+
+    let decodedMsgBody = new Buffer(encodedMsgBodyBuffer.toString(),'base64');
+    console.log("decoded Msg Body length: ", decodedMsgBody.length);
+    console.log("decoded Msg Body (b): ", decodedMsgBody);
+
+    return msgArray;
   }
 }
 
@@ -44,13 +61,21 @@ class DeviceQueryOpen {
  */
 class RDD {
 
-  deviceResponseHandler(board) {
-    console.log("deviceResponseHandler invoked");
-    // let cmd = board.currentBuffer[1];
-    // let msgBody = new Buffer(board.currentBuffer.slice(2, -1)).toString("base64");
-    let msgBody = new Buffer([board.START_SYSEX, RDD.SYSEX('DEVICE_RESPONSE'),RDD.ACTION('OPEN'),
-      1,0,0,0,0,0,0,0,board.END_SYSEX]);
-    let index = 2;
+  sysexDeviceResponseHandler(encodedMsgBody) {
+    console.log("sysexDeviceResponseHandler invoked");
+
+    console.log("encoded Msg Body length: ", encodedMsgBody.length);
+    console.log("encoded Msg Body (object type?): ", encodedMsgBody);
+
+    let encodedMsgBodyBuffer = new Buffer(encodedMsgBody);
+    console.log("encoded Msg Body Buffer length: ", encodedMsgBodyBuffer.length);
+    console.log("encoded Msg Body Buffer (buf): ", encodedMsgBodyBuffer);
+
+    let msgBody = new Buffer(encodedMsgBodyBuffer.toString(),'base64');
+    console.log("decoded Msg Body length: ", msgBody.length);
+    console.log("decoded Msg Body (b): ", msgBody);
+
+    let index = 0;
     let action = msgBody.readUInt8(index);
     index += 1;
     let handle = msgBody.readUInt16LE(index);
@@ -72,12 +97,13 @@ class RDD {
     } else {
       throw new Error("A 'board' property must be specified to the RDD constructor.");
     }
+    this.board.sysexResponse(RDD.SYSEX('DEVICE_RESPONSE'), this.sysexDeviceResponseHandler);
   }
 
   open(unitName, flags) {
     console.info("RDD open: ",unitName);
     let message = new DeviceQueryOpen(unitName,flags);
-    this.board.sysexCommand([RDD.SYSEX('DEVICE_QUERY'), ...message.toByteBuffer()]);
+    this.board.sysexCommand(message.toByteArray());
     return 1;
   }
 
@@ -111,12 +137,14 @@ class RDD {
    * The action codes that indicate the type of query we are making
    */
   static ACTION(key) {
-    return {
-      OPEN : 0,
-      READ : 1,
-      WRITE : 2,
-      CLOSE : 3
-  }[key];}
+    let obj = {
+      'OPEN' : 0,
+      'READ' : 1,
+      'WRITE' : 2,
+      'CLOSE' : 3
+    };
+    return obj[key];
+  }
 
   /**
    * Define the status indicators that can be returned by a remote device driver.

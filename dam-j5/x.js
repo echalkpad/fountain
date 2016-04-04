@@ -51,7 +51,6 @@ board.on("string",function (remoteString) {
 
 board.on("blinking", function () {
   let dd = new RDD({'board': board, skipCapabilities: false});
-  board.sysexResponse(RDD.SYSEX('DEVICE_RESPONSE'), dd.deviceResponseHandler);
 
-  let handle = dd.open("META:0",0);
+  let handle = dd.open("META:0",257);
 });
