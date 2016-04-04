@@ -52,5 +52,5 @@ board.on("string",function (remoteString) {
 board.on("blinking", function () {
   let dd = new RDD({'board': board, skipCapabilities: false});
 
-  let handle = dd.open("META:0",257);
+  let handle = dd.open("Meta:0",1);
 });
