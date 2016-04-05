@@ -11,6 +11,8 @@
 let robo = require("johnny-five");
 let firmata = require("firmata");
 let RDD = require("./RemoteDeviceDriver");
+let rddMsg = require("./RDDSysex");
+let rddErr = require("./RDDStatus");
 
 let ledPin = 13;
 let ledOn = true;
