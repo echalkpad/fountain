@@ -14,6 +14,7 @@ const robo = require("johnny-five");
 const firmata = require("firmata");
 const RDD = require("./RemoteDeviceDriver");
 const rddErr = require("./RDDStatus");
+const rddCmd = require('./RDDCommand');
 
 const ledPin = 13;
 let ledOn = true;
@@ -54,20 +55,47 @@ board.on("string",function (remoteString) {
 board.on("blinking", function () {
   let dd = new RDD({'board': board, skipCapabilities: false});
 
+// Open the remote device drivers of interest
+
   let pack = [];
   pack[0] = dd.open("Meta:0",1);
   pack[1] = dd.open("Hello:0",1);
 
+  console.log("Main program device OPEN requests all issued.");
+
   for (let i=0; i<pack.length; i++) {
-    console.log(`Promised device open ${i}: ${pack[i]}`);
+    console.log(`Device open promise ${i}: ${pack[i]}`);
   }
 
-  Promise.all(pack).then((values) => {
-    console.log(`Returned promise values (fulfill): ${values}`);
-  })
-  .catch((values) => {
-    console.log(`Returned promise values (reject):  ${values}`);
-  });
+  // Wait for the open() calls to complete
 
-  console.log("Main program open phase complete.");
+  Promise.all(pack)
+  .then((values) => {
+    console.log(`Returned open promise values (fulfill): ${values}`);
+    console.log(`Handle value 0 from open() is ${values[0].handle}`);
+    console.log(`Handle value 1 from open() is ${values[1].handle}`);
+    // this.handle.Hello = values[1].handle;
+    // console.log(`Returned handles: Meta:${this.handle.Meta}, Hello:${this.handle.Hello}`);
+
+    // If both opens worked okay, read() the driver versions
+
+    let readProms = [];
+    console.log(`Main program device version READ requests about to be issued for register ${rddCmd.CDR.DriverVersion}`);
+
+    readProms[0] = dd.read(values[0].handle,rddCmd.CDR.DriverVersion,256);
+    readProms[1] = dd.read(values[1].handle,rddCmd.CDR.DriverVersion,256);
+    console.log(`Returned read promise values: ${readProms}`);
+
+    console.log("Main program device version READ requests all issued.");
+
+    Promise.all(readProms)
+    .then((values) => {
+      console.log(`Returned read promise values (fulfill): ${values}`);
+    })
+    .catch((values) => {
+      console.log(`Returned read promise values (reject):  ${values}`);
+    });
+
+   console.log("Main program starter processing completed.");
+  });
 });

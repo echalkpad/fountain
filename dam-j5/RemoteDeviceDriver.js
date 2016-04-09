@@ -57,26 +57,26 @@ class RemoteDeviceDriver extends EventEmitter {
       switch (action) {
         case rddCmd.ACTION.OPEN:
           response = new rddCmd.DeviceResponseOpen(msgBody);
-          eventName = this.responseEvents.get(action)+'-'+response.unitName;
+          eventName = this.responseEvents.get(rddCmd.ACTION.OPEN)+'-'+response.unitName;
           break;
 
         case rddCmd.ACTION.READ:
           response = new rddCmd.DeviceResponseRead(msgBody);
-          eventName = this.responseEvents.get(action)+'-'+response.handle+'-'+response.register;
+          eventName = this.responseEvents.get(rddCmd.ACTION.READ)+`-${response.handle}-${response.register}`;
           break;
 
         case rddCmd.ACTION.WRITE:
           response = new rddCmd.DeviceResponseWrite(msgBody);
-          eventName = this.responseEvents.get(action)+'-'+response.handle+'-'+response.register;
+          eventName = this.responseEvents.get(rddCmd.ACTION.WRITE)+`-${response.handle}-${response.register}`;
           break;
 
         case rddCmd.ACTION.CLOSE:
           response = new rddCmd.DeviceResponseClose(msgBody);
-          eventName = this.responseEvents.get(action)+'-'+response.handle;
+          eventName = this.responseEvents.get(rddCmd.ACTION.CLOSE)+`-${response.handle}`;
           break;
       }
 
-      if (eventName.length != 0) {
+      if (eventName.length !== 0) {
         console.log(`Response event to emit: ${eventName}`);
         this.emit(eventName, response);
       } else {
@@ -90,8 +90,8 @@ class RemoteDeviceDriver extends EventEmitter {
   //--------------------------------------------------------
 
 /**
- * open() and performSynchronousOpen() integrate Promise handling in order to
- * provide a synchronous result from the RemoteDeviceDriver open() method.
+ * open() uses Promise handling to simplify staying coordinated with the
+ * asynchronous return of responses to DEVICE_QUERY messsages.
  */
  open(unitName, flags) {
     console.info("\nRemoteDeviceDriver open() started: ",unitName);
@@ -101,77 +101,80 @@ class RemoteDeviceDriver extends EventEmitter {
     let message = new rddCmd.DeviceQueryOpen(unitName,flags);
     this.board.sysexCommand(message.toByteArray());
 
-    // Create a promise callback that will be fulfilled when the OPEN RESPONSE
+    // Create a promise callback that will be fulfilled when our OPEN RESPONSE
     // is received.
 
     let p = new Promise((fulfill, reject) => {
-      console.log("Promise initialization method is started.");
+      console.log("Promise initialization method is started for OPEN.");
       this.once(`DeviceResponseOpen-${unitName}`, (response) => {
         console.log(`DeviceResponseOpen-${unitName} handler invoked`);
         console.log(`DeviceResponseOpen status: ${response.status}`);
         if (response.status >= 0) {
           console.log(`DeviceResponse Open handle: ${response.handle}, unitName: ${response.unitName}`);
-          fulfill(response.status);
+          fulfill(response);
         } else {
-          reject(response.status);
+          reject(response);
         }
       });
       console.log("Promise initialization method is complete.");
     })
-  .then((status) => {
-      console.log(`then: Status value from open() is ${status}`);
-      return status;
+  .then((response) => {
+      console.log(`then: Status value in open() is ${response.status}`);
+      return response;
     })
-    .catch((status) => {
-      console.log(`catch: Error value from open() is ${status}`);
-      return status;
+    .catch((response) => {
+      console.log(`catch: Error value in open() is ${response.status}`);
+      return response;
     });
     console.info("RemoteDeviceDriver open() finished.");
     return p;
   }
 
-//   //--------------------------------------------------------
-
-// /**
-//  * open() and performSynchronousOpen() integrate Promise handling in order to
-//  * provide a synchronous result from the RemoteDeviceDriver open() method.
-//  */
-//  open(unitName, flags) {
-//     console.info("\nRemoteDeviceDriver open() started: ",unitName);
-//     let result = this.performSynchronousOpen(unitName,flags)
-//     .then((status) => {
-//       console.log(`then: Status value from open() is ${status}`);
-//       return status;
-//     })
-//     .catch((status) => {
-//       console.log(`catch: Error value from open() is ${status}`);
-//       return status;
-//     });
-//     console.info("RemoteDeviceDriver open() finished.");
-//     return result;
-//   }
-
-//   performSynchronousOpen(unitName,flags) {
-//     let message = new rddCmd.DeviceQueryOpen(unitName,flags);
-//     this.board.sysexCommand(message.toByteArray());
-//     let p = new Promise((resolve, reject) => {
-//       console.log("Synchronous Open promise method is started.");
-//       this.once(`DeviceResponseOpen-${unitName}`, (response) => {
-//         console.log(`DeviceResponseOpen-${unitName} handler invoked`);
-//         console.log(`DeviceResponseOpen status: ${response.status}`);
-//         if (response.status >= 0) {
-//           console.log(`DeviceResponse Open handle: ${response.handle}, unitName: ${response.unitName}`);
-//           resolve(response.status);
-//         } else {
-//           reject(response.status);
-//         }
-//       });
-//       console.log("Synchronous Open promise method is complete.");
-//     });
-//     console.log("Promise made, sync method is returning.");
-//     return p;
-//   }
   //--------------------------------------------------------
+
+/**
+ * read() uses Promise handling to simplify staying coordinated with the
+ * asynchronous return of responses to DEVICE_QUERY messsages.
+ */
+  read(handle, reg, count) {
+    console.info(`\nRemoteDeviceDriver read(${handle}, ${reg}, ${count}) started`);
+
+    // Send the READ message
+
+    let message = new rddCmd.DeviceQueryRead(handle, reg, count);
+    this.board.sysexCommand(message.toByteArray());
+
+    // Create a promise callback that will be fulfilled when our READ RESPONSE
+    // is received.
+
+    let eventName = this.responseEvents.get(rddCmd.ACTION.READ)+`-${handle}-${reg}`;
+    console.log(`Response event to wait for: ${eventName}`);
+    let p = new Promise((fulfill, reject) => {
+      console.log("Promise initialization method is started for READ.");
+      this.once(eventName, (response) => {
+        console.log(`${eventName} handler invoked.`);
+        if (response.status >= 0) {
+          fulfill(response);
+        } else {
+          reject(response);
+        }
+      });
+      console.log("Promise initialization method is complete.");
+    })
+  .then((response) => {
+      console.log(`then: Status value from read() is ${response.status}`);
+      console.log(`datablock from read() is ${response}`);
+      return response;
+    })
+    .catch((response) => {
+      console.log(`catch: Error value from read() is ${response.status}`);
+      return status;
+    });
+    console.info("RemoteDeviceDriver read() finished.");
+    return p;
+  }
+
+  //-------------------------------------------------------- refresh close() and write()
 
 /**
  * close() and performSynchronousClose() integrate Promise handling in order to
@@ -209,11 +212,6 @@ class RemoteDeviceDriver extends EventEmitter {
         }
       });
     });
-  }
-
-  read(handle, reg, count,buf) {
-    console.info("RemoteDeviceDriver read: ",reg,count);
-    return count;
   }
 
   write(handle, reg, count, buf) {

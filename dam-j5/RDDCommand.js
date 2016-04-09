@@ -17,6 +17,15 @@
       'CLOSE' : 3
     };
 
+    /**
+     * These register names and codes indicate the specific item of interest
+     * during DeviceDriver reads and writes.
+     */
+    let CDR = {
+        'DriverVersion' : -2,
+        'Intervals' : -6
+    };
+
   /**
    * Define the messge offsets common to all of the DEVICE_QUERY and
    * DEVICE_RESPONSE messages.
@@ -91,6 +100,63 @@ class DeviceResponseOpen {
   //--------------------
 
 /**
+ * This class represents a Firmata Device Query Read message created by the
+ * local client prior to sending it to a remote device driver.
+ */
+class DeviceQueryRead {
+
+  constructor(handle, reg, count) {
+    this.action = ACTION.READ;
+    this.handle = handle;
+    this.register = reg;
+    this.requestedByteCount = count;
+  }
+
+  toByteArray() {
+    let msgBody = new Buffer(256);
+    msgBody.writeUInt8(this.action,MO.ACTION);
+    msgBody.writeUInt16LE(this.handle,MO.FLAGS);
+    msgBody.writeInt16LE(this.register,MO.REGISTER);
+    msgBody.writeUInt16LE(this.requestedByteCount, MO.REQUESTED_COUNT);
+    msgBody.writeUInt16LE(0,MO.STATUS);
+
+    let s = msgBody.toString("base64",0,MO.DATA);
+    let encodedMsgBody = Uint8Array.from(s, x => x.charCodeAt(0));
+    let msgArray =  [SYSEX.DEVICE_QUERY, ...encodedMsgBody];
+
+    return msgArray;
+  }
+}
+
+/**
+ * This class represents a Firmata Device Response Read message received from
+ * a remote device driver after a call to read(handle, reg, count).
+ */
+class DeviceResponseRead {
+
+  constructor(msgBody) {
+    this.action = msgBody.readUInt8(MO.ACTION);
+    this.handle = msgBody.readUInt16LE(MO.HANDLE);
+    this.register = msgBody.readInt16LE(MO.REGISTER);
+    this.requestedByteCount = msgBody.readUInt16LE(MO.REQUESTED_COUNT);
+    this.status = msgBody.readInt16LE(MO.STATUS);
+    if (this.status >= 0) {
+        this.actualByteCount = this.status;
+    } else {
+        this.actualByteCount = 0;
+    }
+
+    if (msgBody.length > MO.DATA) {
+        this.datablock = msgBody.slice(MO.DATA,msgBody.length);
+    } else {
+        this.datablock = null;
+    }
+  }
+}
+
+  //--------------------
+
+/**
  * This class represents a Firmata Device Query Close message created by the
  * local client prior to sending it to a remote device driver.
  */
@@ -130,7 +196,8 @@ class DeviceResponseClose {
   }
 }
 
-module.exports = {SYSEX, ACTION, MO,
+module.exports = {SYSEX, ACTION, MO, CDR,
     DeviceQueryOpen, DeviceResponseOpen,
+    DeviceQueryRead, DeviceResponseRead,
     DeviceQueryClose, DeviceResponseClose
 };
