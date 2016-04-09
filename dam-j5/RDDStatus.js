@@ -147,4 +147,4 @@
     return obj[key];
   };
 
-  module.exports = STATUS;
+  module.exports = {STATUS};

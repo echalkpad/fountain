@@ -8,22 +8,22 @@
 //
 // Doug Johnson, April 2016
 
-let robo = require("johnny-five");
-let firmata = require("firmata");
-let RDD = require("./RemoteDeviceDriver");
-let rddMsg = require("./RDDSysex");
-let rddErr = require("./RDDStatus");
+console.log(`\n----Begin RemoteDeviceDriver exercise.`);
 
-let ledPin = 13;
+const robo = require("johnny-five");
+const firmata = require("firmata");
+const RDD = require("./RemoteDeviceDriver");
+const rddErr = require("./RDDStatus");
+
+const ledPin = 13;
 let ledOn = true;
 
 // Create and initialize a board object
 
-let serialPortName;
-serialPortName = "COM42";
-// serialPortName = "/dev/cu.usbmodem621";
+const serialPortName = "COM42";
+// const serialPortName = "/dev/cu.usbmodem621";
 
-let board = new firmata.Board(serialPortName, function(err) {
+const board = new firmata.Board(serialPortName, function(err) {
   if (err) {
     console.log(err);
     return;
@@ -54,5 +54,20 @@ board.on("string",function (remoteString) {
 board.on("blinking", function () {
   let dd = new RDD({'board': board, skipCapabilities: false});
 
-  let handle = dd.open("Meta:0",1);
+  let pack = [];
+  pack[0] = dd.open("Meta:0",1);
+  pack[1] = dd.open("Hello:0",1);
+
+  for (let i=0; i<pack.length; i++) {
+    console.log(`Promised device open ${i}: ${pack[i]}`);
+  }
+
+  Promise.all(pack).then((values) => {
+    console.log(`Returned promise values (fulfill): ${values}`);
+  })
+  .catch((values) => {
+    console.log(`Returned promise values (reject):  ${values}`);
+  });
+
+  console.log("Main program open phase complete.");
 });
