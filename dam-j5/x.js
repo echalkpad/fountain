@@ -8,13 +8,16 @@
 //
 // Doug Johnson, April 2016
 
-console.log(`\n----Begin RemoteDeviceDriver exercise.`);
-
 const robo = require("johnny-five");
 const firmata = require("firmata");
 const RDD = require("./RemoteDeviceDriver");
 const rddErr = require("./RDDStatus");
 const rddCmd = require('./RDDCommand');
+
+var log4js = require("log4js");
+var logger = log4js.getLogger();
+
+logger.info(`----Begin RemoteDeviceDriver exercise.`);
 
 const ledPin = 13;
 let ledOn = true;
@@ -26,7 +29,7 @@ const serialPortName = "COM42";
 
 const board = new firmata.Board(serialPortName, function(err) {
   if (err) {
-    console.log(err);
+    logger.error(err);
     return;
   }
   board.pinMode(ledPin, board.MODES.OUTPUT);
@@ -35,8 +38,7 @@ const board = new firmata.Board(serialPortName, function(err) {
 // When the board is ready, start blinking the LED and then trigger the rest of the program to run
 
 board.on("ready", function() {
-  console.log("connected");
-  console.log("Firmware: " + board.firmware.name + "-" + board.firmware.version.major + "." + board.firmware.version.minor);
+  logger.info(`Connected to ${board.firmware.name} -${board.firmware.version.major}.${board.firmware.version.minor}`);
   setInterval(function() {
     if (ledOn) {
       board.digitalWrite(ledPin, board.HIGH);
@@ -48,56 +50,51 @@ board.on("ready", function() {
   board.emit("blinking");
 });
 
+// Strings from Firmata host to client are usually error messages
+
 board.on("string",function (remoteString) {
-  console.log("Rcvd: [STRING_DATA] "+remoteString);
+  logger.warn(`[STRING_DATA] ${remoteString}`);
 });
+
+// Once the light is blinking, we're ready to really start work
 
 board.on("blinking", function () {
   let dd = new RDD({'board': board, skipCapabilities: false});
 
 // Open the remote device drivers of interest
 
-  let pack = [];
-  pack[0] = dd.open("Meta:0",1);
-  pack[1] = dd.open("Hello:0",1);
+  let unitNamesOfInterest = ["Meta:0","Hello:0","Foo:0"];
 
-  console.log("Main program device OPEN requests all issued.");
-
-  for (let i=0; i<pack.length; i++) {
-    console.log(`Device open promise ${i}: ${pack[i]}`);
+  let openQueries = [];
+  for (let unit of unitNamesOfInterest) {
+    openQueries.push(dd.open(unit,1));
   }
 
-  // Wait for the open() calls to complete
+  logger.trace("Main program device OPEN requests all issued.");
 
-  Promise.all(pack)
-  .then((values) => {
-    console.log(`Returned open promise values (fulfill): ${values}`);
-    console.log(`Handle value 0 from open() is ${values[0].handle}`);
-    console.log(`Handle value 1 from open() is ${values[1].handle}`);
-    // this.handle.Hello = values[1].handle;
-    // console.log(`Returned handles: Meta:${this.handle.Meta}, Hello:${this.handle.Hello}`);
+  // Wait for the open() calls to complete, then read() the driver versions
 
-    // If both opens worked okay, read() the driver versions
+  Promise.all(openQueries)
+  .then((openResponses) => {
+    let readQueries = [];
+    for (let response of openResponses) {
+      logger.debug(`Handle from open(${response.unitName}) is ${response.handle}`);
+      readQueries.push(dd.read(response.handle,rddCmd.CDR.DriverVersion,256));
+    }
 
-    let readProms = [];
-    console.log(`Main program device version READ requests about to be issued for register ${rddCmd.CDR.DriverVersion}`);
-
-    readProms[0] = dd.read(values[0].handle,rddCmd.CDR.DriverVersion,256);
-    readProms[1] = dd.read(values[1].handle,rddCmd.CDR.DriverVersion,256);
-    console.log(`Returned read promise values: ${readProms}`);
-
-    console.log("Main program device version READ requests all issued.");
-
-    Promise.all(readProms)
-    .then((values) => {
-      console.log(`Returned read promise values (fulfill): ${values}`);
-      console.log(`Version: ${new rddCmd.SemVer(values[0].datablock)}`);
-      console.log(`Version: ${new rddCmd.SemVer(values[1].datablock)}`);
+    Promise.all(readQueries)
+    .then((readResponses) => {
+      for (let response of readResponses) {
+        logger.info(`Remote Device Driver: ${new rddCmd.SemVer(response.datablock)}`);
+      }
     })
-    .catch((values) => {
-      console.log(`Returned read promise values (reject):  ${values}`);
+    .catch((readResponses) => {
+      logger.error(`Returned read promise values (reject):  ${readResponses}`);
     });
 
-   console.log("Main program starter processing completed.");
+   logger.info("Main program starter processing completed.");
+  })
+  .catch((openResponses) => {
+      logger.error(`Returned open promise values (reject):  ${openResponses}`);
   });
 });

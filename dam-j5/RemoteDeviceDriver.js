@@ -118,7 +118,7 @@ class RemoteDeviceDriver extends EventEmitter {
       });
       console.log("Promise initialization method is complete.");
     })
-  .then((response) => {
+    .then((response) => {
       console.log(`then: Status value in open() is ${response.status}`);
       return response;
     })
