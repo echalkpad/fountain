@@ -115,7 +115,7 @@ class DeviceQueryRead {
   toByteArray() {
     let msgBody = new Buffer(256);
     msgBody.writeUInt8(this.action,MO.ACTION);
-    msgBody.writeUInt16LE(this.handle,MO.FLAGS);
+    msgBody.writeUInt16LE(this.handle,MO.HANDLE);
     msgBody.writeInt16LE(this.register,MO.REGISTER);
     msgBody.writeUInt16LE(this.requestedByteCount, MO.REQUESTED_COUNT);
     msgBody.writeUInt16LE(0,MO.STATUS);
@@ -150,6 +150,58 @@ class DeviceResponseRead {
         this.datablock = msgBody.slice(MO.DATA,msgBody.length);
     } else {
         this.datablock = null;
+    }
+  }
+}
+
+  //--------------------
+
+/**
+ * This class represents a Firmata Device Query Write message created by the
+ * local client prior to sending it to a remote device driver.
+ */
+class DeviceQueryWrite {
+
+  constructor(handle, reg, count,buf) {
+    this.action = ACTION.WRITE;
+    this.handle = handle;
+    this.register = reg;
+    this.requestedByteCount = count;
+    this.datablock = buf;
+  }
+
+  toByteArray() {
+    let msgBody = new Buffer(256);
+    msgBody.writeUInt8(this.action,MO.ACTION);
+    msgBody.writeUInt16LE(this.handle,MO.HANDLE);
+    msgBody.writeInt16LE(this.register,MO.REGISTER);
+    msgBody.writeUInt16LE(this.requestedByteCount, MO.REQUESTED_COUNT);
+    msgBody.writeUInt16LE(0,MO.STATUS);
+
+    let s = msgBody.toString("base64",0,MO.DATA+this.requestedByteCount);
+    let encodedMsgBody = Uint8Array.from(s, x => x.charCodeAt(0));
+    let msgArray =  [SYSEX.DEVICE_QUERY, ...encodedMsgBody];
+
+    return msgArray;
+  }
+}
+
+/**
+ * This class represents a Firmata Device Response Write message received from
+ * a remote device driver after a call to read(handle, reg, count).
+ */
+class DeviceResponseWrite {
+
+  constructor(msgBody) {
+    this.action = msgBody.readUInt8(MO.ACTION);
+    this.handle = msgBody.readUInt16LE(MO.HANDLE);
+    this.register = msgBody.readInt16LE(MO.REGISTER);
+    this.requestedByteCount = msgBody.readUInt16LE(MO.REQUESTED_COUNT);
+    this.status = msgBody.readInt16LE(MO.STATUS);
+    if (this.status >= 0) {
+        this.actualByteCount = this.status;
+    } else {
+        this.actualByteCount = 0;
     }
   }
 }
@@ -196,8 +248,82 @@ class DeviceResponseClose {
   }
 }
 
+  //--------------------
+
+    class SemVer {
+      /**
+       * Build a SemVer object based on the byte buffer presented.
+       * @param  buf integer array of values containing version numbers and labels
+       *
+       */
+      constructor(buf) {
+        if (buf.length < 6) {
+            this.itemName = "FormatError";
+            this.version = [0,0,0];
+            this.preReleaseLabel = "FormatError";
+            this.buildLabel = "FormatError";
+            return;
+        }
+
+        let offset = 0;
+        let byteIndex = 0;
+
+        // name
+
+        while (buf[byteIndex++] !== 0) {}
+        console.log(`offset: ${offset}, count: ${byteIndex-offset}`);
+
+        let intElements = buf.slice(offset, byteIndex-1);
+        this.itemName = intElements.toString("utf8");
+
+        // version numbers
+
+        let count = buf[byteIndex++];
+        offset = byteIndex;
+        byteIndex += count;
+        console.log(`offset: ${offset}, count: ${byteIndex-offset}`);
+        this.version = [];
+        for (let idx = 0; idx < count; idx++) {
+            this.version[idx] = buf[offset+idx] & 0xFF;
+        }
+
+        // prerelease label
+
+        offset = byteIndex;
+        while (buf[byteIndex++] !== 0) {}
+        console.log(`offset: ${offset}, count: ${byteIndex-offset}`);
+
+        intElements = buf.slice(offset, byteIndex-1);
+        this.preReleaseLabel = intElements.toString("utf8");
+
+        // build label
+
+        offset = byteIndex;
+        while (buf[byteIndex++] !== 0) {}
+        console.log(`offset: ${offset}, count: ${byteIndex-offset}`);
+
+        intElements = buf.slice(offset, byteIndex-1);
+        this.buildLabel = intElements.toString("utf8");
+      }
+
+      toString() {
+        let result = `${this.itemName} ${this.version[0]}.${this.version[1]}.${this.version[2]}`;
+        if (this.preReleaseLabel.length > 0) {
+          result += `-${this.preReleaseLabel}`;
+        }
+        if (this.buildLabel.length > 0) {
+          result += `+${this.buildLabel}`;
+        }
+        return result;
+    }
+  }
+
+  //--------------------
+
 module.exports = {SYSEX, ACTION, MO, CDR,
+    SemVer,
     DeviceQueryOpen, DeviceResponseOpen,
     DeviceQueryRead, DeviceResponseRead,
+    DeviceQueryWrite, DeviceResponseWrite,
     DeviceQueryClose, DeviceResponseClose
 };

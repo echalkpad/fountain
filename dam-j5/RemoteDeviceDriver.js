@@ -174,49 +174,90 @@ class RemoteDeviceDriver extends EventEmitter {
     return p;
   }
 
-  //-------------------------------------------------------- refresh close() and write()
+  //--------------------------------------------------------
 
 /**
- * close() and performSynchronousClose() integrate Promise handling in order to
- * provide a synchronous result from the RemoteDeviceDriver close() method.
+ * write() uses Promise handling to simplify staying coordinated with the
+ * asynchronous return of responses to DEVICE_QUERY messsages.
  */
-  close(handle) {
-    console.info("\nRemoteDeviceDriver close(): ",handle);
-    let result =  this.performSynchronousClose(handle)
-    .then((status) => {
-      console.log(`then: Status value from close() is ${status}`);
-      return status;
-    })
-    .catch((status) => {
-      console.log(`catch: Error value from close() is ${status}`);
-      return status;
-    });
-    return result;
-  }
+  write(handle, reg, count,buf) {
+    console.info(`\nRemoteDeviceDriver write(${handle}, ${reg}, ${count}, ${buf}) started`);
 
-/**
- * This method integrates Promise handling in order to provide a synchronous
- * result from the RemoteDeviceDriver close() method.
- */
-  performSynchronousClose(handle) {
-    let message = new rddCmd.DeviceQueryClose(handle);
+    // Send the Write message
+
+    let message = new rddCmd.DeviceQueryWrite(handle, reg, count,buf);
     this.board.sysexCommand(message.toByteArray());
-    return new Promise((resolve, reject) => {
-      this.once(`DeviceResponseClose-${handle}`, (response) => {
-        console.log(`DeviceResponseClose-${handle} handler invoked`);
-        console.log(`DeviceResponseClose status: ${response.status}`);
+
+    // Create a promise callback that will be fulfilled when our WRITE RESPONSE
+    // is received.
+
+    let eventName = this.responseEvents.get(rddCmd.ACTION.WRITE)+`-${handle}-${reg}`;
+    console.log(`Response event to wait for: ${eventName}`);
+    let p = new Promise((fulfill, reject) => {
+      console.log("Promise initialization method is started for WRITE.");
+      this.once(eventName, (response) => {
+        console.log(`${eventName} handler invoked.`);
         if (response.status >= 0) {
-          resolve(response.status);
+          fulfill(response);
         } else {
-          reject(response.status);
+          reject(response);
         }
       });
+      console.log("Promise initialization method is complete.");
+    })
+  .then((response) => {
+      console.log(`then: Status value from write() is ${response.status}`);
+      return response;
+    })
+    .catch((response) => {
+      console.log(`catch: Error value from write() is ${response.status}`);
+      return status;
     });
+    console.info("RemoteDeviceDriver write() finished.");
+    return p;
   }
 
-  write(handle, reg, count, buf) {
-    console.info("RemoteDeviceDriver write: ",reg,count);
-    return count;
+  //--------------------------------------------------------
+
+/**
+ * close() uses Promise handling to simplify staying coordinated with the
+ * asynchronous return of responses to DEVICE_QUERY messsages.
+ */
+  close(handle) {
+    console.info(`\nRemoteDeviceDriver close(${handle}) started`);
+
+    // Send the Close message
+
+    let message = new rddCmd.DeviceQueryClose(handle);
+    this.board.sysexCommand(message.toByteArray());
+
+    // Create a promise callback that will be fulfilled when our CLOSE RESPONSE
+    // is received.
+
+    let eventName = this.responseEvents.get(rddCmd.ACTION.CLOSE)+`-${handle}`;
+    console.log(`Response event to wait for: ${eventName}`);
+    let p = new Promise((fulfill, reject) => {
+      console.log("Promise initialization method is started for CLOSE.");
+      this.once(eventName, (response) => {
+        console.log(`${eventName} handler invoked.`);
+        if (response.status >= 0) {
+          fulfill(response);
+        } else {
+          reject(response);
+        }
+      });
+      console.log("Promise initialization method is complete.");
+    })
+  .then((response) => {
+      console.log(`then: Status value from close() is ${response.status}`);
+      return response;
+    })
+    .catch((response) => {
+      console.log(`catch: Error value close write() is ${response.status}`);
+      return status;
+    });
+    console.info("RemoteDeviceDriver close() finished.");
+    return p;
   }
 }
 

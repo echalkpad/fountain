@@ -91,6 +91,8 @@ board.on("blinking", function () {
     Promise.all(readProms)
     .then((values) => {
       console.log(`Returned read promise values (fulfill): ${values}`);
+      console.log(`Version: ${new rddCmd.SemVer(values[0].datablock)}`);
+      console.log(`Version: ${new rddCmd.SemVer(values[1].datablock)}`);
     })
     .catch((values) => {
       console.log(`Returned read promise values (reject):  ${values}`);
