@@ -3,42 +3,34 @@
 //
 // This program is strict-mode throughout, and it uses some ES6 features.
 //
-// The program started life as a copy of blink.js, an example program that
-// comes in the JavaScript Firmata client library used with Johnny-Five.
-//
 // Doug Johnson, April 2016
 
-const robo = require("johnny-five");
-const firmata = require("firmata");
+const five = require("johnny-five");
+const log4js = require("log4js");
+
 const RDD = require("./RemoteDeviceDriver");
 const rddErr = require("./RDDStatus");
 const rddCmd = require('./RDDCommand');
 
-var log4js = require("log4js");
-var logger = log4js.getLogger();
+let logger = log4js.getLogger("Main");
 
 logger.info(`----Begin RemoteDeviceDriver exercise.`);
 
 const ledPin = 13;
 let ledOn = true;
 
-// Create and initialize a board object
+// Create and initialize a J5 board object
 
 const serialPortName = "COM42";
 // const serialPortName = "/dev/cu.usbmodem621";
 
-const board = new firmata.Board(serialPortName, function(err) {
-  if (err) {
-    logger.error(err);
-    return;
-  }
-  board.pinMode(ledPin, board.MODES.OUTPUT);
-});
+const board = new five.Board({port: serialPortName, repl: false});
 
 // When the board is ready, start blinking the LED and then trigger the rest of the program to run
 
 board.on("ready", function() {
-  logger.info(`Connected to ${board.firmware.name} -${board.firmware.version.major}.${board.firmware.version.minor}`);
+  board.info("Board object is ready.","hi!");
+  logger.info(`Connected to ${board.io.firmware.name} -${board.io.firmware.version.major}.${board.io.firmware.version.minor}`);
   setInterval(function() {
     if (ledOn) {
       board.digitalWrite(ledPin, board.HIGH);
@@ -70,31 +62,24 @@ board.on("blinking", function () {
     openQueries.push(dd.open(unit,1));
   }
 
-  logger.trace("Main program device OPEN requests all issued.");
+  logger.debug("Main program device OPEN requests all issued.");
 
   // Wait for the open() calls to complete, then read() the driver versions
 
-  Promise.all(openQueries)
-  .then((openResponses) => {
-    let readQueries = [];
-    for (let response of openResponses) {
-      logger.debug(`Handle from open(${response.unitName}) is ${response.handle}`);
-      readQueries.push(dd.read(response.handle,rddCmd.CDR.DriverVersion,256));
-    }
-
-    Promise.all(readQueries)
-    .then((readResponses) => {
-      for (let response of readResponses) {
-        logger.info(`Remote Device Driver: ${new rddCmd.SemVer(response.datablock)}`);
-      }
-    })
-    .catch((readResponses) => {
-      logger.error(`Returned read promise values (reject):  ${readResponses}`);
-    });
-
-   logger.info("Main program starter processing completed.");
-  })
-  .catch((openResponses) => {
-      logger.error(`Returned open promise values (reject):  ${openResponses}`);
-  });
+  let readQueries = [];
+  for (let openPromise of openQueries) {
+    openPromise.then((response) => {
+      logger.debug(`then: Status value from open() is ${response.status}`);
+      readQueries.push(dd.read(response.handle,rddCmd.CDR.DriverVersion,256)
+      .then((response) => {
+        logger.info(`Settled read promise value (fulfill): ${new rddCmd.SemVer(response.datablock).toString()}`);
+        return response;
+      },(response) => {
+        logger.error(`Settled read promise value (reject): ${response.status}`);
+        return response;
+      }))},(response) => {
+        logger.error(`catch: Error value from open() is ${response.status}`);
+      })
+  }
+  logger.info("Main program starter processing completed.");
 });

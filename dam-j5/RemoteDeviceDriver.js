@@ -6,11 +6,14 @@
 //
 // Doug Johnson, April 2016
 
-const EventEmitter = require('events');
-const firmata = require('firmata');
+const log4js = require("log4js");
+const firmata = require("firmata");
+const EventEmitter = require("events");
 
-const rddCmd = require('./RDDCommand');
-const rddErr = require('./RDDStatus');
+const rddCmd = require("./RDDCommand");
+const rddErr = require("./RDDStatus");
+
+let logger = log4js.getLogger("RDD ");
 
 /**
  * Define the event handlers needed for the Firmata Remote Device Driver
@@ -20,8 +23,8 @@ class RemoteDeviceDriver extends EventEmitter {
 
   constructor(opts) {
     super(opts);
-    console.log("RemoteDeviceDriver constructor",Object.keys(opts));
-    if ('board' in opts) {
+    logger.trace("RemoteDeviceDriver constructor",Object.keys(opts));
+    if ("board" in opts) {
       this.board = opts.board;
     } else {
       throw new Error("A 'board' property must be specified in the RemoteDeviceDriver constructor options.");
@@ -38,18 +41,18 @@ class RemoteDeviceDriver extends EventEmitter {
     // is then emitted for further processing.
 
     this.board.sysexResponse(rddCmd.SYSEX.DEVICE_RESPONSE, (encodedMsgBody) => {
-      console.log("\nsysexDeviceResponseHandler invoked");
+      logger.debug("sysexDeviceResponseHandler invoked");
 
       let encodedMsgBodyBuffer = Buffer.from(encodedMsgBody);
-      console.log("encoded Response Body length: ", encodedMsgBodyBuffer.length);
-      console.log("encoded Response Body (b): ", encodedMsgBodyBuffer);
+      logger.trace("encoded Response Body length: ", encodedMsgBodyBuffer.length);
+      logger.trace("encoded Response Body (b): ", encodedMsgBodyBuffer);
 
-      let msgBody = Buffer.from(encodedMsgBodyBuffer.toString(),'base64');
-      console.log("decoded Response Body length: ", msgBody.length);
-      console.log("decoded Response Body (b): ", msgBody);
+      let msgBody = Buffer.from(encodedMsgBodyBuffer.toString(),"base64");
+      logger.trace("decoded Response Body length: ", msgBody.length);
+      logger.trace("decoded Response Body (b): ", msgBody);
 
       let action = msgBody.readUInt8(0);
-      console.log(`Rcvd DeviceResponse: action code: ${action}`);
+      logger.trace(`Rcvd DeviceResponse: action code: ${action}`);
 
       let response;
       let eventName = "";
@@ -57,7 +60,7 @@ class RemoteDeviceDriver extends EventEmitter {
       switch (action) {
         case rddCmd.ACTION.OPEN:
           response = new rddCmd.DeviceResponseOpen(msgBody);
-          eventName = this.responseEvents.get(rddCmd.ACTION.OPEN)+'-'+response.unitName;
+          eventName = this.responseEvents.get(rddCmd.ACTION.OPEN)+`-${response.unitName}`;
           break;
 
         case rddCmd.ACTION.READ:
@@ -77,12 +80,12 @@ class RemoteDeviceDriver extends EventEmitter {
       }
 
       if (eventName.length !== 0) {
-        console.log(`Response event to emit: ${eventName}`);
+        logger.debug(`Response event to emit: ${eventName}`);
         this.emit(eventName, response);
       } else {
         let errString = `Invalid Device Response Action received from remote device: ${action}`;
-        console.log(errString);
-        this.board.emit('string',errString);
+        logger.error(errString);
+        this.board.emit("string",errString);
       }
     });
   }
@@ -94,7 +97,7 @@ class RemoteDeviceDriver extends EventEmitter {
  * asynchronous return of responses to DEVICE_QUERY messsages.
  */
  open(unitName, flags) {
-    console.info("\nRemoteDeviceDriver open() started: ",unitName);
+    logger.trace("RemoteDeviceDriver open() started: ",unitName);
 
     // Send the OPEN message
 
@@ -104,29 +107,22 @@ class RemoteDeviceDriver extends EventEmitter {
     // Create a promise callback that will be fulfilled when our OPEN RESPONSE
     // is received.
 
+    let eventName = this.responseEvents.get(rddCmd.ACTION.OPEN)+`-${unitName}`;
+    logger.trace(`Response event to wait for: ${eventName}`);
     let p = new Promise((fulfill, reject) => {
-      console.log("Promise initialization method is started for OPEN.");
-      this.once(`DeviceResponseOpen-${unitName}`, (response) => {
-        console.log(`DeviceResponseOpen-${unitName} handler invoked`);
-        console.log(`DeviceResponseOpen status: ${response.status}`);
+      logger.trace("Promise initialization method is started for OPEN.");
+      this.once(eventName, (response) => {
+        logger.debug(`${eventName} handler invoked. status: ${response.status}, unitName: ${response.unitName}`);
         if (response.status >= 0) {
-          console.log(`DeviceResponse Open handle: ${response.handle}, unitName: ${response.unitName}`);
           fulfill(response);
         } else {
           reject(response);
         }
       });
-      console.log("Promise initialization method is complete.");
-    })
-    .then((response) => {
-      console.log(`then: Status value in open() is ${response.status}`);
-      return response;
-    })
-    .catch((response) => {
-      console.log(`catch: Error value in open() is ${response.status}`);
-      return response;
+      logger.trace("Promise initialization method is complete.");
     });
-    console.info("RemoteDeviceDriver open() finished.");
+
+    logger.trace("RemoteDeviceDriver open() finished.");
     return p;
   }
 
@@ -137,7 +133,7 @@ class RemoteDeviceDriver extends EventEmitter {
  * asynchronous return of responses to DEVICE_QUERY messsages.
  */
   read(handle, reg, count) {
-    console.info(`\nRemoteDeviceDriver read(${handle}, ${reg}, ${count}) started`);
+    logger.trace(`RemoteDeviceDriver read(${handle}, ${reg}, ${count}) started`);
 
     // Send the READ message
 
@@ -148,29 +144,20 @@ class RemoteDeviceDriver extends EventEmitter {
     // is received.
 
     let eventName = this.responseEvents.get(rddCmd.ACTION.READ)+`-${handle}-${reg}`;
-    console.log(`Response event to wait for: ${eventName}`);
+    logger.trace(`Response event to wait for: ${eventName}`);
     let p = new Promise((fulfill, reject) => {
-      console.log("Promise initialization method is started for READ.");
+      logger.trace("Promise initialization method is started for READ.");
       this.once(eventName, (response) => {
-        console.log(`${eventName} handler invoked.`);
+        logger.trace(`${eventName} handler invoked.`);
         if (response.status >= 0) {
           fulfill(response);
         } else {
           reject(response);
         }
       });
-      console.log("Promise initialization method is complete.");
+      logger.trace("Promise initialization method is complete.");
     })
-  .then((response) => {
-      console.log(`then: Status value from read() is ${response.status}`);
-      console.log(`datablock from read() is ${response}`);
-      return response;
-    })
-    .catch((response) => {
-      console.log(`catch: Error value from read() is ${response.status}`);
-      return status;
-    });
-    console.info("RemoteDeviceDriver read() finished.");
+    logger.trace("RemoteDeviceDriver read() finished.");
     return p;
   }
 
@@ -181,7 +168,7 @@ class RemoteDeviceDriver extends EventEmitter {
  * asynchronous return of responses to DEVICE_QUERY messsages.
  */
   write(handle, reg, count,buf) {
-    console.info(`\nRemoteDeviceDriver write(${handle}, ${reg}, ${count}, ${buf}) started`);
+    logger.info(`RemoteDeviceDriver write(${handle}, ${reg}, ${count}, ${buf}) started`);
 
     // Send the Write message
 
@@ -192,28 +179,28 @@ class RemoteDeviceDriver extends EventEmitter {
     // is received.
 
     let eventName = this.responseEvents.get(rddCmd.ACTION.WRITE)+`-${handle}-${reg}`;
-    console.log(`Response event to wait for: ${eventName}`);
+    logger.trace(`Response event to wait for: ${eventName}`);
     let p = new Promise((fulfill, reject) => {
-      console.log("Promise initialization method is started for WRITE.");
+      logger.trace("Promise initialization method is started for WRITE.");
       this.once(eventName, (response) => {
-        console.log(`${eventName} handler invoked.`);
+        logger.trace(`${eventName} handler invoked.`);
         if (response.status >= 0) {
           fulfill(response);
         } else {
           reject(response);
         }
       });
-      console.log("Promise initialization method is complete.");
+      logger.trace("Promise initialization method is complete.");
     })
   .then((response) => {
-      console.log(`then: Status value from write() is ${response.status}`);
+      logger.trace(`then: Status value from write() is ${response.status}`);
       return response;
     })
     .catch((response) => {
-      console.log(`catch: Error value from write() is ${response.status}`);
+      logger.trace(`catch: Error value from write() is ${response.status}`);
       return status;
     });
-    console.info("RemoteDeviceDriver write() finished.");
+    logger.trace("RemoteDeviceDriver write() finished.");
     return p;
   }
 
@@ -224,7 +211,7 @@ class RemoteDeviceDriver extends EventEmitter {
  * asynchronous return of responses to DEVICE_QUERY messsages.
  */
   close(handle) {
-    console.info(`\nRemoteDeviceDriver close(${handle}) started`);
+    logger.trace(`RemoteDeviceDriver close(${handle}) started`);
 
     // Send the Close message
 
@@ -235,28 +222,28 @@ class RemoteDeviceDriver extends EventEmitter {
     // is received.
 
     let eventName = this.responseEvents.get(rddCmd.ACTION.CLOSE)+`-${handle}`;
-    console.log(`Response event to wait for: ${eventName}`);
+    logger.trace(`Response event to wait for: ${eventName}`);
     let p = new Promise((fulfill, reject) => {
-      console.log("Promise initialization method is started for CLOSE.");
+      logger.trace("Promise initialization method is started for CLOSE.");
       this.once(eventName, (response) => {
-        console.log(`${eventName} handler invoked.`);
+        logger.trace(`${eventName} handler invoked.`);
         if (response.status >= 0) {
           fulfill(response);
         } else {
           reject(response);
         }
       });
-      console.log("Promise initialization method is complete.");
+      logger.trace("Promise initialization method is complete.");
     })
   .then((response) => {
-      console.log(`then: Status value from close() is ${response.status}`);
+      logger.trace(`then: Status value from close() is ${response.status}`);
       return response;
     })
     .catch((response) => {
-      console.log(`catch: Error value close write() is ${response.status}`);
+      logger.trace(`catch: Error value close write() is ${response.status}`);
       return status;
     });
-    console.info("RemoteDeviceDriver close() finished.");
+    logger.trace("RemoteDeviceDriver close() finished.");
     return p;
   }
 }

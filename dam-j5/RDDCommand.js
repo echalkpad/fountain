@@ -271,7 +271,7 @@ class DeviceResponseClose {
         // name
 
         while (buf[byteIndex++] !== 0) {}
-        console.log(`offset: ${offset}, count: ${byteIndex-offset}`);
+        logger.trace(`offset: ${offset}, count: ${byteIndex-offset}`);
 
         let intElements = buf.slice(offset, byteIndex-1);
         this.itemName = intElements.toString("utf8");
@@ -281,7 +281,7 @@ class DeviceResponseClose {
         let count = buf[byteIndex++];
         offset = byteIndex;
         byteIndex += count;
-        console.log(`offset: ${offset}, count: ${byteIndex-offset}`);
+        logger.trace(`offset: ${offset}, count: ${byteIndex-offset}`);
         this.version = [];
         for (let idx = 0; idx < count; idx++) {
             this.version[idx] = buf[offset+idx] & 0xFF;
@@ -291,7 +291,7 @@ class DeviceResponseClose {
 
         offset = byteIndex;
         while (buf[byteIndex++] !== 0) {}
-        console.log(`offset: ${offset}, count: ${byteIndex-offset}`);
+        logger.trace(`offset: ${offset}, count: ${byteIndex-offset}`);
 
         intElements = buf.slice(offset, byteIndex-1);
         this.preReleaseLabel = intElements.toString("utf8");
@@ -300,7 +300,7 @@ class DeviceResponseClose {
 
         offset = byteIndex;
         while (buf[byteIndex++] !== 0) {}
-        console.log(`offset: ${offset}, count: ${byteIndex-offset}`);
+        logger.trace(`offset: ${offset}, count: ${byteIndex-offset}`);
 
         intElements = buf.slice(offset, byteIndex-1);
         this.buildLabel = intElements.toString("utf8");
