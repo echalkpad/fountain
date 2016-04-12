@@ -53,33 +53,35 @@ board.on("string",function (remoteString) {
 board.on("blinking", function () {
   let dd = new RDD({'board': board, skipCapabilities: false});
 
-// Open the remote device drivers of interest
+// Open the remote device drivers and read version identifiers
 
   let unitNamesOfInterest = ["Meta:0","Hello:0","Foo:0"];
 
-  let openQueries = [];
+  let handleMap = {};
   for (let unit of unitNamesOfInterest) {
-    openQueries.push(dd.open(unit,1));
+    let openEvent = dd.open(unit,1);
+    logger.trace(`Response event to wait for: ${openEvent}`);
+    dd.once(openEvent, (response) => {
+      logger.trace(`${openEvent} handler invoked.`);
+      if (response.status >= 0) {
+        logger.debug(`Status value from open() is ${response.status}`);
+        let readEvent = dd.read(response.handle,rddCmd.CDR.DriverVersion,256);
+        dd.once(readEvent, (response) => {
+          logger.trace(`${readEvent} handler invoked.`);
+          if (response.status >= 0) {
+            logger.debug(`Status value from read() is ${response.status}`);
+            let sv = new rddCmd.SemVer(response.datablock);
+            logger.info(`Driver: ${sv.toString()}`);
+            handleMap[response.handle] = sv;
+          } else {
+            logger.error(`Error value from read() is ${response.status}`);
+          }});
+      } else {
+        logger.error(`Error value from open() is ${response.status}`);
+      }
+    });
   }
 
-  logger.debug("Main program device OPEN requests all issued.");
-
-  // Wait for the open() calls to complete, then read() the driver versions
-
-  let readQueries = [];
-  for (let openPromise of openQueries) {
-    openPromise.then((response) => {
-      logger.debug(`then: Status value from open() is ${response.status}`);
-      readQueries.push(dd.read(response.handle,rddCmd.CDR.DriverVersion,256)
-      .then((response) => {
-        logger.info(`Settled read promise value (fulfill): ${new rddCmd.SemVer(response.datablock).toString()}`);
-        return response;
-      },(response) => {
-        logger.error(`Settled read promise value (reject): ${response.status}`);
-        return response;
-      }))},(response) => {
-        logger.error(`catch: Error value from open() is ${response.status}`);
-      })
-  }
+  logger.debug("Main program device queries all issued.");
   logger.info("Main program starter processing completed.");
 });

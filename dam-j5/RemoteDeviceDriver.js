@@ -14,6 +14,7 @@ const rddCmd = require("./RDDCommand");
 const rddErr = require("./RDDStatus");
 
 let logger = log4js.getLogger("RDD ");
+log4js.setGlobalLogLevel(log4js.DEBUG);
 
 /**
  * Define the event handlers needed for the Firmata Remote Device Driver
@@ -109,21 +110,23 @@ class RemoteDeviceDriver extends EventEmitter {
 
     let eventName = this.responseEvents.get(rddCmd.ACTION.OPEN)+`-${unitName}`;
     logger.trace(`Response event to wait for: ${eventName}`);
-    let p = new Promise((fulfill, reject) => {
-      logger.trace("Promise initialization method is started for OPEN.");
-      this.once(eventName, (response) => {
-        logger.debug(`${eventName} handler invoked. status: ${response.status}, unitName: ${response.unitName}`);
-        if (response.status >= 0) {
-          fulfill(response);
-        } else {
-          reject(response);
-        }
-      });
-      logger.trace("Promise initialization method is complete.");
-    });
+    return eventName;
 
-    logger.trace("RemoteDeviceDriver open() finished.");
-    return p;
+    // let p = new Promise((fulfill, reject) => {
+    //   logger.trace("Promise initialization method is started for OPEN.");
+    //   this.once(eventName, (response) => {
+    //     logger.debug(`${eventName} handler invoked. status: ${response.status}, unitName: ${response.unitName}`);
+    //     if (response.status >= 0) {
+    //       fulfill(response);
+    //     } else {
+    //       reject(response);
+    //     }
+    //   });
+    //   logger.trace("Promise initialization method is complete.");
+    // });
+
+    // logger.trace("RemoteDeviceDriver open() finished.");
+    // return p;
   }
 
   //--------------------------------------------------------
@@ -145,20 +148,21 @@ class RemoteDeviceDriver extends EventEmitter {
 
     let eventName = this.responseEvents.get(rddCmd.ACTION.READ)+`-${handle}-${reg}`;
     logger.trace(`Response event to wait for: ${eventName}`);
-    let p = new Promise((fulfill, reject) => {
-      logger.trace("Promise initialization method is started for READ.");
-      this.once(eventName, (response) => {
-        logger.trace(`${eventName} handler invoked.`);
-        if (response.status >= 0) {
-          fulfill(response);
-        } else {
-          reject(response);
-        }
-      });
-      logger.trace("Promise initialization method is complete.");
-    })
-    logger.trace("RemoteDeviceDriver read() finished.");
-    return p;
+    return eventName;
+    // let p = new Promise((fulfill, reject) => {
+    //   logger.trace("Promise initialization method is started for READ.");
+    //   this.once(eventName, (response) => {
+    //     logger.trace(`${eventName} handler invoked.`);
+    //     if (response.status >= 0) {
+    //       fulfill(response);
+    //     } else {
+    //       reject(response);
+    //     }
+    //   });
+    //   logger.trace("Promise initialization method is complete.");
+    // })
+    // logger.trace("RemoteDeviceDriver read() finished.");
+    // return p;
   }
 
   //--------------------------------------------------------
