@@ -6,13 +6,14 @@
 // Doug Johnson, April 2016
 
 const five = require("johnny-five");
-const log4js = require("log4js");
 
 const RDD = require("./RemoteDeviceDriver");
 const rddErr = require("./RDDStatus");
 const rddCmd = require('./RDDCommand');
 
-let logger = log4js.getLogger("Main");
+const log4js = require("log4js");
+const logger = log4js.getLogger("Main");
+logger.setLevel('DEBUG');
 
 logger.info(`----Begin RemoteDeviceDriver exercise.`);
 
@@ -51,7 +52,7 @@ board.on("string",function (remoteString) {
 // Once the light is blinking, we're ready to really start work
 
 board.on("blinking", function () {
-  let dd = new RDD({'board': board, skipCapabilities: false});
+  let dd = new RDD.RemoteDeviceDriver({'board': board, skipCapabilities: false});
 
 // Open the remote device drivers and read version identifiers
 
@@ -83,5 +84,6 @@ board.on("blinking", function () {
   }
 
   logger.debug("Main program device queries all issued.");
-  logger.info("Main program starter processing completed.");
+  logger.info("Main program processing completed.");
 });
+

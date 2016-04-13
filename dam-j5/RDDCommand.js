@@ -1,5 +1,6 @@
 const log4js = require("log4js");
-let logger = log4js.getLogger("RDDCommand");
+const logger = log4js.getLogger("RDDCommand");
+logger.setLevel('DEBUG');
 
   /**
    * These Firmata Sysex command codes identify the DeviceDriver messages.

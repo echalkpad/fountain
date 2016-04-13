@@ -7,14 +7,13 @@
 // Doug Johnson, April 2016
 
 const log4js = require("log4js");
-const firmata = require("firmata");
 const EventEmitter = require("events");
 
 const rddCmd = require("./RDDCommand");
 const rddErr = require("./RDDStatus");
 
-let logger = log4js.getLogger("RDD ");
-log4js.setGlobalLogLevel(log4js.DEBUG);
+const logger = log4js.getLogger("RDD ");
+logger.setLevel('DEBUG');
 
 /**
  * Define the event handlers needed for the Firmata Remote Device Driver
@@ -94,162 +93,78 @@ class RemoteDeviceDriver extends EventEmitter {
   //--------------------------------------------------------
 
 /**
- * open() uses Promise handling to simplify staying coordinated with the
- * asynchronous return of responses to DEVICE_QUERY messsages.
+ * This open() method sends a DEVICE_QUERY message to the Arduino to request
+ * access to the named logical unit.  It returns the name of the event to listen
+ * for to its caller, which is then responsible for registering with the RDD
+ * object for notification when the DEVICE_RESPONSE message arrives.
  */
  open(unitName, flags) {
-    logger.trace("RemoteDeviceDriver open() started: ",unitName);
 
     // Send the OPEN message
 
     let message = new rddCmd.DeviceQueryOpen(unitName,flags);
     this.board.sysexCommand(message.toByteArray());
 
-    // Create a promise callback that will be fulfilled when our OPEN RESPONSE
-    // is received.
+    // Tell the caller which event will mark the arrival of a response.
 
     let eventName = this.responseEvents.get(rddCmd.ACTION.OPEN)+`-${unitName}`;
     logger.trace(`Response event to wait for: ${eventName}`);
     return eventName;
-
-    // let p = new Promise((fulfill, reject) => {
-    //   logger.trace("Promise initialization method is started for OPEN.");
-    //   this.once(eventName, (response) => {
-    //     logger.debug(`${eventName} handler invoked. status: ${response.status}, unitName: ${response.unitName}`);
-    //     if (response.status >= 0) {
-    //       fulfill(response);
-    //     } else {
-    //       reject(response);
-    //     }
-    //   });
-    //   logger.trace("Promise initialization method is complete.");
-    // });
-
-    // logger.trace("RemoteDeviceDriver open() finished.");
-    // return p;
   }
 
   //--------------------------------------------------------
 
 /**
- * read() uses Promise handling to simplify staying coordinated with the
- * asynchronous return of responses to DEVICE_QUERY messsages.
+ * This read() method sends a DEVICE_QUERY message to the Arduino to request
+ * a read from the device.  It returns the name of the event to listen
+ * for to its caller, which is then responsible for registering with the RDD
+ * object for notification when the DEVICE_RESPONSE message arrives.
  */
   read(handle, reg, count) {
-    logger.trace(`RemoteDeviceDriver read(${handle}, ${reg}, ${count}) started`);
-
-    // Send the READ message
 
     let message = new rddCmd.DeviceQueryRead(handle, reg, count);
     this.board.sysexCommand(message.toByteArray());
 
-    // Create a promise callback that will be fulfilled when our READ RESPONSE
-    // is received.
-
     let eventName = this.responseEvents.get(rddCmd.ACTION.READ)+`-${handle}-${reg}`;
     logger.trace(`Response event to wait for: ${eventName}`);
     return eventName;
-    // let p = new Promise((fulfill, reject) => {
-    //   logger.trace("Promise initialization method is started for READ.");
-    //   this.once(eventName, (response) => {
-    //     logger.trace(`${eventName} handler invoked.`);
-    //     if (response.status >= 0) {
-    //       fulfill(response);
-    //     } else {
-    //       reject(response);
-    //     }
-    //   });
-    //   logger.trace("Promise initialization method is complete.");
-    // })
-    // logger.trace("RemoteDeviceDriver read() finished.");
-    // return p;
   }
 
   //--------------------------------------------------------
 
 /**
- * write() uses Promise handling to simplify staying coordinated with the
- * asynchronous return of responses to DEVICE_QUERY messsages.
+ * This write() method sends a DEVICE_QUERY message to the Arduino to request
+ * a write to the device.  It returns the name of the event to listen
+ * for to its caller, which is then responsible for registering with the RDD
+ * object for notification when the DEVICE_RESPONSE message arrives.
  */
   write(handle, reg, count,buf) {
-    logger.info(`RemoteDeviceDriver write(${handle}, ${reg}, ${count}, ${buf}) started`);
-
-    // Send the Write message
 
     let message = new rddCmd.DeviceQueryWrite(handle, reg, count,buf);
     this.board.sysexCommand(message.toByteArray());
 
-    // Create a promise callback that will be fulfilled when our WRITE RESPONSE
-    // is received.
-
     let eventName = this.responseEvents.get(rddCmd.ACTION.WRITE)+`-${handle}-${reg}`;
     logger.trace(`Response event to wait for: ${eventName}`);
-    let p = new Promise((fulfill, reject) => {
-      logger.trace("Promise initialization method is started for WRITE.");
-      this.once(eventName, (response) => {
-        logger.trace(`${eventName} handler invoked.`);
-        if (response.status >= 0) {
-          fulfill(response);
-        } else {
-          reject(response);
-        }
-      });
-      logger.trace("Promise initialization method is complete.");
-    })
-  .then((response) => {
-      logger.trace(`then: Status value from write() is ${response.status}`);
-      return response;
-    })
-    .catch((response) => {
-      logger.trace(`catch: Error value from write() is ${response.status}`);
-      return status;
-    });
-    logger.trace("RemoteDeviceDriver write() finished.");
-    return p;
+    return eventName;
   }
 
   //--------------------------------------------------------
 
 /**
- * close() uses Promise handling to simplify staying coordinated with the
- * asynchronous return of responses to DEVICE_QUERY messsages.
+ * This close() method sends a DEVICE_QUERY message to the Arduino to release
+ * its claim to the open logical unit.  It returns the name of the event to listen
+ * for to its caller, which is then responsible for registering with the RDD
+ * object for notification when the DEVICE_RESPONSE message arrives.
  */
   close(handle) {
-    logger.trace(`RemoteDeviceDriver close(${handle}) started`);
-
-    // Send the Close message
 
     let message = new rddCmd.DeviceQueryClose(handle);
     this.board.sysexCommand(message.toByteArray());
 
-    // Create a promise callback that will be fulfilled when our CLOSE RESPONSE
-    // is received.
-
     let eventName = this.responseEvents.get(rddCmd.ACTION.CLOSE)+`-${handle}`;
     logger.trace(`Response event to wait for: ${eventName}`);
-    let p = new Promise((fulfill, reject) => {
-      logger.trace("Promise initialization method is started for CLOSE.");
-      this.once(eventName, (response) => {
-        logger.trace(`${eventName} handler invoked.`);
-        if (response.status >= 0) {
-          fulfill(response);
-        } else {
-          reject(response);
-        }
-      });
-      logger.trace("Promise initialization method is complete.");
-    })
-  .then((response) => {
-      logger.trace(`then: Status value from close() is ${response.status}`);
-      return response;
-    })
-    .catch((response) => {
-      logger.trace(`catch: Error value close write() is ${response.status}`);
-      return status;
-    });
-    logger.trace("RemoteDeviceDriver close() finished.");
-    return p;
+    return eventName;
   }
 }
 
-module.exports = RemoteDeviceDriver;
+module.exports = {RemoteDeviceDriver};

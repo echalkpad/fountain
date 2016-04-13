@@ -1,3 +1,6 @@
+const log4js = require("log4js");
+const logger = log4js.getLogger("RDDStatus");
+logger.setLevel('DEBUG');
 
   /**
    * Define the status indicators that can be returned by a remote device driver.
