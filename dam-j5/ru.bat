@@ -1,1 +1,0 @@
-node --harmony --use_strict x.js

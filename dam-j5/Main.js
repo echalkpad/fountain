@@ -27,10 +27,15 @@ const serialPortName = "COM42";
 
 const board = new five.Board({port: serialPortName, repl: false});
 
+// Strings from Firmata host to client are usually error messages
+
+board.on("string",function (remoteString) {
+  logger.warn(`[STRING_DATA] ${remoteString}`);
+});
+
 // When the board is ready, start blinking the LED and then trigger the rest of the program to run
 
 board.on("ready", function() {
-  board.info("Board object is ready.","hi!");
   logger.info(`Connected to ${board.io.firmware.name} -${board.io.firmware.version.major}.${board.io.firmware.version.minor}`);
   setInterval(function() {
     if (ledOn) {
@@ -43,16 +48,10 @@ board.on("ready", function() {
   board.emit("blinking");
 });
 
-// Strings from Firmata host to client are usually error messages
-
-board.on("string",function (remoteString) {
-  logger.warn(`[STRING_DATA] ${remoteString}`);
-});
-
 // Once the light is blinking, we're ready to really start work
 
 board.on("blinking", function () {
-  let dd = new RDD.RemoteDeviceDriver({'board': board, skipCapabilities: false});
+  const dd = new RDD.RemoteDeviceDriver({'board': board, skipCapabilities: false});
 
 // Open the remote device drivers and read version identifiers
 
