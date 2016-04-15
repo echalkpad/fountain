@@ -7,9 +7,9 @@
 
 const five = require("johnny-five");
 
-const RDD = require("./RemoteDeviceDriver");
-const rddErr = require("./RDDStatus");
-const rddCmd = require('./RDDCommand');
+const RDD = require("../lib/RemoteDeviceDriver");
+const rddErr = require("../lib/RDDStatus");
+const rddCmd = require('../lib/RDDCommand');
 
 const log4js = require("log4js");
 const logger = log4js.getLogger("Main");
@@ -36,7 +36,7 @@ board.on("string",function (remoteString) {
 // When the board is ready, start blinking the LED and then trigger the rest of the program to run
 
 board.on("ready", function() {
-  logger.info(`Connected to ${board.io.firmware.name} -${board.io.firmware.version.major}.${board.io.firmware.version.minor}`);
+  logger.info(`Connected to ${board.io.firmware.name}-${board.io.firmware.version.major}.${board.io.firmware.version.minor}`);
   setInterval(function() {
     if (ledOn) {
       board.digitalWrite(ledPin, board.HIGH);

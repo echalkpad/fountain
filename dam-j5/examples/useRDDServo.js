@@ -9,8 +9,8 @@ const log4js = require("log4js");
 const five = require("johnny-five");
 
 const RDD = require("../lib/RemoteDeviceDriver");
-const rddErr = require("../lib//RDDStatus");
-const rddCmd = require("../lib//RDDCommand");
+const rddErr = require("../lib/RDDStatus");
+const rddCmd = require("../lib/RDDCommand");
 
 const logger = log4js.getLogger("Main");
 const RDDServo = require("../lib/RDDServo");
@@ -34,7 +34,7 @@ board.on("string",function (remoteString) {
 // When the board is ready, start blinking the LED and then trigger the rest of the program to run
 
 board.on("ready", function() {
-  logger.info(`Connected to ${board.io.firmware.name} -${board.io.firmware.version.major}.${board.io.firmware.version.minor}`);
+  logger.info(`Connected to ${board.io.firmware.name}-${board.io.firmware.version.major}.${board.io.firmware.version.minor}`);
   setInterval(function() {
     if (ledOn) {
       board.digitalWrite(ledPin, board.HIGH);
@@ -50,6 +50,8 @@ board.on("ready", function() {
 
 board.on("blinking", function () {
   const sC = RDDServo.Controller;
+  logger.trace(`Controller type is ${typeof sC}.`);
+  logger.trace(`Controller property keys are ${Object.keys(sC)}.`);
 
   const servo = new five.Servo({
     controller: sC,
