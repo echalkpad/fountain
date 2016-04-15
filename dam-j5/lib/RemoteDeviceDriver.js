@@ -8,6 +8,7 @@
 
 const log4js = require("log4js");
 const EventEmitter = require("events");
+const five = require("johnny-five");
 
 const rddCmd = require("./RDDCommand");
 const rddErr = require("./RDDStatus");
@@ -24,12 +25,7 @@ class RemoteDeviceDriver extends EventEmitter {
   constructor(opts) {
     super(opts);
     logger.trace("RemoteDeviceDriver constructor",Object.keys(opts));
-    if ("board" in opts) {
-      this.board = opts.board;
-    } else {
-      throw new Error("A 'board' property must be specified in the RemoteDeviceDriver constructor options.");
-    }
-
+    this.board = opts.board;
     this.responseEvents = new Map();
     this.responseEvents.set(rddCmd.ACTION.OPEN, "DeviceResponseOpen");
     this.responseEvents.set(rddCmd.ACTION.READ, "DeviceResponseRead");
