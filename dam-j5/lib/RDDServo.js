@@ -20,21 +20,20 @@ let logger = log4js.getLogger("RDDServo");
 let Controller = {
   initialize: {
     value: function(opts) {
+      // let state = priv.get(this);
       this.openFlags = opts.flags || 1;
       this.board = opts.board || five.Board.mount();
       this.unit = opts.unit || "Servo:0";
       this.dd = new RDD.RemoteDeviceDriver({board: this.board, skipCapabilities: false});
-      let openEvent = this.dd.open(this.unit,this.openFlags);
-      logger.trace(`Open response event to wait for: ${openEvent}`);
-      this.dd.once(openEvent, (response) => {
-        logger.trace(`${openEvent} handler invoked.`);
+      this.handle = 0;
+      this.dd.open(this.unit,this.openFlags,(response) => {
+        logger.trace(`Callback openCB invoked.`);
+        logger.trace(`Property keys of 'this' are ${Object.keys(this)}.`);
         if (response.status >= 0) {
           logger.debug(`Status value from open() is ${response.status}`);
           this.handle = response.status;
-          let readEvent = this.dd.read(this.handle,rddCmd.CDR.DriverVersion,256);
-          logger.trace(`Read response event to wait for: ${readEvent}`);
-          this.dd.once(readEvent, (response) => {
-            logger.trace(`${readEvent} handler invoked.`);
+          this.dd.read(this.handle,rddCmd.CDR.DriverVersion,256,(response) => {
+            logger.trace(`readCB callback invoked.`);
             if (response.status >= 0) {
               logger.debug(`Status value from read() is ${response.status}`);
               let sv = new rddCmd.SemVer(response.datablock);

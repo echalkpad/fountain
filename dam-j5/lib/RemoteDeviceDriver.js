@@ -17,7 +17,7 @@ const logger = log4js.getLogger("RDD ");
 logger.setLevel('DEBUG');
 
 /**
- * Define the event handlers needed for the Firmata Remote Device Driver
+ * Define the methods needed for the Firmata Remote Device Driver
  * implementation in Javascript.
  */
 class RemoteDeviceDriver extends EventEmitter {
@@ -94,18 +94,28 @@ class RemoteDeviceDriver extends EventEmitter {
  * for to its caller, which is then responsible for registering with the RDD
  * object for notification when the DEVICE_RESPONSE message arrives.
  */
- open(unitName, flags) {
+  open(unitName, flags, callback) {
 
-    // Send the OPEN message
+    // Prepare to receive the open() response
+
+    let openEvent = this.responseEvents.get(rddCmd.ACTION.OPEN)+`-${unitName}`;
+    this.once(openEvent, (response) => {
+      logger.trace(`${openEvent} handler invoked.`);
+      if (response.status >= 0) {
+        logger.debug(`Status value from open() is ${response.status}`);
+        callback(response);
+      } else {
+        logger.error(`Error value from open() is ${response.status}`);
+        callback(response);
+      }
+    });
+
+    // Send the open() query message
 
     let message = new rddCmd.DeviceQueryOpen(unitName,flags);
     this.board.sysexCommand(message.toByteArray());
 
-    // Tell the caller which event will mark the arrival of a response.
-
-    let eventName = this.responseEvents.get(rddCmd.ACTION.OPEN)+`-${unitName}`;
-    logger.trace(`Response event to wait for: ${eventName}`);
-    return eventName;
+    return this;
   }
 
   //--------------------------------------------------------
@@ -116,14 +126,28 @@ class RemoteDeviceDriver extends EventEmitter {
  * for to its caller, which is then responsible for registering with the RDD
  * object for notification when the DEVICE_RESPONSE message arrives.
  */
-  read(handle, reg, count) {
+  read(handle, reg, count, callback) {
+
+    // Prepare to receive the read() response
+
+    let readEvent = this.responseEvents.get(rddCmd.ACTION.READ)+`-${handle}-${reg}`;
+    this.once(readEvent, (response) => {
+      logger.trace(`${readEvent} handler invoked.`);
+      if (response.status >= 0) {
+        logger.debug(`Status value from read() is ${response.status}`);
+        callback(response);
+      } else {
+        logger.error(`Error value from read() is ${response.status}`);
+        callback(response);
+      }
+    });
+
+    // Send the read() query message
 
     let message = new rddCmd.DeviceQueryRead(handle, reg, count);
     this.board.sysexCommand(message.toByteArray());
 
-    let eventName = this.responseEvents.get(rddCmd.ACTION.READ)+`-${handle}-${reg}`;
-    logger.trace(`Response event to wait for: ${eventName}`);
-    return eventName;
+    return this;
   }
 
   //--------------------------------------------------------
@@ -134,14 +158,28 @@ class RemoteDeviceDriver extends EventEmitter {
  * for to its caller, which is then responsible for registering with the RDD
  * object for notification when the DEVICE_RESPONSE message arrives.
  */
-  write(handle, reg, count,buf) {
+  write(handle, reg, count, buf, callback) {
+
+  // Prepare to receive the write() response
+
+    let writeEvent = this.responseEvents.get(rddCmd.ACTION.WRITE)+`-${handle}-${reg}`;
+    this.once(writeEvent, (response) => {
+      logger.trace(`${writeEvent} handler invoked.`);
+      if (response.status >= 0) {
+        logger.debug(`Status value from write() is ${response.status}`);
+        callback(response);
+      } else {
+        logger.error(`Error value from write() is ${response.status}`);
+        callback(response);
+      }
+    });
+
+  // Send the write() query
 
     let message = new rddCmd.DeviceQueryWrite(handle, reg, count,buf);
     this.board.sysexCommand(message.toByteArray());
 
-    let eventName = this.responseEvents.get(rddCmd.ACTION.WRITE)+`-${handle}-${reg}`;
-    logger.trace(`Response event to wait for: ${eventName}`);
-    return eventName;
+    return this;
   }
 
   //--------------------------------------------------------
@@ -152,14 +190,26 @@ class RemoteDeviceDriver extends EventEmitter {
  * for to its caller, which is then responsible for registering with the RDD
  * object for notification when the DEVICE_RESPONSE message arrives.
  */
-  close(handle) {
+  close(handle, callback) {
+
+    // Prepare to receive the close() response
+
+    let closeEvent = this.responseEvents.get(rddCmd.ACTION.CLOSE)+`-${handle}`;
+    this.once(closeEvent, (response) => {
+      logger.trace(`${closeEvent} handler invoked.`);
+      if (response.status >= 0) {
+        logger.debug(`Status value from close() is ${response.status}`);
+        callback(response);
+      } else {
+        logger.error(`Error value from close() is ${response.status}`);
+        callback(response);
+      }
+    });
 
     let message = new rddCmd.DeviceQueryClose(handle);
     this.board.sysexCommand(message.toByteArray());
 
-    let eventName = this.responseEvents.get(rddCmd.ACTION.CLOSE)+`-${handle}`;
-    logger.trace(`Response event to wait for: ${eventName}`);
-    return eventName;
+    return this;
   }
 }
 
