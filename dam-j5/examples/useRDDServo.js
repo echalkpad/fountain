@@ -13,7 +13,7 @@ const rddErr = require("../lib/RDDStatus");
 const rddCmd = require("../lib/RDDCommand");
 
 const logger = log4js.getLogger("Main");
-const RDDServo = require("../lib/RDDServo");
+const rddController = require("../lib/RDDServo").RDDServo;
 
 const ledPin = 13;
 let ledOn = true;
@@ -49,13 +49,14 @@ board.on("ready", function() {
 // Once the light is blinking, we're ready to really start work
 
 board.on("blinking", function () {
-  const sC = RDDServo.Controller;
-  logger.trace(`Controller type is ${typeof sC}.`);
-  logger.trace(`Controller property keys are ${Object.keys(sC)}.`);
+  logger.trace(`Controller type is ${typeof rddController}.`);
+  logger.trace(`Controller property keys are ${Object.keys(rddController)}.`);
 
   const servo = new five.Servo({
-    controller: sC,
-    unit: "Servo:0"
+    controller: rddController,
+    custom: {unit: "Servo:0",flags: 1},
+    pin: 3,
+    center: true
   });
 
   servo.sweep();
