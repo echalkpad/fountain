@@ -27,16 +27,17 @@ let RDDServo = {
       this.rdd = {};
 
       let reg = {
-        PIN: 0,
-        RANGE_MICROSECONDS: 1,
-        POSITION_DEGREES: 2,
-        POSITION_MICROSECONDS: 3
-      }
+        PIN: 256,
+        RANGE_MICROSECONDS: 257,
+        POSITION_DEGREES: 258,
+        POSITION_MICROSECONDS: 259
+      };
       this.rdd.reg = reg;
 
       this.rdd.openFlags = opts.custom.flags || 1;
       this.rdd.unit = opts.custom.unit || "Servo:0";
       this.rdd.board = opts.board || five.Board.mount();
+      logger.trace(`Mode check: isServo(${this.pin}) is ${this.board.pins.isServo(this.pin)}`);
 
       let dd =  new RDD.RemoteDeviceDriver({board: this.rdd.board, skipCapabilities: false});
       this.rdd.dd = dd;
@@ -55,10 +56,10 @@ let RDDServo = {
               this.rdd.sv = new rddCmd.SemVer(response.datablock);
               logger.info(`DeviceDriver '${this.rdd.sv.toString()}' is open on logical unit '${this.rdd.unit}' with handle ${this.rdd.handle}`);
               dd.write(this.rdd.handle,reg.PIN,2,[this.pin,0],(response) => {
-                logger.trace(`writeCB callback invoked after setting pin = ${this.pin}.`)
+                logger.trace(`writeCB callback invoked after setting pin = ${this.pin}.`);
                 if (response.status >= 0) {
                   logger.debug(`Status value from write() is ${response.status}`);
-                  logger.info(`${this.rdd.unit} (handle: ${this.rdd.handle}) is attached to the servo on pin ${this.pin}.`);
+                  logger.info(`Logical unit '${this.rdd.unit}' (handle ${this.rdd.handle}) is attached to pin ${this.pin}.`);
                 } else {
                   logger.error(`Error value from write() is ${response.status}`);
                 }
