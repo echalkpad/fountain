@@ -150,7 +150,7 @@ class DeviceResponseRead {
     }
 
     if (msgBody.length > MO.DATA) {
-        this.datablock = msgBody.slice(MO.DATA,msgBody.length);
+        this.datablock = Buffer.from(msgBody.slice(MO.DATA,msgBody.length));
     } else {
         this.datablock = null;
     }
@@ -170,7 +170,7 @@ class DeviceQueryWrite {
     this.handle = handle;
     this.register = reg;
     this.requestedByteCount = count;
-    this.datablock = buf;
+    this.datablock = Buffer.from(buf);
   }
 
   toByteArray() {
@@ -180,6 +180,7 @@ class DeviceQueryWrite {
     msgBody.writeInt16LE(this.register,MO.REGISTER);
     msgBody.writeUInt16LE(this.requestedByteCount, MO.REQUESTED_COUNT);
     msgBody.writeUInt16LE(0,MO.STATUS);
+    this.datablock.copy(msgBody,MO.DATA);
 
     let s = msgBody.toString("base64",0,MO.DATA+this.requestedByteCount);
     let encodedMsgBody = Uint8Array.from(s, x => x.charCodeAt(0));
