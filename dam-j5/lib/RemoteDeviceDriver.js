@@ -90,9 +90,12 @@ class RemoteDeviceDriver extends EventEmitter {
 
 /**
  * This open() method sends a DEVICE_QUERY message to the Arduino to request
- * access to the named logical unit.  It returns the name of the event to listen
- * for to its caller, which is then responsible for registering with the RDD
- * object for notification when the DEVICE_RESPONSE message arrives.
+ * access to the named logical unit.
+ *
+ * @param  {[type]}   unitName [description]
+ * @param  {[type]}   flags    [description]
+ * @param  {Function} callback [description]
+ * @return {[type]}            [description]
  */
   open(unitName, flags, callback) {
 
@@ -122,9 +125,13 @@ class RemoteDeviceDriver extends EventEmitter {
 
 /**
  * This read() method sends a DEVICE_QUERY message to the Arduino to request
- * a read from the device.  It returns the name of the event to listen
- * for to its caller, which is then responsible for registering with the RDD
- * object for notification when the DEVICE_RESPONSE message arrives.
+ * a read from the device.
+ *
+ * @param  {[type]}   handle   [description]
+ * @param  {[type]}   reg      [description]
+ * @param  {[type]}   count    [description]
+ * @param  {Function} callback [description]
+ * @return {[type]}            [description]
  */
   read(handle, reg, count, callback) {
 
@@ -154,9 +161,14 @@ class RemoteDeviceDriver extends EventEmitter {
 
 /**
  * This write() method sends a DEVICE_QUERY message to the Arduino to request
- * a write to the device.  It returns the name of the event to listen
- * for to its caller, which is then responsible for registering with the RDD
- * object for notification when the DEVICE_RESPONSE message arrives.
+ * a write to the device.
+ *
+ * @param  {[type]}   handle   [description]
+ * @param  {[type]}   reg      [description]
+ * @param  {[type]}   count    [description]
+ * @param  {[type]}   buf      [description]
+ * @param  {Function} callback [description]
+ * @return {[type]}            [description]
  */
   write(handle, reg, count, buf, callback) {
 
@@ -186,9 +198,11 @@ class RemoteDeviceDriver extends EventEmitter {
 
 /**
  * This close() method sends a DEVICE_QUERY message to the Arduino to release
- * its claim to the open logical unit.  It returns the name of the event to listen
- * for to its caller, which is then responsible for registering with the RDD
- * object for notification when the DEVICE_RESPONSE message arrives.
+ * its claim to the open logical unit.
+ *
+ * @param  {[type]}   handle   [description]
+ * @param  {Function} callback [description]
+ * @return {[type]}            [description]
  */
   close(handle, callback) {
 
