@@ -22,7 +22,9 @@ logger.setLevel('DEBUG');
 
     /**
      * These register names and codes indicate the specific item of interest
-     * during DeviceDriver reads and writes.
+     * during DeviceDriver reads and writes.  CDR code values are expected
+     * to fall within -1..-255 in order to avoid conflict with device specific
+     * registers which use the values >= 0 and <= -256.
      */
     let CDR = {
         'DriverVersion' : -2,
