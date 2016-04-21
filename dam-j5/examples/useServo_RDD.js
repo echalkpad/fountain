@@ -7,16 +7,16 @@
 
 const log4js = require("log4js");
 const five = require("johnny-five");
+const fn = require("../node_modules/johnny-five/lib/fn");
 
 const RDD = require("../lib/RemoteDeviceDriver");
 const rddErr = require("../lib/RDDStatus");
 const rddCmd = require("../lib/RDDCommand");
 
-const logger = log4js.getLogger("Main");
-const rddController = require("../lib/RDDServo").RDDServo;
+const logger = log4js.getLogger("useRDDServo");
+logger.setLevel('INFO');
 
-const ledPin = 13;
-let ledOn = true;
+const servoController = require("../lib/servo/ServoRDD").ServoRDD;
 
 // Create and initialize a board object
 
@@ -35,29 +35,35 @@ board.on("string",function (remoteString) {
 
 board.on("ready", function() {
   logger.info(`Connected to ${board.io.firmware.name}-${board.io.firmware.version.major}.${board.io.firmware.version.minor}`);
-  setInterval(function() {
-    if (ledOn) {
-      board.digitalWrite(ledPin, board.HIGH);
-    } else {
-      board.digitalWrite(ledPin, board.LOW);
-    }
-    ledOn = !ledOn;
-  }, 500);
+  const led = new five.Led(13);
+  led.blink(500);
   board.emit("blinking");
 });
 
 // Once the light is blinking, we're ready to really start work
 
 board.on("blinking", function () {
-  logger.trace(`Controller type is ${typeof rddController}.`);
-  logger.trace(`Controller property keys are ${Object.keys(rddController)}.`);
+  logger.trace(`Controller property keys are ${Object.keys(servoController)}.`);
 
   const servo = new five.Servo({
-    controller: rddController,
+    controller: servoController,
     custom: {unit: "Servo:0",flags: 1},
     pin: 3,
     center: true
   });
 
-  servo.sweep();
+  const pot = [];
+  for (let aPin of ["A6","A7","A8","A9"]) {
+      const dial = new five.Sensor({
+        pin: aPin,
+        freq: 50
+      });
+      pot.push(dial);
+  }
+
+  pot[0].on("data",() => {
+    let newPosition = fn.fmap(pot[0].raw,0,1023,0,180);
+    logger.debug(`New position is ${newPosition} degrees.`);
+    servo.to(newPosition);
+  });
 });

@@ -1,5 +1,5 @@
 // This module defines a Johnny-Five Controller object for use with the
-// J-5 Servo Component and a DDServo device driver on an Arduino.
+// J-5 Sensor Component and a DDSensor device driver on an Arduino.
 //
 // This program is strict-mode throughout.
 //
@@ -12,32 +12,33 @@ const RDD = require("../lib/RemoteDeviceDriver");
 const rddErr = require("../lib/RDDStatus");
 const rddCmd = require("../lib/RDDCommand");
 
-let logger = log4js.getLogger("RDDServo");
+let logger = log4js.getLogger("RDDSensor");
 
 /**
- * Create an RDDServo Controller object for use with a Servo Component.
+ * Create an RDDSensor Controller object for use with a Sensor Component.
  */
-let RDDServo = {
+let RDDSensor = {
 
   initialize: {
     value: function(opts) {
       // Can an externally defined Controller get at the private state Map?
-      // let state = five.Servo.priv.get(this);
-      // I'll use a single property 'rdd' instead ...
+      // let state = five.Sensor.priv.get(this);
+      // For the time being, I'll use a single property 'rdd' instead ...
+
       this.rdd = {};
 
+      // Define register numbers specific to this device.  See also the Common
+      // Device Registers (CDR) defined in RDDCommands.js.
+
       let reg = {
-        PIN: 256,
-        RANGE_MICROSECONDS: 257,
-        POSITION_DEGREES: 258,
-        POSITION_MICROSECONDS: 259
+        PIN: 256
       };
       this.rdd.reg = reg;
 
       this.rdd.openFlags = opts.custom.flags || 1;
-      this.rdd.unit = opts.custom.unit || "Servo:0";
+      this.rdd.unit = opts.custom.unit || "Chan:0";
       this.rdd.board = opts.board || five.Board.mount();
-      logger.trace(`Mode check: isServo(${this.pin}) is ${this.board.pins.isServo(this.pin)}`);
+      logger.trace(`Mode check: isAnalog(${this.pin}) is ${this.board.pins.isAnalog(this.pin)}`);
 
       let dd =  new RDD.RemoteDeviceDriver({board: this.rdd.board, skipCapabilities: false});
       this.rdd.dd = dd;
@@ -75,18 +76,19 @@ let RDDServo = {
     }
   },
 
-  servoWrite: {
-    value: function(pin, degrees) {
-      // // Servo is restricted to integers
-      // degrees |= 0;
+  doAnalogRead: {
+    value: function() {
+      let result = analogRead(this.pin);
+      return result;
+    }
+  },
 
-      // // If same degrees return immediately.
-      // if (this.last && this.last.degrees === degrees) {
-      //   return this;
-      // }
-      // this.io.servoWrite(this.pin, degrees);
+  doDigitalRead: {
+    value: function() {
+      let result = digitalRead(this.pin);
+      return result;
     }
   }
 };
 
-module.exports = {RDDServo};
+module.exports = {RDDSensor};

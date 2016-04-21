@@ -1,1 +1,1 @@
-ru=node --harmony --use_strict useRDDServo.js
+ru=node --harmony --use_strict useServoRDD.js
