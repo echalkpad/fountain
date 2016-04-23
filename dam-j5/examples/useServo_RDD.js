@@ -5,6 +5,7 @@
 //
 // Doug Johnson, April 2016
 
+const path = require("path");
 const log4js = require("log4js");
 const five = require("johnny-five");
 const fn = require("../node_modules/johnny-five/lib/fn");
@@ -16,7 +17,7 @@ const rddCmd = require("../lib/RDDCommand");
 const logger = log4js.getLogger("useRDDServo");
 logger.setLevel('INFO');
 
-const servoController = require("../lib/servo/ServoRDD").ServoRDD;
+const componentController = require("../lib/servo/ServoRDD").ServoRDD;
 
 // Create and initialize a board object
 
@@ -43,10 +44,10 @@ board.on("ready", function() {
 // Once the light is blinking, we're ready to really start work
 
 board.on("blinking", function () {
-  logger.trace(`Controller property keys are ${Object.keys(servoController)}.`);
+  logger.trace(`Controller property keys are ${Object.keys(componentController)}.`);
 
   const servo = new five.Servo({
-    controller: servoController,
+    controller: componentController,
     custom: {unit: "Servo:0",flags: 1},
     pin: 3,
     center: true
