@@ -6,14 +6,16 @@
 //
 // Doug Johnson, April 2016
 
-const log4js = require("/users/finson/repos/log4js-node/lib/log4js");
-const five = require("/users/finson/repos/johnny-five/lib/johnny-five");
+const log4js = require("log4js");
+const five = require("johnny-five");
 
 const RDD = require("../RemoteDeviceDriver");
 const rddErr = require("../RDDStatus");
 const rddCmd = require("../RDDCommand");
 
-let logger = log4js.getLogger("MCP9808_RDD");
+const path = require("path");
+const thisModule = path.basename(module.filename);
+const logger = log4js.getLogger(thisModule);
 
 /**
  * Create an MCP9808_RDD Controller object for use with a Thermometer Component.
@@ -27,7 +29,8 @@ let logger = log4js.getLogger("MCP9808_RDD");
  */
 let MCP9808_RDD = {
 
-  function* initCallback(response) {
+  initCallback: {
+    value: function* (response) {
 
     // 0. Open response, read version query
 
@@ -41,7 +44,7 @@ let MCP9808_RDD = {
       logger.debug(`Status value from open() is ${response.status}`);
       this.rdd.handle = response.status;
       dd.read(this.rdd.handle,rddCmd.CDR.DriverVersion,256,initCallback);
-      yield;
+      yield undefined;
     }
 
     // 1. Read version response, write pin query
@@ -54,7 +57,7 @@ let MCP9808_RDD = {
       this.rdd.sv = new rddCmd.SemVer(response.datablock);
       logger.info(`DeviceDriver '${this.rdd.sv.toString()}' is open on logical unit '${this.rdd.unit}' with handle ${this.rdd.handle}`);
       dd.write(this.rdd.handle,reg.PIN,2,[this.pin,0],initCallback);
-      yield;
+      yield undefined;
     }
 
     // 2.  Write pin response
@@ -65,8 +68,9 @@ let MCP9808_RDD = {
     } else {
       logger.debug(`Status value from write() is ${response.status}`);
       logger.info(`Logical unit '${this.rdd.unit}' (handle ${this.rdd.handle}) is attached to pin ${this.pin}.`);
-      yield;
-  }
+      yield undefined;
+    }
+  }},
 
   initialize: {
     value: function(opts, dataHandler) {

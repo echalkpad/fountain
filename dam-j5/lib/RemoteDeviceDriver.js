@@ -14,7 +14,7 @@ const rddCmd = require("./RDDCommand");
 const rddErr = require("./RDDStatus");
 
 const logger = log4js.getLogger("RDD ");
-logger.setLevel('DEBUG');
+logger.setLevel('TRACE');
 
 /**
  * Define the methods needed for the Firmata Remote Device Driver
