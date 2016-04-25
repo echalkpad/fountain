@@ -7,18 +7,18 @@
 
 const path = require("path");
 const log4js = require("log4js");
-const five = require("./node_modules/johnny-five");
-const fn = require("./node_modules/johnny-five/lib/fn");
+const five = require("johnny-five");
+const fn = require("../node_modules/johnny-five/lib/fn");
 
-const RDD = require("../lib/RemoteDeviceDriver");
-const rddErr = require("../lib/RDDStatus");
-const rddCmd = require("../lib/RDDCommand");
+const RDD = require("../RemoteDeviceDriver");
+const rddErr = require("../RDDStatus");
+const rddCmd = require("../RDDCommand");
 
 const thisModule = path.basename(module.filename);
 const logger = log4js.getLogger(thisModule);
 logger.setLevel('TRACE');
 
-const componentController = require("../lib/thermometer/xMCP9808_RDD").MCP9808_RDD;
+const componentController = require("../thermometer/xMCP9808_RDD").MCP9808_RDD;
 
 // Create and initialize a board object
 
