@@ -73,7 +73,7 @@ let MCP9808_RDD = {
   }},
 
   initialize: {
-    value: function(opts, dataHandler) {
+    value: function(opts) {
 
       // Can an externally defined Controller get at the state Map
       // defined in the associated Component?
@@ -96,7 +96,7 @@ let MCP9808_RDD = {
       this.rdd.reg = reg;
 
       this.rdd.openFlags = opts.custom.flags || 1;
-      this.rdd.unit = opts.custom.unit || "TempSensor:0";
+      this.rdd.unit = opts.custom.unit || "MCP9808:0";
       this.rdd.board = opts.board || five.Board.mount();
 
       let dd =  new RDD.RemoteDeviceDriver({board: this.rdd.board, skipCapabilities: false});
