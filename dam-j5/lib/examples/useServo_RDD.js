@@ -28,6 +28,8 @@ const serialPortName = "COM44";
 const board = new five.Board({port: serialPortName, repl: false});
 const componentController = require("../servo/Servo_RDD").Servo_RDD;
 
+logger.trace(`board.id: ${board.id}`);
+
 // Strings from Firmata host to client are usually error messages
 
 board.on("string",function (remoteString) {
@@ -38,7 +40,7 @@ board.on("string",function (remoteString) {
 
 board.on("ready", function() {
   logger.debug(`Evt: ready.`);
-  logger.trace(`Connected to ${board.io.firmware.name}-${board.io.firmware.version.major}.${board.io.firmware.version.minor}`);
+  logger.info(`Connected to ${board.io.firmware.name}-${board.io.firmware.version.major}.${board.io.firmware.version.minor}`);
   const led = new five.Led(13);
   led.blink(500);
   board.emit("blinking");
@@ -48,17 +50,14 @@ board.on("ready", function() {
 
 board.on("blinking", function () {
   logger.debug(`Evt: blinking.`);
-  logger.trace(`board.io keys: ${Object.keys(board.io)}`);
-  logger.trace(`componentController keys: ${Object.keys(componentController)}`);
 
   const servo = new five.Servo({
     controller: componentController,
     custom: {unit: "Servo:0",flags: 1},
     pin: 3,
-    center: true
+    center: false
   });
 
-  logger.trace(`servo keys: ${Object.keys(servo)}`);
 
   const pot = [];
   for (let aPin of ["A6","A7","A8","A9"]) {
@@ -69,9 +68,15 @@ board.on("blinking", function () {
       pot.push(dial);
   }
 
-  pot[0].on("data",() => {
-    let newPosition = fn.fmap(pot[0].raw,0,1023,0,180);
-    logger.debug(`New position is ${newPosition} degrees.`);
-    servo.to(newPosition);
+  pot[0].on("change",() => {
+    let newPosition = fn.fmap(pot[0].raw,0,1023,0,180) | 0;
+    if (newPosition !== servo.position) {
+      logger.debug(`New position is ${newPosition} degrees.`);
+      servo.to(newPosition);
+    }
+  });
+
+  board.on("servo_initialized",() => {
+      servo.center();
   });
 });

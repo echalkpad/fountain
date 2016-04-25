@@ -44,15 +44,12 @@ let Servo_RDD = {
       this.rdd.board = opts.board || five.Board.mount();
 
       logger.trace(`Mode check: isServo(${this.pin}) is ${this.board.pins.isServo(this.pin)}`);
-      logger.trace(`this.rdd.board: ${Object.keys(this.rdd.board)}`);
 
       let dd =  new RDD.RemoteDeviceDriver({board: this.rdd.board, skipCapabilities: false});
       this.rdd.dd = dd;
       this.rdd.handle = 0;
       dd.open(this.rdd.unit,this.rdd.openFlags,(response) => {
         logger.trace(`Callback openCB invoked.`);
-        logger.trace(`Property keys of 'this' are ${Object.keys(this)}.`);
-        logger.trace(`Property keys of 'this.rdd' are ${Object.keys(this.rdd)}.`);
         if (response.status >= 0) {
           logger.debug(`Status value from open() is ${response.status}`);
           this.rdd.handle = response.status;
@@ -67,6 +64,7 @@ let Servo_RDD = {
                 if (response.status >= 0) {
                   logger.debug(`Status value from write() is ${response.status}`);
                   logger.info(`Logical unit '${this.rdd.unit}' (handle ${this.rdd.handle}) is attached to pin ${this.pin}.`);
+                  this.rdd.board.emit("servo_initialized");
                 } else {
                   logger.error(`Error value from write() is ${response.status}`);
                 }

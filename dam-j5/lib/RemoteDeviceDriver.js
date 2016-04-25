@@ -16,7 +16,7 @@ const rddErr = require("./RDDStatus");
 const path = require("path");
 const thisModule = path.basename(module.filename,".js");
 const logger = log4js.getLogger(thisModule);
-logger.setLevel('TRACE');
+logger.setLevel('DEBUG');
 
 /**
  * Define the methods needed for the Firmata Remote Device Driver
@@ -39,10 +39,6 @@ class RemoteDeviceDriver extends EventEmitter {
     // Tell Firmata that we will handle all DEVICE_RESPONSE messages that arrive.
     // The message is decoded as much as needed to derive a signature event which
     // is then emitted for further processing.
-
-    logger.trace(`this: ${Object.keys(this)}`);
-    logger.trace(`this.board: ${Object.keys(this.board)}`);
-    logger.trace(`this.board.io: ${Object.keys(this.board.io)}`);
 
     this.board.sysexResponse(rddCmd.SYSEX.DEVICE_RESPONSE, (encodedMsgBody) => {
       logger.debug("sysexDeviceResponseHandler invoked");
@@ -183,6 +179,7 @@ class RemoteDeviceDriver extends EventEmitter {
   // Prepare to receive the write() response
 
     let writeEvent = this.responseEvents.get(rddCmd.ACTION.WRITE)+`-${handle}-${reg}`;
+    logger.trace(`Response event to listen for: ${writeEvent}`);
     this.once(writeEvent, (response) => {
       logger.trace(`${writeEvent} handler invoked.`);
       if (response.status >= 0) {
