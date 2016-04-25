@@ -1,6 +1,7 @@
 // This module defines a Johnny-Five Controller object for use with the
 // J-5 Servo Component and a DDServo device driver on an Arduino.
 //
+//
 // This program is strict-mode throughout.
 //
 // Doug Johnson, April 2016
@@ -12,7 +13,10 @@ const RDD = require("../RemoteDeviceDriver");
 const rddErr = require("../RDDStatus");
 const rddCmd = require("../RDDCommand");
 
-let logger = log4js.getLogger("Servo_RDD");
+const path = require("path");
+const thisModule = path.basename(module.filename,".js");
+const logger = log4js.getLogger(thisModule);
+logger.setLevel('TRACE');
 
 /**
  * Create a Servo_RDD Controller object for use with a Servo Component.
@@ -38,7 +42,9 @@ let Servo_RDD = {
       this.rdd.openFlags = opts.custom.flags || 1;
       this.rdd.unit = opts.custom.unit || "Servo:0";
       this.rdd.board = opts.board || five.Board.mount();
+
       logger.trace(`Mode check: isServo(${this.pin}) is ${this.board.pins.isServo(this.pin)}`);
+      logger.trace(`this.rdd.board: ${Object.keys(this.rdd.board)}`);
 
       let dd =  new RDD.RemoteDeviceDriver({board: this.rdd.board, skipCapabilities: false});
       this.rdd.dd = dd;

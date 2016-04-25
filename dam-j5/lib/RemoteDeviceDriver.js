@@ -1,5 +1,5 @@
 // This module provides a Johnny-Five accessible interface to DeviceDrivers
-// running on a remote Arduino host.  The transport protocol is StandardFirmata
+// running on a remote Arduino host.  The transport protocol is ConfigurableFirmata
 // with the addition of DEVICE_QUERY and DEVICE_RESPONSE.
 //
 // This module is strict-mode throughout, and it uses some ES6 features.
@@ -7,13 +7,15 @@
 // Doug Johnson, April 2016
 
 const log4js = require("log4js");
-const EventEmitter = require("events");
 const five = require("johnny-five");
 
+const EventEmitter = require("events");
 const rddCmd = require("./RDDCommand");
 const rddErr = require("./RDDStatus");
 
-const logger = log4js.getLogger("RDD ");
+const path = require("path");
+const thisModule = path.basename(module.filename,".js");
+const logger = log4js.getLogger(thisModule);
 logger.setLevel('TRACE');
 
 /**
@@ -24,8 +26,10 @@ class RemoteDeviceDriver extends EventEmitter {
 
   constructor(opts) {
     super(opts);
-    logger.trace("RemoteDeviceDriver constructor",Object.keys(opts));
     this.board = opts.board;
+
+    // Set up mapping from response messages to response event types
+
     this.responseEvents = new Map();
     this.responseEvents.set(rddCmd.ACTION.OPEN, "DeviceResponseOpen");
     this.responseEvents.set(rddCmd.ACTION.READ, "DeviceResponseRead");
@@ -35,6 +39,10 @@ class RemoteDeviceDriver extends EventEmitter {
     // Tell Firmata that we will handle all DEVICE_RESPONSE messages that arrive.
     // The message is decoded as much as needed to derive a signature event which
     // is then emitted for further processing.
+
+    logger.trace(`this: ${Object.keys(this)}`);
+    logger.trace(`this.board: ${Object.keys(this.board)}`);
+    logger.trace(`this.board.io: ${Object.keys(this.board.io)}`);
 
     this.board.sysexResponse(rddCmd.SYSEX.DEVICE_RESPONSE, (encodedMsgBody) => {
       logger.debug("sysexDeviceResponseHandler invoked");
