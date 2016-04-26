@@ -14,8 +14,9 @@ const rddErr = require("../RDDStatus");
 const rddCmd = require("../RDDCommand");
 
 const path = require("path");
-const thisModule = path.basename(module.filename);
+const thisModule = path.basename(module.filename,".js");
 const logger = log4js.getLogger(thisModule);
+logger.setLevel('TRACE');
 
 /**
  * Create an MCP9808_RDD Controller object for use with a Thermometer Component.
@@ -24,53 +25,8 @@ const logger = log4js.getLogger(thisModule);
  * @param custom.flags flags for device open.  default ForceOpen
  * @param freq Update period in milliseconds.  default : 25
  * @param board the Board object to use.  default five.Board.mount()
- * @param address I2E device address.  default 0x18
- * @param
  */
 let MCP9808_RDD = {
-
-  initCallback: {
-    value: function* (response) {
-
-    // 0. Open response, read version query
-
-    let step = 0;
-    logger.trace(`Function initCallback invoked. (Step ${step}, open())`);
-    logger.trace(`Property keys of 'this' are ${Object.keys(this)}.`);
-    logger.trace(`Property keys of 'this.rdd' are ${Object.keys(this.rdd)}.`);
-    if (response.status < 0) {
-      throw new Error(`Open error during init (${step}): ${response.status}.`);
-    } else {
-      logger.debug(`Status value from open() is ${response.status}`);
-      this.rdd.handle = response.status;
-      dd.read(this.rdd.handle,rddCmd.CDR.DriverVersion,256,initCallback);
-      yield undefined;
-    }
-
-    // 1. Read version response, write pin query
-
-    logger.trace(`Function initCallback invoked. (Step ${++step}, read())`);
-    if (response.status < 0) {
-      throw new Error(`Read error during init (${step}): ${response.status}.`);
-    } else {
-      logger.debug(`Status value from read() is ${response.status}`);
-      this.rdd.sv = new rddCmd.SemVer(response.datablock);
-      logger.info(`DeviceDriver '${this.rdd.sv.toString()}' is open on logical unit '${this.rdd.unit}' with handle ${this.rdd.handle}`);
-      dd.write(this.rdd.handle,reg.PIN,2,[this.pin,0],initCallback);
-      yield undefined;
-    }
-
-    // 2.  Write pin response
-
-    logger.trace(`Function initCallback invoked. (Step ${++step}, write())`);
-    if (response.status < 0) {
-      throw new Error(`Write error during init (${step}): ${response.status}.`);
-    } else {
-      logger.debug(`Status value from write() is ${response.status}`);
-      logger.info(`Logical unit '${this.rdd.unit}' (handle ${this.rdd.handle}) is attached to pin ${this.pin}.`);
-      yield undefined;
-    }
-  }},
 
   initialize: {
     value: function(opts) {
@@ -78,10 +34,11 @@ let MCP9808_RDD = {
       // Can an externally defined Controller get at the state Map
       // defined in the associated Component?
       // let state = five.Servo.priv.get(this);
-      // I'll use a single property 'rdd' instead ...
-      this.rdd = {};
+      // I'll use a single property 'rdd' and a closure instead ...
 
-      let reg = {
+      const rdd = {};
+
+      const reg = {
         RESERVED: 0,
         CONFIG: 1,
         UPPER_TEMP: 2,
@@ -93,16 +50,47 @@ let MCP9808_RDD = {
         RESOLUTION: 8
       };
 
-      this.rdd.reg = reg;
+      rdd.reg = reg;
+      rdd.openFlags = opts.custom.flags || 1;
+      rdd.unit = opts.custom.unit || "MCP9808:0";
+      rdd.board = opts.board || five.Board.mount();
 
-      this.rdd.openFlags = opts.custom.flags || 1;
-      this.rdd.unit = opts.custom.unit || "MCP9808:0";
-      this.rdd.board = opts.board || five.Board.mount();
+      rdd.hook = [
 
-      let dd =  new RDD.RemoteDeviceDriver({board: this.rdd.board, skipCapabilities: false});
-      this.rdd.dd = dd;
-      this.rdd.handle = 0;
-      dd.open(this.rdd.unit,this.rdd.openFlags,initCallback);
+      // 0. Open response, read version query
+
+      function (response) {
+          logger.trace(`Response hook invoked. (Step 0, open())`);
+          if (response.status < 0) {
+            throw new Error(`Open error during init (0): ${response.status}.`);
+          } else {
+            logger.debug(`Status value from open() is ${response.status}`);
+            rdd.handle = response.status;
+            dd.read(rdd.handle,rddCmd.CDR.DriverVersion,256,rdd.hook[1]);
+            return;
+          }
+        },
+
+        // 1. Read version response,
+        // TODO [set interval, start auto read, ...]
+
+      function (response) {
+          logger.trace(`Response hook invoked. (Step 1, read())`);
+          if (response.status < 0) {
+            throw new Error(`Read error during init (1): ${response.status}.`);
+          } else {
+            logger.debug(`Status value from read() is ${response.status}`);
+            rdd.sv = new rddCmd.SemVer(response.datablock);
+            logger.info(`DeviceDriver '${rdd.sv.toString()}' is open on logical unit '${rdd.unit}' with handle ${rdd.handle}`);
+            return;
+          }
+        }
+      ];
+
+      let dd =  new RDD.RemoteDeviceDriver({board: rdd.board, skipCapabilities: false});
+      rdd.dd = dd;
+      rdd.handle = 0;
+      dd.open(rdd.unit,rdd.openFlags,rdd.hook[0]);
     }
   },
   toCelsius: {
