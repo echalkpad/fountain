@@ -21,14 +21,35 @@ logger.setLevel('DEBUG');
     };
 
     /**
+     * The Device Action Flags enable various extensions to the meanings of
+     * the action codes.
+     */
+    let DAF = {
+      'NONE'       : 0x0,
+      'FORCE'      : 0x1,
+      'MILLI_RUN'  : 0xC,
+      'MILLI_STOP' : 0xD,
+      'MICRO_RUN'  : 0xE,
+      'MICRO_STOP' : 0xF
+    };
+
+    /**
      * These register names and codes indicate the specific item of interest
      * during DeviceDriver reads and writes.  CDR code values are expected
      * to fall within -1..-255 in order to avoid conflict with device specific
-     * registers which use the values >= 0 and <= -256.
+     * registers which use the values >= 0.
      */
     let CDR = {
-        'DriverVersion' : -2,
-        'Intervals' : -6
+      'Reset'           : -1,   /* Reset all state in the device driver for the specified unit number */
+      'DriverVersion'   : -2,   /* Get driver name and version */
+      'LibraryVersion'  : -3,   /* Get library name and version */
+      'UnitNamePrefix'  : -4,   /* Get/set the name with which the units of this device are opened */
+      'Configure'       : -5,   /* Get/set configuration of a logical unit number instance */
+      'Intervals'       : -6,   /* Get/set current timer intervals for this device */
+      'Stream'          : -7,   /* Read or write bytes using the "primary" data stream source or sink */
+      'Manufacturer'    : -8,   /* Get the manufacturer id associated with the device (PCiSIG, ?, ?) */
+      'DeviceID'        : -9,   /* Unique ID for the component attached to the open unit number */
+      'Debug'           : -255  /* Do something helpful for debugging ... */
     };
 
   /**
@@ -37,7 +58,7 @@ logger.setLevel('DEBUG');
    */
   let MO = {
     ACTION : 0,
-    FLAGS : 1,
+    OPTIONS : 1,
     HANDLE : 1,
     REGISTER : 3,
     REQUESTED_COUNT : 5,
@@ -53,9 +74,10 @@ logger.setLevel('DEBUG');
  */
 class DeviceQueryOpen {
 
-  constructor(unitName,flags) {
+  constructor(unitName, flags, options) {
     this.action = ACTION.OPEN;
     this.flags = flags;
+    this.options = options;
     this.register = 0;
     this.requestedByteCount = 0;
     this.unitName = unitName;
@@ -63,8 +85,8 @@ class DeviceQueryOpen {
 
   toByteArray() {
     let msgBody = new Buffer(256);
-    msgBody.writeUInt8(this.action,MO.ACTION);
-    msgBody.writeUInt16LE(this.flags,MO.FLAGS);
+    msgBody.writeUInt8(((this.flags & 0xF)<<4) | (this.action & 0xF),MO.ACTION);
+    msgBody.writeUInt16LE(this.options,MO.OPTIONS);
     msgBody.writeInt16LE(0,MO.REGISTER);
     msgBody.writeUInt16LE(0, MO.REQUESTED_COUNT);
     msgBody.writeUInt16LE(0,MO.STATUS);
@@ -81,13 +103,14 @@ class DeviceQueryOpen {
 
 /**
  * This class represents a Firmata Device Response Open message received from
- * a remote device driver after a call to open(unitName,flags).
+ * a remote device driver after a call to open(unitName,flags,options).
  */
 class DeviceResponseOpen {
 
   constructor(msgBody) {
-    this.action = msgBody.readUInt8(MO.ACTION);
-    this.flags = msgBody.readUInt16LE(MO.FLAGS);
+    this.action = msgBody.readUInt8(MO.ACTION) & 0xF;
+    this.flags = (msgBody.readUInt8(MO.ACTION) & 0xF0) >> 4;
+    this.options = msgBody.readUInt16LE(MO.OPTIONS);
     this.register = msgBody.readUInt16LE(MO.REGISTER);
     this.requestedByteCount = msgBody.readUInt16LE(MO.REQUESTED_COUNT);
     this.status = msgBody.readInt16LE(MO.STATUS);
@@ -110,16 +133,17 @@ class DeviceResponseOpen {
  */
 class DeviceQueryRead {
 
-  constructor(handle, reg, count) {
+  constructor(handle, flags, reg, count) {
     this.action = ACTION.READ;
     this.handle = handle;
+    this.flags = flags;
     this.register = reg;
     this.requestedByteCount = count;
   }
 
   toByteArray() {
     let msgBody = new Buffer(256);
-    msgBody.writeUInt8(this.action,MO.ACTION);
+    msgBody.writeUInt8(((this.flags & 0xF)<<4) | (this.action & 0xF),MO.ACTION);
     msgBody.writeUInt16LE(this.handle,MO.HANDLE);
     msgBody.writeInt16LE(this.register,MO.REGISTER);
     msgBody.writeUInt16LE(this.requestedByteCount, MO.REQUESTED_COUNT);
@@ -135,12 +159,13 @@ class DeviceQueryRead {
 
 /**
  * This class represents a Firmata Device Response Read message received from
- * a remote device driver after a call to read(handle, reg, count).
+ * a remote device driver after a call to read(handle, flags, reg, count).
  */
 class DeviceResponseRead {
 
   constructor(msgBody) {
-    this.action = msgBody.readUInt8(MO.ACTION);
+    this.action = msgBody.readUInt8(MO.ACTION) & 0xF;
+    this.flags = (msgBody.readUInt8(MO.ACTION) & 0xF0) >> 4;
     this.handle = msgBody.readUInt16LE(MO.HANDLE);
     this.register = msgBody.readInt16LE(MO.REGISTER);
     this.requestedByteCount = msgBody.readUInt16LE(MO.REQUESTED_COUNT);
@@ -167,9 +192,10 @@ class DeviceResponseRead {
  */
 class DeviceQueryWrite {
 
-  constructor(handle, reg, count,buf) {
+  constructor(handle, flags, reg, count,buf) {
     this.action = ACTION.WRITE;
     this.handle = handle;
+    this.flags = flags;
     this.register = reg;
     this.requestedByteCount = count;
     this.datablock = Buffer.from(buf);
@@ -177,7 +203,7 @@ class DeviceQueryWrite {
 
   toByteArray() {
     let msgBody = new Buffer(256);
-    msgBody.writeUInt8(this.action,MO.ACTION);
+    msgBody.writeUInt8(((this.flags & 0xF)<<4) | (this.action & 0xF),MO.ACTION);
     msgBody.writeUInt16LE(this.handle,MO.HANDLE);
     msgBody.writeInt16LE(this.register,MO.REGISTER);
     msgBody.writeUInt16LE(this.requestedByteCount, MO.REQUESTED_COUNT);
@@ -194,12 +220,13 @@ class DeviceQueryWrite {
 
 /**
  * This class represents a Firmata Device Response Write message received from
- * a remote device driver after a call to read(handle, reg, count).
+ * a remote device driver after a call to read(handle, flags, reg, count).
  */
 class DeviceResponseWrite {
 
   constructor(msgBody) {
-    this.action = msgBody.readUInt8(MO.ACTION);
+    this.action = msgBody.readUInt8(MO.ACTION) & 0xF;
+    this.flags = (msgBody.readUInt8(MO.ACTION) & 0xF0) >> 4;
     this.handle = msgBody.readUInt16LE(MO.HANDLE);
     this.register = msgBody.readInt16LE(MO.REGISTER);
     this.requestedByteCount = msgBody.readUInt16LE(MO.REQUESTED_COUNT);
@@ -220,14 +247,15 @@ class DeviceResponseWrite {
  */
 class DeviceQueryClose {
 
-  constructor(handle) {
+  constructor(handle, flags) {
     this.action = ACTION.CLOSE;
     this.handle = handle;
+    this.flags = flags;
   }
 
   toByteArray() {
     let msgBody = new Buffer(MO.DATA);
-    msgBody.writeUInt8(this.action,MO.ACTION);
+    msgBody.writeUInt8(((this.flags & 0xF)<<4) | (this.action & 0xF),MO.ACTION);
     msgBody.writeUInt16LE(this.handle,MO.HANDLE);
     msgBody.writeInt16LE(0,MO.REGISTER);
     msgBody.writeUInt16LE(0,MO.REQUESTED_COUNT);
@@ -248,7 +276,8 @@ class DeviceQueryClose {
 class DeviceResponseClose {
 
   constructor(msgBody) {
-    this.action = msgBody.readUInt8(MO.ACTION);
+    this.action = msgBody.readUInt8(MO.ACTION) & 0xF;
+    this.flags = (msgBody.readUInt8(MO.ACTION) & 0xF0) >> 4;
     this.handle = msgBody.readUInt16LE(MO.HANDLE);
     this.status = msgBody.readInt16LE(MO.STATUS);
   }
@@ -326,7 +355,7 @@ class DeviceResponseClose {
 
   //--------------------
 
-module.exports = {SYSEX, ACTION, MO, CDR,
+module.exports = {SYSEX, ACTION, DAF, MO, CDR,
     SemVer,
     DeviceQueryOpen, DeviceResponseOpen,
     DeviceQueryRead, DeviceResponseRead,

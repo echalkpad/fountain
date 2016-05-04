@@ -6,14 +6,17 @@
 //
 // Doug Johnson, April 2016
 
-const log4js = require("/users/finson/repos/log4js-node/lib/log4js");
-const five = require("/users/finson/repos/johnny-five/lib/johnny-five");
+const log4js = require("log4js");
+const five = require("johnny-five");
 
 const RDD = require("../RemoteDeviceDriver");
 const rddErr = require("../RDDStatus");
 const rddCmd = require("../RDDCommand");
 
-let logger = log4js.getLogger("MCP9808_RDD");
+const path = require("path");
+const thisModule = path.basename(module.filename,".js");
+const logger = log4js.getLogger(thisModule);
+logger.setLevel('TRACE');
 
 /**
  * Create an MCP9808_RDD Controller object for use with a Thermometer Component.
@@ -22,23 +25,15 @@ let logger = log4js.getLogger("MCP9808_RDD");
  * @param custom.flags flags for device open.  default ForceOpen
  * @param freq Update period in milliseconds.  default : 25
  * @param board the Board object to use.  default five.Board.mount()
- * @param address I2E device address.  default 0x18
- * @param
  */
 let MCP9808_RDD = {
 
   initialize: {
-    value: function(opts, dataHandler) {
-      var address = opts.address || 0x18;
-      opts.address = address;
+    value: function(opts, datahandler) {
 
-      // Can an externally defined Controller get at the state Map
-      // defined in the associated Component?
-      // let state = five.Servo.priv.get(this);
-      // I'll use a single property 'rdd' instead ...
-      this.rdd = {};
+      const rdd = {};
 
-      let reg = {
+      const reg = {
         RESERVED: 0,
         CONFIG: 1,
         UPPER_TEMP: 2,
@@ -50,51 +45,123 @@ let MCP9808_RDD = {
         RESOLUTION: 8
       };
 
-      this.rdd.reg = reg;
+      rdd.reg = reg;
+      rdd.openFlags = opts.custom.flags || 1;
+      rdd.openOpts = opts.custom.opts || 0;
+      rdd.unit = opts.custom.unit || "MCP9808:0";
+      rdd.board = opts.board || five.Board.mount();
+      rdd.freq = opts.freq || 25;
 
-      this.rdd.openFlags = opts.custom.flags || 1;
-      this.rdd.unit = opts.custom.unit || "TempSensor:0";
-      this.rdd.board = opts.board || five.Board.mount();
+      rdd.hook = [
 
-      let dd =  new RDD.RemoteDeviceDriver({board: this.rdd.board, skipCapabilities: false});
-      this.rdd.dd = dd;
-      this.rdd.handle = 0;
-      dd.open(this.rdd.unit,this.rdd.openFlags,(response) => {
-        logger.trace(`Callback openCB invoked.`);
-        logger.trace(`Property keys of 'this' are ${Object.keys(this)}.`);
-        logger.trace(`Property keys of 'this.rdd' are ${Object.keys(this.rdd)}.`);
-        if (response.status >= 0) {
-          logger.debug(`Status value from open() is ${response.status}`);
-          this.rdd.handle = response.status;
-          dd.read(this.rdd.handle,rddCmd.CDR.DriverVersion,256,(response) => {
-            logger.trace(`readCB callback invoked.`);
-            if (response.status >= 0) {
-              logger.debug(`Status value from read() is ${response.status}`);
-              this.rdd.sv = new rddCmd.SemVer(response.datablock);
-              logger.info(`DeviceDriver '${this.rdd.sv.toString()}' is open on logical unit '${this.rdd.unit}' with handle ${this.rdd.handle}`);
-------------------
-              dd.write(this.rdd.handle,reg.PIN,2,[this.pin,0],(response) => {
-                logger.trace(`writeCB callback invoked after setting pin = ${this.pin}.`);
-                if (response.status >= 0) {
-                  logger.debug(`Status value from write() is ${response.status}`);
-                  logger.info(`Logical unit '${this.rdd.unit}' (handle ${this.rdd.handle}) is attached to pin ${this.pin}.`);
-                } else {
-                  logger.error(`Error value from write() is ${response.status}`);
-                }
-              });
-            } else {
-              logger.error(`Error value from read() is ${response.status}`);
-            }
-          });
-        } else {
-          logger.error(`Error value from open() is ${response.status}`);
+      // 0. Open response, read version query
+
+      function (response) {
+          logger.trace(`Response hook invoked. (Step 0, open(${rdd.unit}) response, read(version) query)`);
+          if (response.status < 0) {
+            throw new Error(`Open error during init (0): ${response.status}.`);
+          } else {
+            logger.debug(`Status value from open() is ${response.status}`);
+            rdd.handle = response.status;
+            dd.read(rdd.handle,0,rddCmd.CDR.DriverVersion,256,rdd.hook[1]);
+          }
+        },
+
+      // 1. Read version response, read(Stream, once) query
+
+      function (response) {
+          logger.trace(`Response hook invoked. (Step 1, read(version) response), read(Stream, once) query)`);
+          if (response.status < 0) {
+            throw new Error(`Read error during init (1): ${response.status}.`);
+          } else {
+            logger.debug(`Status value from read() is ${response.status}`);
+            rdd.sv = new rddCmd.SemVer(response.datablock);
+            logger.info(`DeviceDriver '${rdd.sv.toString()}' is open on logical unit '${rdd.unit}' with handle ${rdd.handle}`);
+            dd.read(rdd.handle,0,rddCmd.CDR.Stream,2,rdd.hook[2]);
+          }
+        },
+
+        // 2. read(stream, once) response, write(intervals) query
+
+      function (response) {
+          logger.trace(`Response hook invoked. (Step 2, read(Stream, once) response, write(intervals) query)`);
+          if (response.status < 0) {
+            throw new Error(`Read error during init (2): ${response.status}.`);
+          } else {
+            logger.debug(`Status value from read() is ${response.status}`);
+            logger.info(`Current temp is -not yet calculated-`);
+
+            let buf = new Buffer(256);
+            buf.writeUInt32LE(0,0);
+            buf.writeUInt32LE(rdd.freq,4);
+            logger.trace(`rdd.freq: ${rdd.freq}`);
+            dd.write(rdd.handle,0,rddCmd.CDR.Intervals,8,buf,rdd.hook[3]);
+          }
+        },
+
+        // 3. write(intervals) response, read(intervals) query
+
+      function (response) {
+          logger.trace(`Response hook invoked. (Step 3, write(intervals) response, read(intervals) query) `);
+          if (response.status < 0) {
+            throw new Error(`Write error during init (3): ${response.status}.`);
+          } else {
+            logger.debug(`Status value from write() is ${response.status}`);
+            dd.read(rdd.handle,0,rddCmd.CDR.Intervals,8,rdd.hook[4]);
+          }
+        },
+
+        // 4. read(intervals) response, read(stream continuous) query
+
+      function (response) {
+          logger.trace(`Response hook invoked. (Step 4, read(intervals) response, read(Stream, continuous) query) `);
+          if (response.status < 0) {
+            throw new Error(`Read error during init (4): ${response.status}.`);
+          } else {
+            logger.debug(`Status value from read() is ${response.status}`);
+            logger.debug(`micros: ${response.datablock.readUInt32LE(0)}`);
+            logger.debug(`millis: ${response.datablock.readUInt32LE(4)}`);
+            dd.read(rdd.handle,rddCmd.DAF.MILLI_RUN,rddCmd.CDR.Stream,2,rdd.hook[5]);
+          }
+        },
+
+        // 5. read(Stream, continuous) response
+
+      function (response) {
+          logger.trace(`Response hook invoked. (Step 5, read(Stream, continuous) response`);
+          if (response.status < 0) {
+            throw new Error(`Read error during init (5): ${response.status}.`);
+          } else {
+            logger.debug(`Status value from continuous read() is ${response.status}, (flags: ${response.flags})`);
+            logger.info(`Current temp is -not yet calculated-`);
+            logger.debug(`Temp register bytes: ${response.datablock.readInt8(0)}  ${response.datablock.readInt8(1)}` );
+            let raw = response.datablock.readUInt16BE(0);
+            datahandler(raw);
+          }
         }
-      });
+      ];
+
+      let dd =  new RDD.RemoteDeviceDriver({board: rdd.board, skipCapabilities: false});
+      rdd.dd = dd;
+      rdd.handle = 0;
+      dd.open(rdd.unit,rdd.openFlags,rdd.openOpts, rdd.hook[0]);
     }
   },
   toCelsius: {
     value: function(raw) {
-      return raw;
+      let result;
+      let buf = Buffer.alloc(2);
+      buf.writeUInt16BE(buf,0);
+      let upperByte = buf[0];
+      let lowerByte = buf[1];
+      upperByte = upperByte & 0x1F;
+      if ((upperByte & 0x10) === 0x10) {
+        upperByte = upperByte & 0x0F;     // clear sign bit
+        result = 256 - ((upperByte * 16) + (lowerByte / 16));
+      } else {
+        result = (upperByte * 16) + (lowerByte / 16);
+      }
+      return result;
     }
   }
 };

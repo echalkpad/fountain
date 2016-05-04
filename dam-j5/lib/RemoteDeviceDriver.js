@@ -16,7 +16,7 @@ const rddErr = require("./RDDStatus");
 const path = require("path");
 const thisModule = path.basename(module.filename,".js");
 const logger = log4js.getLogger(thisModule);
-logger.setLevel('DEBUG');
+logger.setLevel('TRACE');
 
 /**
  * Define the methods needed for the Firmata Remote Device Driver
@@ -41,7 +41,8 @@ class RemoteDeviceDriver extends EventEmitter {
     // is then emitted for further processing.
 
     this.board.sysexResponse(rddCmd.SYSEX.DEVICE_RESPONSE, (encodedMsgBody) => {
-      logger.debug("sysexDeviceResponseHandler invoked");
+      console.log(" ");
+      logger.debug("Sysex Device Response Handler invoked");
 
       let encodedMsgBodyBuffer = Buffer.from(encodedMsgBody);
       logger.trace("encoded Response Body length: ", encodedMsgBodyBuffer.length);
@@ -51,8 +52,9 @@ class RemoteDeviceDriver extends EventEmitter {
       logger.trace("decoded Response Body length: ", msgBody.length);
       logger.trace("decoded Response Body (b): ", msgBody);
 
-      let action = msgBody.readUInt8(0);
-      logger.trace(`Rcvd DeviceResponse: action code: ${action}`);
+      let action = msgBody.readUInt8(0) & 0xF;
+      let flags = (msgBody.readUInt8(0) >>> 4) & 0xF;
+      logger.trace(`Rcvd DeviceResponse: action code: ${action}, flags: ${flags}`);
 
       let response;
       let eventName = "";
@@ -65,12 +67,12 @@ class RemoteDeviceDriver extends EventEmitter {
 
         case rddCmd.ACTION.READ:
           response = new rddCmd.DeviceResponseRead(msgBody);
-          eventName = this.responseEvents.get(rddCmd.ACTION.READ)+`-${response.handle}-${response.register}`;
+          eventName = this.responseEvents.get(rddCmd.ACTION.READ)+`-${response.handle}-${flags}-${response.register}`;
           break;
 
         case rddCmd.ACTION.WRITE:
           response = new rddCmd.DeviceResponseWrite(msgBody);
-          eventName = this.responseEvents.get(rddCmd.ACTION.WRITE)+`-${response.handle}-${response.register}`;
+          eventName = this.responseEvents.get(rddCmd.ACTION.WRITE)+`-${response.handle}-${flags}-${response.register}`;
           break;
 
         case rddCmd.ACTION.CLOSE:
@@ -92,16 +94,17 @@ class RemoteDeviceDriver extends EventEmitter {
 
   //--------------------------------------------------------
 
-/**
- * This open() method sends a DEVICE_QUERY message to the Arduino to request
- * access to the named logical unit.
- *
- * @param  {[type]}   unitName [description]
- * @param  {[type]}   flags    [description]
- * @param  {Function} callback [description]
- * @return {[type]}            [description]
- */
-  open(unitName, flags, callback) {
+ /**
+  * This open() method sends a DEVICE_QUERY message to the Arduino to request
+  * access to the named logical unit.
+  *
+  * @param  {[type]}   unitName [description]
+  * @param  {[type]}   flags    [description]
+  * @param  {[type]}   opts     [description]
+  * @param  {Function} callback [description]
+  * @return {[type]}            [description]
+  */
+  open(unitName, flags, opts, callback) {
 
     // Prepare to receive the open() response
 
@@ -119,7 +122,7 @@ class RemoteDeviceDriver extends EventEmitter {
 
     // Send the open() query message
 
-    let message = new rddCmd.DeviceQueryOpen(unitName,flags);
+    let message = new rddCmd.DeviceQueryOpen(unitName,flags, opts);
     this.board.sysexCommand(message.toByteArray());
 
     return this;
@@ -127,35 +130,48 @@ class RemoteDeviceDriver extends EventEmitter {
 
   //--------------------------------------------------------
 
-/**
- * This read() method sends a DEVICE_QUERY message to the Arduino to request
- * a read from the device.
- *
- * @param  {[type]}   handle   [description]
- * @param  {[type]}   reg      [description]
- * @param  {[type]}   count    [description]
- * @param  {Function} callback [description]
- * @return {[type]}            [description]
- */
-  read(handle, reg, count, callback) {
+  /**
+   * This read() method sends a DEVICE_QUERY message to the Arduino to request
+   * a read from the device.
+   * @param  {[type]}   handle   [description]
+   * @param  {[type]}   flags    [description]
+   * @param  {[type]}   reg      [description]
+   * @param  {[type]}   count    [description]
+   * @param  {Function} callback [description]
+   * @return {[type]}            [description]
+   */
+  read(handle, flags, reg, count, callback) {
 
     // Prepare to receive the read() response
 
-    let readEvent = this.responseEvents.get(rddCmd.ACTION.READ)+`-${handle}-${reg}`;
-    this.once(readEvent, (response) => {
-      logger.trace(`${readEvent} handler invoked.`);
-      if (response.status >= 0) {
-        logger.debug(`Status value from read() is ${response.status}`);
-        callback(response);
-      } else {
-        logger.error(`Error value from read() is ${response.status}`);
-        callback(response);
-      }
-    });
+    let readEvent = this.responseEvents.get(rddCmd.ACTION.READ)+`-${handle}-${flags}-${reg}`;
+    if (flags === rddCmd.DAF.MILLI_RUN) {
+      this.on(readEvent, (response) => {
+        logger.trace(`${readEvent} (continuous) handler invoked.`);
+        if (response.status >= 0) {
+          logger.debug(`Status value from continuous read() is ${response.status}`);
+          callback(response);
+        } else {
+          logger.error(`Error value from continuous read() is ${response.status}`);
+          callback(response);
+        }
+      });
+    } else {
+      this.once(readEvent, (response) => {
+        logger.trace(`${readEvent} (one shot) handler invoked.`);
+        if (response.status >= 0) {
+          logger.debug(`Status value from read() is ${response.status}`);
+          callback(response);
+        } else {
+          logger.error(`Error value from read() is ${response.status}`);
+          callback(response);
+        }
+      });
+    }
 
     // Send the read() query message
 
-    let message = new rddCmd.DeviceQueryRead(handle, reg, count);
+    let message = new rddCmd.DeviceQueryRead(handle, flags, reg, count);
     this.board.sysexCommand(message.toByteArray());
 
     return this;
@@ -166,19 +182,19 @@ class RemoteDeviceDriver extends EventEmitter {
 /**
  * This write() method sends a DEVICE_QUERY message to the Arduino to request
  * a write to the device.
- *
  * @param  {[type]}   handle   [description]
+ * @param  {[type]}   flags    [description]
  * @param  {[type]}   reg      [description]
  * @param  {[type]}   count    [description]
  * @param  {[type]}   buf      [description]
  * @param  {Function} callback [description]
  * @return {[type]}            [description]
  */
-  write(handle, reg, count, buf, callback) {
+  write(handle, flags, reg, count, buf, callback) {
 
   // Prepare to receive the write() response
 
-    let writeEvent = this.responseEvents.get(rddCmd.ACTION.WRITE)+`-${handle}-${reg}`;
+    let writeEvent = this.responseEvents.get(rddCmd.ACTION.WRITE)+`-${handle}-${flags}-${reg}`;
     logger.trace(`Response event to listen for: ${writeEvent}`);
     this.once(writeEvent, (response) => {
       logger.trace(`${writeEvent} handler invoked.`);
@@ -193,7 +209,7 @@ class RemoteDeviceDriver extends EventEmitter {
 
   // Send the write() query
 
-    let message = new rddCmd.DeviceQueryWrite(handle, reg, count,buf);
+    let message = new rddCmd.DeviceQueryWrite(handle, flags, reg, count,buf);
     this.board.sysexCommand(message.toByteArray());
 
     return this;
@@ -204,12 +220,12 @@ class RemoteDeviceDriver extends EventEmitter {
 /**
  * This close() method sends a DEVICE_QUERY message to the Arduino to release
  * its claim to the open logical unit.
- *
  * @param  {[type]}   handle   [description]
+ * @param  {[type]}   flags    [description]
  * @param  {Function} callback [description]
  * @return {[type]}            [description]
  */
-  close(handle, callback) {
+  close(handle, flags, callback) {
 
     // Prepare to receive the close() response
 
@@ -225,7 +241,7 @@ class RemoteDeviceDriver extends EventEmitter {
       }
     });
 
-    let message = new rddCmd.DeviceQueryClose(handle);
+    let message = new rddCmd.DeviceQueryClose(handle,flags);
     this.board.sysexCommand(message.toByteArray());
 
     return this;

@@ -24,7 +24,7 @@ const serialPortName = "COM42";
 // const serialPortName = "/dev/cu.usbmodem621";
 
 const board = new five.Board({port: serialPortName, repl: false});
-const componentController = require("../thermometer/xMCP9808_RDD").MCP9808_RDD;
+const componentController = require("../thermometer/MCP9808_RDD").MCP9808_RDD;
 
 // Strings from Firmata host to client are usually error messages
 
@@ -38,7 +38,7 @@ board.on("ready", function() {
   logger.debug(`Evt: ready.`);
   logger.info(`Connected to ${board.io.firmware.name}-${board.io.firmware.version.major}.${board.io.firmware.version.minor}`);
   const led = new five.Led(13);
-  led.blink(500);
+  led.blink(2000);
   board.emit("blinking");
 });
 
@@ -49,10 +49,11 @@ board.on("blinking", function () {
 
   let sensor = new five.Thermometer({
     controller: componentController,
-    custom: {unit: "MCP9808:0", flags: 1}
+    custom: {unit: "MCP9808:0", flags: 1},
+    freq: 1000
   });
 
-  sensor.on("change", function() {
+  sensor.on("data", function() {
     console.log("celsius: %d", this.C);
     console.log("fahrenheit: %d", this.F);
     console.log("kelvin: %d", this.K);
