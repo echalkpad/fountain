@@ -54,8 +54,6 @@ board.on("blinking", function () {
   });
 
   sensor.on("data", function() {
-    console.log("celsius: %d", this.C);
-    console.log("fahrenheit: %d", this.F);
-    console.log("kelvin: %d", this.K);
+    console.log(`celsius: ${this.C}, fahrenheit: ${this.F}, kelvin: ${this.K}`);
   });
 });

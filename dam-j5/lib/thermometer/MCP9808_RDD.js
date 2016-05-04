@@ -133,10 +133,16 @@ let MCP9808_RDD = {
             throw new Error(`Read error during init (5): ${response.status}.`);
           } else {
             logger.debug(`Status value from continuous read() is ${response.status}, (flags: ${response.flags})`);
-            logger.info(`Current temp is -not yet calculated-`);
-            logger.debug(`Temp register bytes: ${response.datablock.readInt8(0)}  ${response.datablock.readInt8(1)}` );
-            let raw = response.datablock.readUInt16BE(0);
-            datahandler(raw);
+            let upperByte = response.datablock.readInt8(0) & 0x1F;
+            let lowerByte = response.datablock.readInt8(1);
+            let result = (((upperByte << 8) & 0xF00) | (lowerByte & 0xFF))/16;
+            if ((upperByte & 0x10) === 0x10) {
+              logger.warn("Negative temp!");
+              result = 256 - result;
+            }
+            logger.info(`Current temp is ${result} °C`);
+            logger.debug(`Temp register bytes: ${(upperByte & 0x1F).toString(16)}  ${(lowerByte & 0xFF).toString(16)}` );
+            datahandler(result);
           }
         }
       ];
@@ -146,24 +152,13 @@ let MCP9808_RDD = {
       rdd.handle = 0;
       dd.open(rdd.unit,rdd.openFlags,rdd.openOpts, rdd.hook[0]);
     }
-  },
-  toCelsius: {
-    value: function(raw) {
-      let result;
-      let buf = Buffer.alloc(2);
-      buf.writeUInt16BE(buf,0);
-      let upperByte = buf[0];
-      let lowerByte = buf[1];
-      upperByte = upperByte & 0x1F;
-      if ((upperByte & 0x10) === 0x10) {
-        upperByte = upperByte & 0x0F;     // clear sign bit
-        result = 256 - ((upperByte * 16) + (lowerByte / 16));
-      } else {
-        result = (upperByte * 16) + (lowerByte / 16);
-      }
-      return result;
-    }
   }
+  // },
+  // toCelsius: {
+  //   value: function(raw) {
+  //     return raw;
+  //   }
+  // }
 };
 
 module.exports = {MCP9808_RDD};
